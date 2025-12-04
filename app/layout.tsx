@@ -1,10 +1,14 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Noto_Sans_KR } from 'next/font/google'
 import { Header } from './_components/Header'
 import { Footer } from './_components/Footer'
 
-const inter = Inter({ subsets: ['latin'] })
+const notoSansKR = Noto_Sans_KR({
+  subsets: ['latin'],
+  weight: ['400', '500', '700'],
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: '일성크레인',
@@ -18,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className={inter.className}>
+      <body className={notoSansKR.className}>
         {/* 헤더 고정 */}
         <Header />
         {/* 헤더 높이만큼 여백 주기 */}

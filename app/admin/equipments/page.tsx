@@ -12,19 +12,28 @@ const supabase = createClient(
 
 type Equipment = {
   id: string
-  name: string
+  name?: string  // name 또는 model_name
+  model_name?: string  // 실제 DB 컬럼명
   manufacturer: string | null
   tonnage: string | null
   category: string
   thumbnail_url: string | null
+  main_image_url?: string | null  // 상세 페이지용 메인 이미지
   spec_pdf_url: string | null
-  description: string | null
+  pdf_cover_url?: string | null  // PDF 표지 이미지
+  display_order?: number
+  // 추가 스펙 필드
+  max_boom_length?: string | null
+  max_lifting_capacity?: string | null
+  max_lifting_moment?: string | null
+  dimensions_image_url?: string | null
+  technical_data_image_url?: string | null
 }
 
 const CATEGORY_OPTIONS = [
-  { value: 'crawler', label: '크롤러' },
-  { value: 'mobile', label: '모바일(하이드로)' },
-  { value: 'etc', label: '기타' },
+  { value: 'Crawler Crane', label: 'Crawler Crane' },
+  { value: 'Mobile Crane', label: 'Mobile Crane' },
+  { value: 'Etc', label: 'Etc' },
 ]
 
 export default function AdminEquipmentsPage() {
@@ -35,31 +44,72 @@ export default function AdminEquipmentsPage() {
   // 폼 상태
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState({
-    name: '',
+    model_name: '',
     manufacturer: '',
     tonnage: '',
-    category: 'crawler',
+    category: 'Crawler Crane',
     thumbnail_url: '',
+    main_image_url: '',
     spec_pdf_url: '',
-    description: '',
+    pdf_cover_url: '',
+    display_order: 0,
+    max_boom_length: '',
+    max_lifting_capacity: '',
+    max_lifting_moment: '',
+    dimensions_image_url: '',
+    technical_data_image_url: '',
   })
   const [saving, setSaving] = useState(false)
+  const [uploadingThumbnail, setUploadingThumbnail] = useState(false)
+  const [uploadingMainImage, setUploadingMainImage] = useState(false)
+  const [uploadingPdf, setUploadingPdf] = useState(false)
+  const [uploadingPdfCover, setUploadingPdfCover] = useState(false)
+  const [uploadingDimensions, setUploadingDimensions] = useState(false)
+  const [uploadingTechnical, setUploadingTechnical] = useState(false)
+  const [thumbnailFileName, setThumbnailFileName] = useState('')
+  const [mainImageFileName, setMainImageFileName] = useState('')
+  const [pdfFileName, setPdfFileName] = useState('')
+  const [pdfCoverFileName, setPdfCoverFileName] = useState('')
+  const [dimensionsFileName, setDimensionsFileName] = useState('')
+  const [technicalFileName, setTechnicalFileName] = useState('')
 
-  // 목록 불러오기
+  // 목록 불러오기 (display_order 순서로 정렬)
   const loadEquipments = async () => {
     setLoading(true)
-    const { data, error } = await supabase
-      .from('equipments')
-      .select('*')
-      .order('name', { ascending: true })
+    try {
+      // display_order 컬럼이 있는지 확인하기 위해 먼저 시도
+      let query = supabase.from('equipments').select('*')
+      
+      const { data, error } = await query
+        .order('display_order', { ascending: true })
+        .order('model_name', { ascending: true })
 
-    if (error) {
-      setError(error.message)
-    } else {
-      setEquipments((data || []) as Equipment[])
-      setError(null)
+      if (error) {
+        // display_order 컬럼이 없을 경우 name만으로 정렬
+        if (error.message.includes('display_order')) {
+          const { data: fallbackData, error: fallbackError } = await supabase
+            .from('equipments')
+            .select('*')
+            .order('model_name', { ascending: true })
+          
+          if (fallbackError) {
+            setError(fallbackError.message)
+          } else {
+            setEquipments((fallbackData || []) as Equipment[])
+            setError(null)
+          }
+        } else {
+          setError(error.message)
+        }
+      } else {
+        setEquipments((data || []) as Equipment[])
+        setError(null)
+      }
+    } catch (err: any) {
+      setError(err.message || '데이터를 불러오는 중 오류가 발생했습니다.')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   useEffect(() => {
@@ -71,7 +121,12 @@ export default function AdminEquipmentsPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
+    // display_order는 숫자로 변환
+    if (name === 'display_order') {
+      setForm((prev) => ({ ...prev, [name]: Number(value) || 0 }))
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }))
+    }
   }
 
   // 신규 등록 or 수정 저장
@@ -79,78 +134,322 @@ export default function AdminEquipmentsPage() {
     e.preventDefault()
     setSaving(true)
 
-    const payload = {
-      name: form.name.trim(),
-      manufacturer: form.manufacturer.trim() || null,
-      tonnage: form.tonnage.trim() || null,
+    // 기본 payload 생성 - 필수 컬럼만 먼저 포함
+    const basePayload: any = {
+      model_name: form.model_name.trim(),
       category: form.category,
-      thumbnail_url: form.thumbnail_url.trim() || null,
-      spec_pdf_url: form.spec_pdf_url.trim() || null,
-      description: form.description.trim() || null,
     }
 
-    if (!payload.name) {
+    // 선택적 컬럼들 (값이 있을 때만 추가)
+    // 실제 DB에 존재하는 컬럼만 포함되도록 주의
+    if (form.manufacturer.trim()) {
+      basePayload.manufacturer = form.manufacturer.trim()
+    }
+    if (form.tonnage.trim()) {
+      basePayload.tonnage = form.tonnage.trim()
+    }
+    
+    // 파일 URL 필드들 (실제 DB 컬럼명과 정확히 일치해야 함)
+    // 에러 발생 시 자동으로 제거됨
+    if (form.thumbnail_url.trim()) {
+      basePayload.thumbnail_url = form.thumbnail_url.trim()
+    }
+    if (form.main_image_url.trim()) {
+      basePayload.main_image_url = form.main_image_url.trim()
+    }
+    if (form.spec_pdf_url.trim()) {
+      basePayload.spec_pdf_url = form.spec_pdf_url.trim()
+    }
+    // PDF 표지 URL 추가
+    if (form.pdf_cover_url?.trim()) {
+      basePayload.pdf_cover_url = form.pdf_cover_url.trim()
+    }
+    if (form.max_boom_length.trim()) {
+      basePayload.max_boom_length = form.max_boom_length.trim()
+    }
+    if (form.max_lifting_capacity.trim()) {
+      basePayload.max_lifting_capacity = form.max_lifting_capacity.trim()
+    }
+    if (form.max_lifting_moment.trim()) {
+      basePayload.max_lifting_moment = form.max_lifting_moment.trim()
+    }
+    if (form.dimensions_image_url.trim()) {
+      basePayload.dimensions_image_url = form.dimensions_image_url.trim()
+    }
+    if (form.technical_data_image_url.trim()) {
+      basePayload.technical_data_image_url = form.technical_data_image_url.trim()
+    }
+
+    // display_order 추가 (숫자 값이므로 trim 불필요)
+    if (form.display_order !== undefined && form.display_order !== null) {
+      basePayload.display_order = Number(form.display_order) || 0
+    }
+
+    if (!basePayload.model_name) {
       alert('모델명은 필수입니다.')
       setSaving(false)
       return
     }
 
-    if (editingId) {
-      // 수정
-      const { error } = await supabase
-        .from('equipments')
-        .update(payload)
-        .eq('id', editingId)
-
-      if (error) {
-        alert('수정 중 오류: ' + error.message)
-      } else {
-        alert('수정되었습니다.')
-        setEditingId(null)
-        resetForm()
-        loadEquipments()
+    // 존재하지 않는 컬럼을 자동으로 제거하는 헬퍼 함수
+    const removeMissingColumns = (payload: any, errorMessage: string): any => {
+      const cleanedPayload = { ...payload }
+      // 에러 메시지에서 누락된 컬럼명 추출 (여러 패턴 시도)
+      const patterns = [
+        /column ['"](\w+)['"]/,  // "column 'spec_pdf_url'"
+        /column (\w+)/,           // "column spec_pdf_url"
+        /'(\w+)' column/,         // "'spec_pdf_url' column"
+        /(\w+) column/,           // "spec_pdf_url column"
+        /Could not find the '(\w+)' column/,  // "Could not find the 'display_order' column"
+        /'(\w+)' of 'equipments'/, // "'display_order' of 'equipments'"
+      ]
+      
+      for (const pattern of patterns) {
+        const match = errorMessage.match(pattern)
+        if (match && match[1]) {
+          const missingColumn = match[1]
+          delete cleanedPayload[missingColumn]
+          break
+        }
       }
-    } else {
-      // 신규 등록
-      const { error } = await supabase.from('equipments').insert([payload])
-
-      if (error) {
-        alert('등록 중 오류: ' + error.message)
-      } else {
-        alert('등록되었습니다.')
-        resetForm()
-        loadEquipments()
-      }
+      
+      return cleanedPayload
     }
 
-    setSaving(false)
+    // 재시도 로직 (최대 5회까지)
+    const trySaveWithRetry = async (payload: any, isUpdate: boolean, id?: string) => {
+      let currentPayload = { ...payload }
+      let lastError: any = null
+      const maxRetries = 5
+
+      for (let attempt = 0; attempt < maxRetries; attempt++) {
+        let result: any
+
+        if (isUpdate && id) {
+          result = await supabase
+            .from('equipments')
+            .update(currentPayload)
+            .eq('id', id)
+        } else {
+          result = await supabase.from('equipments').insert([currentPayload])
+        }
+
+        if (!result.error) {
+          return { success: true, error: null }
+        }
+
+        // 컬럼 관련 에러인 경우 해당 컬럼 제거 후 재시도
+        if (result.error.message.includes('column') || result.error.message.includes('Column')) {
+          currentPayload = removeMissingColumns(currentPayload, result.error.message)
+          lastError = result.error
+          // 계속 재시도
+          continue
+        } else {
+          // 다른 종류의 에러는 즉시 반환
+          return { success: false, error: result.error }
+        }
+      }
+
+      return { success: false, error: lastError }
+    }
+
+    try {
+      if (editingId) {
+        // 수정
+        const result = await trySaveWithRetry(basePayload, true, editingId)
+
+        if (result.error) {
+          let errorMessage = result.error.message
+          // RLS 정책 오류인 경우 더 명확한 안내 메시지
+          if (errorMessage.includes('row-level security') || errorMessage.includes('RLS')) {
+            errorMessage = '데이터베이스 권한 오류입니다.\n\n' +
+              'Supabase에서 RLS 정책을 설정해야 합니다.\n' +
+              'SQL Editor에서 supabase_rls_fix.sql 파일의 내용을 실행하세요.'
+          }
+          alert('수정 중 오류: ' + errorMessage)
+        } else {
+          alert('수정되었습니다.')
+          setEditingId(null)
+          resetForm()
+          loadEquipments()
+        }
+      } else {
+        // 신규 등록
+        const result = await trySaveWithRetry(basePayload, false)
+
+        if (result.error) {
+          let errorMessage = result.error.message
+          // RLS 정책 오류인 경우 더 명확한 안내 메시지
+          if (errorMessage.includes('row-level security') || errorMessage.includes('RLS')) {
+            errorMessage = '데이터베이스 권한 오류입니다.\n\n' +
+              'Supabase에서 RLS 정책을 설정해야 합니다.\n' +
+              'SQL Editor에서 supabase_rls_fix.sql 파일의 내용을 실행하세요.'
+          }
+          alert('등록 중 오류: ' + errorMessage)
+        } else {
+          alert('등록되었습니다.')
+          resetForm()
+          loadEquipments()
+        }
+      }
+    } catch (err: any) {
+      alert('오류 발생: ' + (err.message || '알 수 없는 오류'))
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // 파일 업로드 핸들러
+  const handleFileUpload = async (
+    file: File,
+    type: 'thumbnail' | 'mainImage' | 'pdf' | 'pdfCover' | 'dimensions' | 'technical'
+  ) => {
+    try {
+      if (type === 'thumbnail') setUploadingThumbnail(true)
+      else if (type === 'mainImage') setUploadingMainImage(true)
+      else if (type === 'pdf') setUploadingPdf(true)
+      else if (type === 'pdfCover') setUploadingPdfCover(true)
+      else if (type === 'dimensions') setUploadingDimensions(true)
+      else if (type === 'technical') setUploadingTechnical(true)
+
+      // 파일명 생성 (중복 방지)
+      const timestamp = Date.now()
+      const fileExt = file.name.split('.').pop()
+      const fileName = `${timestamp}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`
+      const filePath = `${fileName}`
+
+      // Supabase Storage 업로드
+      const { data, error } = await supabase.storage
+        .from('equipment-assets')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false,
+        })
+
+      if (error) {
+        throw error
+      }
+
+      // Public URL 가져오기
+      const { data: urlData } = supabase.storage
+        .from('equipment-assets')
+        .getPublicUrl(filePath)
+
+      const publicUrl = urlData.publicUrl
+
+      // 폼 상태 업데이트
+      if (type === 'thumbnail') {
+        setForm((prev) => ({ ...prev, thumbnail_url: publicUrl }))
+        setThumbnailFileName(file.name)
+      } else if (type === 'mainImage') {
+        setForm((prev) => ({ ...prev, main_image_url: publicUrl }))
+        setMainImageFileName(file.name)
+      } else if (type === 'pdf') {
+        setForm((prev) => ({ ...prev, spec_pdf_url: publicUrl }))
+        setPdfFileName(file.name)
+      } else if (type === 'pdfCover') {
+        setForm((prev) => ({ ...prev, pdf_cover_url: publicUrl }))
+        setPdfCoverFileName(file.name)
+      } else if (type === 'dimensions') {
+        setForm((prev) => ({ ...prev, dimensions_image_url: publicUrl }))
+        setDimensionsFileName(file.name)
+      } else if (type === 'technical') {
+        setForm((prev) => ({ ...prev, technical_data_image_url: publicUrl }))
+        setTechnicalFileName(file.name)
+      }
+
+      const fileTypeLabel = {
+        thumbnail: '썸네일 이미지',
+        mainImage: '메인 이미지',
+        pdf: 'PDF',
+        pdfCover: 'PDF 브로슈어 표지 이미지',
+        dimensions: '도면 이미지',
+        technical: '기술 데이터 이미지'
+      }[type]
+      
+      alert(`${fileTypeLabel} 업로드 완료!`)
+    } catch (error: any) {
+      alert(`업로드 실패: ${error.message}`)
+    } finally {
+      if (type === 'thumbnail') setUploadingThumbnail(false)
+      else if (type === 'mainImage') setUploadingMainImage(false)
+      else if (type === 'pdf') setUploadingPdf(false)
+      else if (type === 'pdfCover') setUploadingPdfCover(false)
+      else if (type === 'dimensions') setUploadingDimensions(false)
+      else if (type === 'technical') setUploadingTechnical(false)
+    }
   }
 
   const resetForm = () => {
     setForm({
-      name: '',
+      model_name: '',
       manufacturer: '',
       tonnage: '',
-      category: 'crawler',
+      category: 'Crawler Crane',
       thumbnail_url: '',
+      main_image_url: '',
       spec_pdf_url: '',
-      description: '',
+      pdf_cover_url: '',
+      display_order: 0,
+      max_boom_length: '',
+      max_lifting_capacity: '',
+      max_lifting_moment: '',
+      dimensions_image_url: '',
+      technical_data_image_url: '',
     })
     setEditingId(null)
+    setThumbnailFileName('')
+    setMainImageFileName('')
+    setPdfFileName('')
+    setPdfCoverFileName('')
+    setDimensionsFileName('')
+    setTechnicalFileName('')
   }
 
   // 행 클릭 시 수정 모드로
   const startEdit = (item: Equipment) => {
     setEditingId(item.id)
     setForm({
-      name: item.name || '',
+      model_name: item.model_name || item.name || '',
       manufacturer: item.manufacturer || '',
       tonnage: item.tonnage || '',
       category: item.category,
       thumbnail_url: item.thumbnail_url || '',
+      main_image_url: item.main_image_url || '',
       spec_pdf_url: item.spec_pdf_url || '',
-      description: item.description || '',
+      pdf_cover_url: item.pdf_cover_url || '',
+      display_order: item.display_order || 0,
+      max_boom_length: item.max_boom_length || '',
+      max_lifting_capacity: item.max_lifting_capacity || '',
+      max_lifting_moment: item.max_lifting_moment || '',
+      dimensions_image_url: item.dimensions_image_url || '',
+      technical_data_image_url: item.technical_data_image_url || '',
     })
+    // 파일명 표시
+    if (item.thumbnail_url) {
+      const fileName = item.thumbnail_url.split('/').pop() || ''
+      setThumbnailFileName(decodeURIComponent(fileName))
+    }
+    if (item.main_image_url) {
+      const fileName = item.main_image_url.split('/').pop() || ''
+      setMainImageFileName(decodeURIComponent(fileName))
+    }
+    if (item.spec_pdf_url) {
+      const fileName = item.spec_pdf_url.split('/').pop() || ''
+      setPdfFileName(decodeURIComponent(fileName))
+    }
+    if (item.pdf_cover_url) {
+      const fileName = item.pdf_cover_url.split('/').pop() || ''
+      setPdfCoverFileName(decodeURIComponent(fileName))
+    }
+    if (item.dimensions_image_url) {
+      const fileName = item.dimensions_image_url.split('/').pop() || ''
+      setDimensionsFileName(decodeURIComponent(fileName))
+    }
+    if (item.technical_data_image_url) {
+      const fileName = item.technical_data_image_url.split('/').pop() || ''
+      setTechnicalFileName(decodeURIComponent(fileName))
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -172,7 +471,7 @@ export default function AdminEquipmentsPage() {
       subtitle="보유장비 정보를 등록/수정/삭제할 수 있습니다."
     >
       {/* 장비 등록/수정 폼 */}
-      <section className="mb-10 rounded-xl bg-white p-4 shadow-sm">
+      <section className="mx-auto mb-10 max-w-[1800px] rounded-xl bg-white p-4 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold">
           {editingId ? '장비 정보 수정' : '신규 장비 등록'}
         </h2>
@@ -184,11 +483,11 @@ export default function AdminEquipmentsPage() {
             </label>
             <input
               type="text"
-              name="name"
-              value={form.name}
+              name="model_name"
+              value={form.model_name}
               onChange={handleChange}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="예: LR1750"
+              placeholder="예: SCE8000A"
             />
           </div>
 
@@ -202,7 +501,7 @@ export default function AdminEquipmentsPage() {
               value={form.manufacturer}
               onChange={handleChange}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="예: Liebherr"
+              placeholder="예: SANY"
             />
           </div>
 
@@ -238,49 +537,318 @@ export default function AdminEquipmentsPage() {
             </select>
           </div>
 
-          <div className="space-y-2 md:col-span-2">
+          <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              썸네일 이미지 URL
+              노출 순서 (Display Order)
             </label>
             <input
-              type="text"
-              name="thumbnail_url"
-              value={form.thumbnail_url}
+              type="number"
+              name="display_order"
+              value={form.display_order}
               onChange={handleChange}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="예: https://... 또는 /images/sample.png"
+              placeholder="0"
+              min="0"
             />
             <p className="text-xs text-gray-500">
-              나중에 관리자에서 Storage와 연동해 자동으로 채우도록 개선할 수 있습니다.
+              작은 숫자가 먼저 보여집니다. (예: 1, 2, 3...)
             </p>
           </div>
 
+          {/* 썸네일 이미지 업로드 */}
           <div className="space-y-2 md:col-span-2">
             <label className="block text-sm font-medium text-gray-700">
-              제원표 PDF URL
+              썸네일 이미지
+            </label>
+            <p className="text-xs text-gray-500">
+              권장 사이즈: 400x400px (정사각형)
+            </p>
+            <div className="flex items-center gap-3">
+              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <span>📁</span>
+                <span>이미지 업로드</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      handleFileUpload(file, 'thumbnail')
+                    }
+                  }}
+                  disabled={uploadingThumbnail}
+                />
+              </label>
+              {uploadingThumbnail && (
+                <span className="text-sm text-blue-600">업로드 중...</span>
+              )}
+              {thumbnailFileName && !uploadingThumbnail && (
+                <span className="text-sm text-green-600">
+                  ✓ 업로드 완료: {thumbnailFileName}
+                </span>
+              )}
+            </div>
+            {form.thumbnail_url && (
+              <div className="mt-2">
+                <img
+                  src={form.thumbnail_url}
+                  alt="미리보기"
+                  className="h-20 w-20 rounded border object-cover"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* 상세 페이지용 메인 이미지 업로드 */}
+          <div className="space-y-2 md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700">
+              상세 페이지용 메인 이미지 (고화질)
+            </label>
+            <p className="text-xs text-gray-500">
+              권장 사이즈: 1920x1080px (가로형)
+            </p>
+            <div className="flex items-center gap-3">
+              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <span>🖼️</span>
+                <span>이미지 업로드</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      handleFileUpload(file, 'mainImage')
+                    }
+                  }}
+                  disabled={uploadingMainImage}
+                />
+              </label>
+              {uploadingMainImage && (
+                <span className="text-sm text-blue-600">업로드 중...</span>
+              )}
+              {mainImageFileName && !uploadingMainImage && (
+                <span className="text-sm text-green-600">
+                  ✓ 업로드 완료: {mainImageFileName}
+                </span>
+              )}
+            </div>
+            {form.main_image_url && (
+              <div className="mt-2">
+                <img
+                  src={form.main_image_url}
+                  alt="메인 이미지 미리보기"
+                  className="h-32 w-auto rounded border object-contain"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* 제원표 PDF 업로드 */}
+          <div className="space-y-2 md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700">
+              제원표 PDF
+            </label>
+            <div className="flex items-center gap-3">
+              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <span>📄</span>
+                <span>PDF 업로드</span>
+                <input
+                  type="file"
+                  accept=".pdf"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      handleFileUpload(file, 'pdf')
+                    }
+                  }}
+                  disabled={uploadingPdf}
+                />
+              </label>
+              {uploadingPdf && (
+                <span className="text-sm text-blue-600">업로드 중...</span>
+              )}
+              {pdfFileName && !uploadingPdf && (
+                <span className="text-sm text-green-600">
+                  ✓ 업로드 완료: {pdfFileName}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* PDF 브로슈어 표지 이미지 */}
+          <div className="space-y-2 md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700">
+              PDF 브로슈어 표지 이미지
+            </label>
+            <p className="text-xs text-gray-500">
+              권장 사이즈: 216x294px (세로형, A4 비율)
+            </p>
+            <div className="flex items-center gap-3">
+              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <span>📄</span>
+                <span>이미지 업로드</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      handleFileUpload(file, 'pdfCover')
+                    }
+                  }}
+                  disabled={uploadingPdfCover}
+                />
+              </label>
+              {uploadingPdfCover && (
+                <span className="text-sm text-blue-600">업로드 중...</span>
+              )}
+              {pdfCoverFileName && !uploadingPdfCover && (
+                <span className="text-sm text-green-600">
+                  ✓ 업로드 완료: {pdfCoverFileName}
+                </span>
+              )}
+            </div>
+            {form.pdf_cover_url && (
+              <div className="mt-2">
+                <img
+                  src={form.pdf_cover_url}
+                  alt="PDF 표지 미리보기"
+                  className="h-32 w-auto rounded border object-contain"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* 구분선 */}
+          <div className="md:col-span-2">
+            <hr className="my-4 border-t-2 border-gray-200" />
+            <h3 className="text-base font-semibold text-gray-800">
+              상세 스펙 정보 (선택사항)
+            </h3>
+          </div>
+
+          {/* Max Boom Length */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              최대 붐 길이 (Max. Boom Length)
             </label>
             <input
               type="text"
-              name="spec_pdf_url"
-              value={form.spec_pdf_url}
+              name="max_boom_length"
+              value={form.max_boom_length}
               onChange={handleChange}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="예: https://.../specs.pdf"
+              placeholder="예: 111m"
             />
           </div>
 
-          <div className="space-y-2 md:col-span-2">
+          {/* Max Lifting Capacity */}
+          <div className="space-y-2">
             <label className="block text-sm font-medium text-gray-700">
-              설명
+              최대 인양 능력 (Max. Lifting Capacity)
             </label>
-            <textarea
-              name="description"
-              value={form.description}
+            <input
+              type="text"
+              name="max_lifting_capacity"
+              value={form.max_lifting_capacity}
               onChange={handleChange}
-              rows={3}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="장비 특징, 용도 등 설명을 입력하세요."
+              placeholder="예: 800 T"
             />
+          </div>
+
+          {/* Max Lifting Moment */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              최대 리프팅 모멘트 (Max. Lifting Moment)
+            </label>
+            <input
+              type="text"
+              name="max_lifting_moment"
+              value={form.max_lifting_moment}
+              onChange={handleChange}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="예: 12016t·m"
+            />
+          </div>
+
+          {/* 빈칸 (그리드 정렬용) */}
+          <div></div>
+
+          {/* Dimensions 이미지 업로드 */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              치수 도면 이미지 (Dimensions)
+            </label>
+            <p className="text-xs text-gray-500">
+              권장 사이즈: 1200x800px (가로형)
+            </p>
+            <div className="flex items-center gap-3">
+              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <span>📐</span>
+                <span>도면 업로드</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      handleFileUpload(file, 'dimensions')
+                    }
+                  }}
+                  disabled={uploadingDimensions}
+                />
+              </label>
+              {uploadingDimensions && (
+                <span className="text-sm text-blue-600">업로드 중...</span>
+              )}
+              {dimensionsFileName && !uploadingDimensions && (
+                <span className="text-sm text-green-600">
+                  ✓ {dimensionsFileName}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Technical Data 이미지 업로드 */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              기술 데이터 차트 (Technical Data)
+            </label>
+            <p className="text-xs text-gray-500">
+              권장 사이즈: 1200x900px (가로형)
+            </p>
+            <div className="flex items-center gap-3">
+              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                <span>📊</span>
+                <span>차트 업로드</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      handleFileUpload(file, 'technical')
+                    }
+                  }}
+                  disabled={uploadingTechnical}
+                />
+              </label>
+              {uploadingTechnical && (
+                <span className="text-sm text-blue-600">업로드 중...</span>
+              )}
+              {technicalFileName && !uploadingTechnical && (
+                <span className="text-sm text-green-600">
+                  ✓ {technicalFileName}
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-3 md:col-span-2">
@@ -305,7 +873,7 @@ export default function AdminEquipmentsPage() {
       </section>
 
       {/* 장비 목록 테이블 */}
-      <section className="rounded-xl bg-white p-4 shadow-sm">
+      <section className="mx-auto max-w-[1800px] rounded-xl bg-white p-4 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold">장비 목록</h2>
 
         {loading ? (
@@ -321,6 +889,7 @@ export default function AdminEquipmentsPage() {
             <table className="min-w-full border text-sm">
               <thead className="bg-gray-50">
                 <tr>
+                  <th className="border px-2 py-1 text-left">순서</th>
                   <th className="border px-2 py-1 text-left">모델명</th>
                   <th className="border px-2 py-1 text-left">제조사</th>
                   <th className="border px-2 py-1 text-left">톤수</th>
@@ -333,7 +902,10 @@ export default function AdminEquipmentsPage() {
               <tbody>
                 {equipments.map((item) => (
                   <tr key={item.id} className="hover:bg-gray-50">
-                    <td className="border px-2 py-1">{item.name}</td>
+                    <td className="border px-2 py-1 text-center font-semibold">
+                      {item.display_order || 0}
+                    </td>
+                    <td className="border px-2 py-1">{item.model_name || item.name || '-'}</td>
                     <td className="border px-2 py-1">
                       {item.manufacturer || '-'}
                     </td>

@@ -30,13 +30,26 @@ export default async function TestDbPage() {
         <p>장비 데이터가 없습니다. Supabase에서 한 줄 이상 추가해 보세요.</p>
       ) : (
         <div className="space-y-3">
+          {/* 실제 컬럼명 확인용 - 첫 번째 데이터의 모든 키 표시 */}
+          {equipments.length > 0 && (
+            <div className="rounded-lg bg-yellow-50 p-4 border border-yellow-200">
+              <h3 className="font-bold mb-2">실제 컬럼명 확인:</h3>
+              <pre className="text-xs overflow-auto">
+                {JSON.stringify(Object.keys(equipments[0]), null, 2)}
+              </pre>
+              <h3 className="font-bold mt-4 mb-2">첫 번째 데이터 샘플:</h3>
+              <pre className="text-xs overflow-auto">
+                {JSON.stringify(equipments[0], null, 2)}
+              </pre>
+            </div>
+          )}
           {equipments.map((eq: any) => (
             <div
               key={eq.id}
               className="flex flex-col gap-1 rounded-lg bg-white p-4 shadow"
             >
               <div className="font-semibold">
-                {eq.name} ({eq.tonnage})
+                {eq.name || eq.model_name || eq.equipment_name || '이름 없음'} ({eq.tonnage})
               </div>
               <div className="text-sm text-gray-600">
                 카테고리: {eq.category} / 제조사: {eq.manufacturer}

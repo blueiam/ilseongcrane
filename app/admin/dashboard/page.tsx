@@ -23,7 +23,7 @@ export default function AdminDashboardPage() {
       title="관리자 대시보드"
       subtitle="방문자 통계, 최신 문의 내역 등이 들어갈 자리입니다."
     >
-      <div className="mb-4 flex justify-end">
+      <div className="mx-auto mb-4 max-w-[1800px] flex justify-end">
         <button
           onClick={handleLogout}
           className="rounded-md border border-gray-300 px-3 py-1 text-xs text-gray-700 hover:bg-gray-50"
@@ -32,7 +32,7 @@ export default function AdminDashboardPage() {
         </button>
       </div>
 
-      <div className="rounded-xl bg-white p-4 text-sm text-gray-700 shadow-sm">
+      <div className="mx-auto max-w-[1800px] rounded-xl bg-white p-4 text-sm text-gray-700 shadow-sm">
         <p>여기에 대시보드 카드(방문자 수, 최근 문의 등)가 들어갈 예정입니다.</p>
       </div>
     </PageShell>

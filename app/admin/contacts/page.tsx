@@ -139,7 +139,7 @@ export default function AdminContactsPage() {
           아직 접수된 문의가 없습니다.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-xl bg-white p-4 shadow-sm">
+        <div className="mx-auto max-w-[1800px] overflow-x-auto rounded-xl bg-white p-4 shadow-sm">
           <table className="min-w-full text-xs">
             <thead className="bg-gray-50">
               <tr>

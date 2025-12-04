@@ -2,7 +2,6 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { PageShell } from '@/app/_components/PageShell'
 import ReCAPTCHA from 'react-google-recaptcha'
 
 type Category = 'equipment' | 'wind'
@@ -90,12 +89,17 @@ export default function ContactPage() {
   }
 
   return (
-    <PageShell
-      title="견적 / 문의"
-      subtitle="장비 및 풍력 관련 문의를 남겨주시면 담당자가 확인 후 연락드립니다."
-    >
-      <div className="mx-auto max-w-xl rounded-xl bg-white p-6 shadow-sm">
-        <form onSubmit={handleSubmit} className="space-y-4 text-sm">
+    <main className="min-h-screen bg-gray-100 px-6 py-10">
+      <div className="mx-auto max-w-xl">
+        <div className="rounded-xl bg-white p-6 shadow-sm">
+          {/* 제목 및 설명 */}
+          <h1 className="text-2xl font-bold text-gray-900">견적 / 문의</h1>
+          <p className="mt-2 mb-6 text-gray-600">
+            장비 및 풍력 관련 문의를 남겨주시면 담당자가 확인 후 연락드립니다.
+          </p>
+
+          {/* 폼 */}
+          <form onSubmit={handleSubmit} className="space-y-4 text-sm">
           {/* 문의 유형 선택 */}
           <div>
             <label className="mb-1 block text-xs font-medium text-gray-700">
@@ -233,12 +237,13 @@ export default function ContactPage() {
           <button
             type="submit"
             disabled={submitting || !RECAPTCHA_SITE_KEY}
-            className="mt-2 w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-60"
+            className="mt-2 w-full rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-60"
           >
             {submitting ? '전송 중...' : '문의 보내기'}
           </button>
-        </form>
+          </form>
+        </div>
       </div>
-    </PageShell>
+    </main>
   )
 }

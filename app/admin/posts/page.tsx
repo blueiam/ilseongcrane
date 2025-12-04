@@ -23,6 +23,8 @@ type Post = {
   content: string | null
   is_notice: boolean
   created_at: string
+  label?: string | null
+  external_link?: string | null
 }
 
 type PostFile = {
@@ -32,6 +34,31 @@ type PostFile = {
   file_type?: string | null
 }
 
+type FileCategory = 'image' | 'pdf' | 'zip' | 'other'
+
+function getCategoryFromName(name: string): FileCategory {
+  const ext = name.split('.').pop()?.toLowerCase() || ''
+  if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic'].includes(ext)) return 'image'
+  if (ext === 'pdf') return 'pdf'
+  if (ext === 'zip') return 'zip'
+  return 'other'
+}
+
+// 기본 첨부 제한 (공지/기타 게시판)
+const BASE_MAX: Record<FileCategory, number> = {
+  image: 5,
+  pdf: 5,
+  zip: 5,
+  other: 0,
+}
+
+// 일반자료실(archive_general) 전용 첨부 제한
+const GENERAL_MAX: Record<FileCategory, number> = {
+  image: 10,
+  pdf: 10,
+  zip: 10,
+  other: 0,
+}
 
 export default function AdminPostsPage() {
   const [boards, setBoards] = useState<Board[]>([])
@@ -43,6 +70,8 @@ export default function AdminPostsPage() {
     title: '',
     content: '',
     is_notice: false,
+    label: '',
+    external_link: '',
   })
 
   const [attachments, setAttachments] = useState<PostFile[]>([])
@@ -53,7 +82,7 @@ export default function AdminPostsPage() {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // 게시판 목록
+  // boards 불러오기
   const loadBoards = async () => {
     const { data, error } = await supabase
       .from('boards')
@@ -69,16 +98,17 @@ export default function AdminPostsPage() {
     setBoards(list)
 
     if (list.length > 0) {
-      const noticeBoard = list.find((b) => b.code === 'notice')
-      setCurrentBoardId((noticeBoard || list[0]).id)
+      const notice = list.find((b) => b.code === 'notice')
+      setCurrentBoardId((notice || list[0]).id)
     }
   }
 
+  // 해당 게시판 posts
   const loadPosts = async (boardId: string) => {
     setLoading(true)
     const { data, error } = await supabase
       .from('posts')
-      .select('*')
+      .select('id, board_id, title, content, is_notice, created_at, label, external_link')
       .eq('board_id', boardId)
       .order('is_notice', { ascending: false })
       .order('created_at', { ascending: false })
@@ -86,12 +116,13 @@ export default function AdminPostsPage() {
     if (error) {
       setError(error.message)
     } else {
-      setPosts((data || []) as Post[])
       setError(null)
+      setPosts((data || []) as Post[])
     }
     setLoading(false)
   }
 
+  // 첨부파일 목록
   const loadAttachments = async (postId: string) => {
     const { data, error } = await supabase
       .from('post_files')
@@ -122,6 +153,8 @@ export default function AdminPostsPage() {
       title: '',
       content: '',
       is_notice: false,
+      label: '',
+      external_link: '',
     })
     setEditingId(null)
     setAttachments([])
@@ -131,7 +164,8 @@ export default function AdminPostsPage() {
   const handleChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLTextAreaElement>,
+      | React.ChangeEvent<HTMLTextAreaElement>
+      | React.ChangeEvent<HTMLSelectElement>
   ) => {
     const { name, value, type, checked } = e.target as any
     setForm((prev) => ({
@@ -153,11 +187,13 @@ export default function AdminPostsPage() {
 
     setSaving(true)
 
-    const payload = {
+    const payload: any = {
       board_id: currentBoardId,
       title: form.title.trim(),
       content: form.content.trim() || null,
       is_notice: form.is_notice,
+      label: form.label.trim() || null,
+      external_link: form.external_link.trim() || null,
     }
 
     if (editingId) {
@@ -193,6 +229,8 @@ export default function AdminPostsPage() {
       title: post.title,
       content: post.content || '',
       is_notice: post.is_notice,
+      label: post.label || '',
+      external_link: post.external_link || '',
     })
     loadAttachments(post.id)
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -201,6 +239,7 @@ export default function AdminPostsPage() {
   const handleDelete = async (id: string) => {
     if (!currentBoardId) return
     if (!confirm('정말 삭제하시겠습니까?')) return
+
     const { error } = await supabase.from('posts').delete().eq('id', id)
     if (error) {
       alert('삭제 중 오류: ' + error.message)
@@ -215,6 +254,26 @@ export default function AdminPostsPage() {
     setFilesToUpload(e.target.files)
   }
 
+  const currentBoard = boards.find((b) => b.id === currentBoardId)
+  const isGeneralBoard = currentBoard?.code === 'archive_general'
+  const maxPerType: Record<FileCategory, number> =
+    isGeneralBoard ? GENERAL_MAX : BASE_MAX
+
+  // 현재 첨부파일 개수
+  const attachmentCounts = (() => {
+    const counts: Record<FileCategory, number> = {
+      image: 0,
+      pdf: 0,
+      zip: 0,
+      other: 0,
+    }
+    attachments.forEach((f) => {
+      const cat = getCategoryFromName(f.file_name || f.file_url)
+      counts[cat]++
+    })
+    return counts
+  })()
+
   const handleUploadFiles = async () => {
     if (!editingId) {
       alert('먼저 게시글을 저장한 후 첨부파일을 등록할 수 있습니다.')
@@ -225,11 +284,40 @@ export default function AdminPostsPage() {
       return
     }
 
+    const filesArray = Array.from(filesToUpload)
+    const counts: Record<FileCategory, number> = { ...attachmentCounts }
+
     setUploading(true)
 
-    const filesArray = Array.from(filesToUpload)
-
     for (const file of filesArray) {
+      const cat = getCategoryFromName(file.name)
+
+      if (cat === 'other') {
+        alert(`지원하지 않는 파일 형식입니다: ${file.name}`)
+        continue
+      }
+
+      const limit = maxPerType[cat]
+      if (limit <= 0) {
+        alert(`이 게시판에서는 해당 파일 형식을 업로드할 수 없습니다: ${file.name}`)
+        continue
+      }
+
+      if (counts[cat] >= limit) {
+        const label =
+          cat === 'image'
+            ? '이미지'
+            : cat === 'pdf'
+            ? 'PDF'
+            : cat === 'zip'
+            ? 'ZIP'
+            : '파일'
+        alert(
+          `${label} 파일은 최대 ${limit}개까지 업로드할 수 있습니다. (${file.name})`
+        )
+        continue
+      }
+
       const path = `${editingId}/${Date.now()}-${file.name}`
 
       const { error: uploadError } = await supabase.storage
@@ -244,26 +332,25 @@ export default function AdminPostsPage() {
         continue
       }
 
-      // DB에 메타데이터 저장
-      const { error: insertError } = await supabase
-        .from('post_files')
-        .insert([
-          {
-            post_id: editingId,
-            file_url: path, // 경로만 저장
-            file_name: file.name,
-            file_type: file.type,
-          },
-        ])
+      const { error: insertError } = await supabase.from('post_files').insert([
+        {
+          post_id: editingId,
+          file_url: path,
+          file_name: file.name,
+          file_type: cat, // image / pdf / zip
+        },
+      ])
 
       if (insertError) {
         alert(`파일 정보 저장 실패: ${file.name} (${insertError.message})`)
+        continue
       }
+
+      counts[cat]++
     }
 
     setUploading(false)
     setFilesToUpload(null)
-    // 최신 목록 다시 로딩
     loadAttachments(editingId)
   }
 
@@ -271,7 +358,6 @@ export default function AdminPostsPage() {
     if (!editingId) return
     if (!confirm('이 첨부파일을 삭제하시겠습니까?')) return
 
-    // 1) Storage에서 삭제
     const { error: storageError } = await supabase.storage
       .from('post-files')
       .remove([file.file_url])
@@ -281,7 +367,6 @@ export default function AdminPostsPage() {
       return
     }
 
-    // 2) DB에서 삭제
     const { error: dbError } = await supabase
       .from('post_files')
       .delete()
@@ -292,24 +377,18 @@ export default function AdminPostsPage() {
       return
     }
 
-    // 목록 업데이트
     loadAttachments(editingId)
   }
 
-  const currentBoard = boards.find((b) => b.id === currentBoardId)
-
-  // 첨부파일 public URL
   const getFileUrl = (filePath: string) => {
-    const { data } = supabase.storage
-      .from('post-files')
-      .getPublicUrl(filePath)
+    const { data } = supabase.storage.from('post-files').getPublicUrl(filePath)
     return data.publicUrl
   }
 
   return (
     <PageShell
       title="관리자 - 게시글 관리"
-      subtitle="공지/뉴스 및 자료실 게시글을 통합 관리합니다."
+      subtitle="공지/뉴스 및 일반자료실 등 게시글을 통합 관리합니다."
     >
       {/* 게시판 선택 */}
       <div className="mb-4 flex flex-wrap items-center gap-2 text-sm">
@@ -336,8 +415,8 @@ export default function AdminPostsPage() {
         )}
       </div>
 
-      {/* 글 입력 폼 + 첨부파일 */}
-      <section className="mb-8 rounded-xl bg-white p-4 shadow-sm">
+      {/* 글 입력 + 첨부파일 */}
+      <section className="mx-auto mb-8 max-w-[1800px] rounded-xl bg-white p-4 shadow-sm">
         <h2 className="mb-3 text-sm font-semibold text-gray-800">
           {editingId
             ? `게시글 수정 (${currentBoard?.name || ''})`
@@ -345,17 +424,67 @@ export default function AdminPostsPage() {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="grid gap-3 md:grid-cols-2">
+            <div>
+              <label className="block text-xs font-medium text-gray-700">
+                제목
+              </label>
+              <input
+                type="text"
+                name="title"
+                value={form.title}
+                onChange={handleChange}
+                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-gray-700">
+                레이블 (뱃지)
+              </label>
+
+              {currentBoard?.code === 'notice' ? (
+  <select
+    name="label"
+    value={form.label}
+    onChange={handleChange}
+    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+  >
+    <option value="공지">공지</option>
+    <option value="뉴스">뉴스</option>
+  </select>
+) : (
+  // 일반자료실 등 다른 게시판: 자유 입력
+  <input
+    type="text"
+    name="label"
+    value={form.label}
+    onChange={handleChange}
+    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+    placeholder="예: 작업사진, 영상, 현장 스케치 등"
+  />
+)}
+
+            </div>
+          </div>
+
           <div>
             <label className="block text-xs font-medium text-gray-700">
-              제목
+              외부 링크 (YouTube URL 등)
             </label>
             <input
               type="text"
-              name="title"
-              value={form.title}
+              name="external_link"
+              value={form.external_link}
               onChange={handleChange}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="https://www.youtube.com/watch?v=..."
             />
+            {currentBoard?.code === 'archive_general' && (
+              <p className="mt-1 text-[11px] text-gray-500">
+                일반자료실의 경우 유튜브 링크를 입력하면 상세 페이지에서 영상이 임베드 됩니다.
+              </p>
+            )}
           </div>
 
           <div>
@@ -381,7 +510,7 @@ export default function AdminPostsPage() {
               className="h-3 w-3 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             />
             <label htmlFor="is_notice" className="text-gray-700">
-              공지로 상단 고정
+              공지/상단 고정 (이 게시판에서 위로 고정)
             </label>
           </div>
 
@@ -405,17 +534,29 @@ export default function AdminPostsPage() {
           </div>
         </form>
 
-        {/* 첨부파일 영역 - 게시글 수정 모드일 때만 */}
+        {/* 첨부파일 관리 */}
         {editingId && (
           <div className="mt-6 border-t pt-4">
             <h3 className="mb-2 text-xs font-semibold text-gray-800">
               첨부파일 관리
             </h3>
 
+            <p className="mb-1 text-[11px] text-gray-600">
+              {isGeneralBoard
+                ? '일반자료실: 이미지/PDF/ZIP 각 10개까지 업로드 가능합니다.'
+                : '기타 게시판: 이미지/PDF/ZIP 각 5개까지 업로드 가능합니다.'}
+            </p>
+            <p className="mb-3 text-[11px] text-gray-500">
+              현재 이미지 {attachmentCounts.image}/{maxPerType.image} · PDF{' '}
+              {attachmentCounts.pdf}/{maxPerType.pdf} · ZIP{' '}
+              {attachmentCounts.zip}/{maxPerType.zip}
+            </p>
+
             <div className="flex flex-col gap-2 md:flex-row md:items-center">
               <input
                 type="file"
                 multiple
+                accept="image/*,application/pdf,application/zip,application/x-zip-compressed,.zip"
                 onChange={handleFileInputChange}
                 className="text-xs"
               />
@@ -428,9 +569,6 @@ export default function AdminPostsPage() {
                 {uploading ? '업로드 중...' : '선택 파일 업로드'}
               </button>
             </div>
-            <p className="mt-1 text-[11px] text-gray-500">
-              이미지(PNG/JPG)와 PDF 파일 업로드를 권장합니다.
-            </p>
 
             <div className="mt-3">
               {attachments.length === 0 ? (
@@ -469,8 +607,8 @@ export default function AdminPostsPage() {
       </section>
 
       {/* 글 목록 */}
-      <section className="rounded-xl bg-white p-4 shadow-sm">
-        <h2 className="mb-3 text.sm font-semibold text-gray-800">
+      <section className="mx-auto max-w-[1800px] rounded-xl bg-white p-4 shadow-sm">
+        <h2 className="mb-3 text-sm font-semibold text-gray-800">
           게시글 목록 ({currentBoard?.name || '-'})
         </h2>
 
@@ -485,25 +623,22 @@ export default function AdminPostsPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full text-xs">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="border-b px-2 py-1 text-left">구분</th>
-                  <th className="border-b px-2 py-1 text-left">제목</th>
-                  <th className="w-24 border-b px-2 py-1 text-center">
-                    작성일
-                  </th>
-                  <th className="w-24 border-b px-2 py-1 text-center">
-                    관리
-                  </th>
-                </tr>
-              </thead>
+            <thead className="bg-gray-50">
+  <tr>
+    <th className="border-b px-2 py-1 text-left">제목</th>
+    <th className="border-b px-2 py-1 text-left">레이블</th>
+    <th className="w-24 border-b px-2 py-1 text-center">작성일</th>
+    <th className="w-24 border-b px-2 py-1 text-center">관리</th>
+  </tr>
+</thead>
+
               <tbody>
                 {posts.map((p) => (
                   <tr key={p.id} className="hover:bg-gray-50">
                     <td className="border-b px-2 py-1">
                       {p.is_notice ? (
                         <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
-                          공지
+                          고정
                         </span>
                       ) : (
                         <span className="text-[11px] text-gray-500">
@@ -513,6 +648,15 @@ export default function AdminPostsPage() {
                     </td>
                     <td className="border-b px-2 py-1">
                       <span className="text-gray-800">{p.title}</span>
+                    </td>
+                    <td className="border-b px-2 py-1">
+                      {p.label ? (
+                        <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] text-gray-700">
+                          {p.label}
+                        </span>
+                      ) : (
+                        <span className="text-[11px] text-gray-400">-</span>
+                      )}
                     </td>
                     <td className="border-b px-2 py-1 text-center">
                       {p.created_at

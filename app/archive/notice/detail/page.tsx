@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { PageShell } from '@/app/_components/PageShell'
 import { createClient } from '@supabase/supabase-js'
 
@@ -17,13 +17,27 @@ type Post = {
   content: string | null
   is_notice: boolean
   created_at: string
+  label?: string | null
+  external_link?: string | null
 }
 
 type PostFile = {
   id: string
   file_url: string
   file_name: string | null
+  file_type?: string | null
 }
+
+// 확장자로 분류 (file_type이 null인 옛 데이터용)
+const getExt = (nameOrPath: string): string =>
+  (nameOrPath.split('.').pop() || '').toLowerCase()
+
+const isImageFile = (nameOrPath: string): boolean =>
+  ['jpg', 'jpeg', 'png', 'gif', 'webp', 'heic'].includes(getExt(nameOrPath))
+
+const isPdfFile = (nameOrPath: string): boolean => getExt(nameOrPath) === 'pdf'
+
+const isZipFile = (nameOrPath: string): boolean => getExt(nameOrPath) === 'zip'
 
 export default function NoticeDetailPage() {
   const searchParams = useSearchParams()
@@ -31,7 +45,9 @@ export default function NoticeDetailPage() {
   const id = searchParams.get('id')
 
   const [post, setPost] = useState<Post | null>(null)
-  const [files, setFiles] = useState<PostFile[]>([])
+  const [images, setImages] = useState<PostFile[]>([])
+  const [pdfs, setPdfs] = useState<PostFile[]>([])
+  const [zips, setZips] = useState<PostFile[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -41,46 +57,64 @@ export default function NoticeDetailPage() {
       return
     }
 
-    const fetchData = async () => {
+    const load = async () => {
+      setLoading(true)
+
       // 1) 게시글
       const { data: postData, error: postError } = await supabase
         .from('posts')
-        .select('*')
+        .select('id, title, content, is_notice, created_at, label, external_link')
         .eq('id', id)
         .single()
 
       if (postError || !postData) {
-        setError(
-          postError?.message || '게시글을 찾을 수 없습니다.'
-        )
+        setError(postError?.message || '게시글을 찾을 수 없습니다.')
         setLoading(false)
         return
       }
-
       setPost(postData as Post)
 
-      // 2) 첨부파일 목록
+      // 2) 첨부파일
       const { data: fileData, error: fileError } = await supabase
         .from('post_files')
-        .select('id, file_url, file_name')
+        .select('id, file_url, file_name, file_type')
         .eq('post_id', id)
         .order('created_at', { ascending: true })
 
       if (!fileError && fileData) {
-        setFiles(fileData as PostFile[])
+        const imgs: PostFile[] = []
+        const pdfList: PostFile[] = []
+        const zipList: PostFile[] = []
+
+        ;(fileData as PostFile[]).forEach((f) => {
+          const base = f.file_name || f.file_url
+          const type = f.file_type
+
+          const isImg = type === 'image' || isImageFile(base)
+          const isPdf = type === 'pdf' || isPdfFile(base)
+          const isZip = type === 'zip' || isZipFile(base)
+
+          if (isImg) imgs.push(f)
+          else if (isPdf) pdfList.push(f)
+          else if (isZip) zipList.push(f)
+        })
+
+        setImages(imgs)
+        setPdfs(pdfList)
+        setZips(zipList)
       }
 
       setLoading(false)
     }
 
-    fetchData()
+    load()
   }, [id])
 
   if (!id) {
     return (
-      <PageShell title="공지 상세" subtitle="유효하지 않은 글입니다.">
+      <PageShell title="공지 / 뉴스" subtitle="">
         <p className="text-gray-600">
-          잘못된 경로입니다. 공지 목록에서 다시 선택해주세요.
+          잘못된 경로입니다. 공지/뉴스 목록에서 다시 선택해주세요.
         </p>
       </PageShell>
     )
@@ -88,7 +122,7 @@ export default function NoticeDetailPage() {
 
   if (loading) {
     return (
-      <PageShell title="공지 상세" subtitle="">
+      <PageShell title="공지 / 뉴스" subtitle="">
         <p className="text-gray-600">게시글을 불러오는 중입니다...</p>
       </PageShell>
     )
@@ -96,7 +130,7 @@ export default function NoticeDetailPage() {
 
   if (error || !post) {
     return (
-      <PageShell title="공지 상세" subtitle="">
+      <PageShell title="공지 / 뉴스" subtitle="">
         <p className="text-red-500">
           게시글을 불러오는 중 오류가 발생했거나, 존재하지 않는 글입니다.
         </p>
@@ -104,7 +138,8 @@ export default function NoticeDetailPage() {
     )
   }
 
-  // Storage public URL 생성
+  const label = post.label || '' // 공지/뉴스만 사용
+
   const getFileUrl = (filePath: string) => {
     const { data } = supabase.storage
       .from('post-files')
@@ -113,47 +148,97 @@ export default function NoticeDetailPage() {
   }
 
   return (
-    <PageShell
-      title="공지 · 뉴스"
-      subtitle={post.is_notice ? '공지사항' : '일반 공지'}
-    >
+    <PageShell title="공지 / 뉴스" subtitle={label || undefined}>
       <article className="rounded-xl bg-white p-6 shadow-sm">
-        <div className="mb-3 flex items-center justify-between">
+        {/* 헤더 */}
+        <header className="border-b pb-4">
+          <div className="mb-2 flex items-center gap-2">
+            {label && (
+              <span
+                className={`inline-flex rounded-full px-2 py-0.5 text-[11px] ${
+                  label === '공지'
+                    ? 'bg-red-100 text-red-700'
+                    : label === '뉴스'
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'bg-gray-100 text-gray-700'
+                }`}
+              >
+                {label}
+              </span>
+            )}
+            {/* 상단고정 텍스트는 표시하지 않음 (is_notice는 정렬용으로만 사용) */}
+          </div>
           <h1 className="text-xl font-semibold text-gray-900">
             {post.title}
           </h1>
-          <div className="text-right text-xs text-gray-500">
-            <div>
-              {new Date(post.created_at).toLocaleDateString('ko-KR')}
-            </div>
-            {post.is_notice && (
-              <div className="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-700">
-                공지
-              </div>
-            )}
+          <div className="mt-1 text-xs text-gray-500">
+            {new Date(post.created_at).toLocaleString('ko-KR')}
           </div>
-        </div>
 
-        <div className="mt-4 whitespace-pre-wrap text-sm leading-relaxed text-gray-800">
-          {post.content || '내용이 없습니다.'}
-        </div>
+          {post.external_link && (
+            <div className="mt-2">
+              <a
+                href={post.external_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center rounded-md border border-blue-500 px-3 py-1 text-[11px] text-blue-600 hover:bg-blue-50"
+              >
+                관련 링크 열기
+              </a>
+            </div>
+          )}
+        </header>
 
-        {/* 첨부파일 리스트 */}
-        <div className="mt-6 border-t pt-4">
-          <h3 className="mb-2 text-sm font-semibold text-gray-800">
-            첨부파일
-          </h3>
-          {files.length === 0 ? (
-            <p className="text-xs text-gray-500">
-              등록된 첨부파일이 없습니다.
-            </p>
-          ) : (
+        {/* 본문 텍스트 */}
+        <section className="mt-4">
+          <div className="whitespace-pre-wrap text-sm leading-relaxed text-gray-800">
+            {post.content || '내용이 없습니다.'}
+          </div>
+        </section>
+
+        {/* 이미지 – 본문 아래 갤러리 */}
+        {images.length > 0 && (
+          <section className="mt-6 border-t pt-4">
+            <h3 className="mb-2 text-sm font-semibold text-gray-800">
+              첨부 이미지
+            </h3>
+            <div className="grid gap-3 md:grid-cols-3">
+              {images.map((img) => {
+                const url = getFileUrl(img.file_url)
+                return (
+                  <a
+                    key={img.id}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative block overflow-hidden rounded-lg border bg-gray-50"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={url}
+                      alt={img.file_name || 'image'}
+                      className="h-40 w-full object-cover transition group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/0 transition group-hover:bg-black/10" />
+                  </a>
+                )
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* PDF 첨부 */}
+        {pdfs.length > 0 && (
+          <section className="mt-6 border-t pt-4">
+            <h3 className="mb-2 text-sm font-semibold text-gray-800">
+              첨부파일 (PDF)
+            </h3>
             <ul className="space-y-1 text-sm">
-              {files.map((f) => {
+              {pdfs.map((f) => {
                 const url = getFileUrl(f.file_url)
                 return (
                   <li key={f.id} className="flex items-center gap-2">
-                    <span className="text-xs text-gray-400">•</span>
+                    <span className="text-xs text-red-500">PDF</span>
                     <a
                       href={url}
                       target="_blank"
@@ -166,8 +251,35 @@ export default function NoticeDetailPage() {
                 )
               })}
             </ul>
-          )}
-        </div>
+          </section>
+        )}
+
+        {/* ZIP 첨부 */}
+        {zips.length > 0 && (
+          <section className="mt-4 border-t pt-4">
+            <h3 className="mb-2 text-sm font-semibold text-gray-800">
+              첨부파일 (ZIP)
+            </h3>
+            <ul className="space-y-1 text-sm">
+              {zips.map((f) => {
+                const url = getFileUrl(f.file_url)
+                return (
+                  <li key={f.id} className="flex items-center gap-2">
+                    <span className="text-xs text-gray-700">ZIP</span>
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      {f.file_name || f.file_url}
+                    </a>
+                  </li>
+                )
+              })}
+            </ul>
+          </section>
+        )}
       </article>
 
       <div className="mt-6">

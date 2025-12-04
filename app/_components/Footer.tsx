@@ -12,9 +12,9 @@ export function Footer() {
           <div className="font-semibold text-gray-900">
             일성크레인 주식회사
           </div>
-          <div>주소: (예시) 부산광역시 ○○구 ○○로 123</div>
-          <div>사업자등록번호: 000-00-00000</div>
-          <div>대표번호: 051-000-0000 · 이메일: info@example.com</div>
+          <div>주소: 경기도 평택시 고덕갈평6길 25, 813호</div>
+          <div>사업자등록번호: 762-87-01656</div>
+          <div>대표번호: 031-683-4235 · 이메일: info@ilseongcrane.com</div>
           <div className="text-[11px] text-gray-500">
             © {new Date().getFullYear()} ILSEONG CRANE. All rights reserved.
           </div>
@@ -24,16 +24,10 @@ export function Footer() {
         <div className="flex flex-col gap-4 sm:items-end">
           <div className="flex gap-4">
             <Link
-              href="#"
+              href="/privacy"
               className="text-gray-600 hover:text-gray-900 hover:underline"
             >
               개인정보처리방침
-            </Link>
-            <Link
-              href="#"
-              className="text-gray-600 hover:text-gray-900 hover:underline"
-            >
-              이용약관
             </Link>
           </div>
 
@@ -64,8 +58,8 @@ export function Footer() {
               <option value="" disabled>
                 패밀리 사이트 선택
               </option>
-              <option value="https://www.google.com">승원아이엔씨 (예시)</option>
-              <option value="https://www.google.com">범한 (예시)</option>
+              <option value="https://www.google.com">승원아이엔씨</option>
+              <option value="https://www.google.com">범한</option>
             </select>
             <button
               type="submit"
@@ -77,7 +71,6 @@ export function Footer() {
 
           {/* SNS */}
           <div className="flex items-center gap-3 text-xs">
-            <span className="text-gray-700">SNS</span>
             <a
               href="https://www.youtube.com"
               target="_blank"
@@ -86,14 +79,14 @@ export function Footer() {
             >
               YouTube
             </a>
-            <a
+            {/* <a
               href="https://www.instagram.com"
               target="_blank"
               rel="noreferrer"
               className="rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 px-2 py-1 text-[11px] font-semibold text-white hover:brightness-110"
             >
               Instagram
-            </a>
+            </a> */}
           </div>
         </div>
       </div>
