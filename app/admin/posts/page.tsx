@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { PageShell } from '@/app/_components/PageShell'
+import ToastEditor from '@/components/ToastEditor'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -174,8 +175,18 @@ export default function AdminPostsPage() {
     }))
   }
 
+  const handleContentChange = (htmlContent: string) => {
+    setForm((prev) => ({
+      ...prev,
+      content: htmlContent,
+    }))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    // form submit 시 스크롤 방지
+    e.stopPropagation()
+    
     if (!currentBoardId) {
       alert('먼저 게시판을 선택해주세요.')
       return
@@ -251,7 +262,37 @@ export default function AdminPostsPage() {
   }
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilesToUpload(e.target.files)
+    const files = e.target.files
+    if (!files || files.length === 0) {
+      setFilesToUpload(null)
+      return
+    }
+
+    // 최대 4개 파일 제한 검증
+    if (files.length > 4) {
+      alert('파일첨부는 최대 4개까지 가능합니다.')
+      e.target.value = ''
+      setFilesToUpload(null)
+      return
+    }
+
+    // 파일 크기 검증 (5MB = 5 * 1024 * 1024 bytes)
+    const maxSize = 5 * 1024 * 1024
+    const invalidFiles: string[] = []
+    Array.from(files).forEach((file) => {
+      if (file.size > maxSize) {
+        invalidFiles.push(file.name)
+      }
+    })
+
+    if (invalidFiles.length > 0) {
+      alert(`다음 파일들이 5MB를 초과합니다:\n${invalidFiles.join('\n')}`)
+      e.target.value = ''
+      setFilesToUpload(null)
+      return
+    }
+
+    setFilesToUpload(files)
   }
 
   const currentBoard = boards.find((b) => b.id === currentBoardId)
@@ -285,6 +326,27 @@ export default function AdminPostsPage() {
     }
 
     const filesArray = Array.from(filesToUpload)
+
+    // 최대 4개 파일 제한 검증
+    if (filesArray.length > 4) {
+      alert('파일첨부는 최대 4개까지 가능합니다.')
+      return
+    }
+
+    // 파일 크기 검증 (5MB = 5 * 1024 * 1024 bytes)
+    const maxSize = 5 * 1024 * 1024
+    const invalidFiles: string[] = []
+    filesArray.forEach((file) => {
+      if (file.size > maxSize) {
+        invalidFiles.push(file.name)
+      }
+    })
+
+    if (invalidFiles.length > 0) {
+      alert(`다음 파일들이 5MB를 초과합니다:\n${invalidFiles.join('\n')}`)
+      return
+    }
+
     const counts: Record<FileCategory, number> = { ...attachmentCounts }
 
     setUploading(true)
@@ -292,8 +354,9 @@ export default function AdminPostsPage() {
     for (const file of filesArray) {
       const cat = getCategoryFromName(file.name)
 
-      if (cat === 'other') {
-        alert(`지원하지 않는 파일 형식입니다: ${file.name}`)
+      // GIF, JPG, JPEG, PNG, PDF만 허용 (ZIP 제외)
+      if (cat === 'zip' || cat === 'other') {
+        alert(`지원하지 않는 파일 형식입니다: ${file.name}\n(GIF, JPG, JPEG, PNG, PDF만 가능)`)
         continue
       }
 
@@ -309,8 +372,6 @@ export default function AdminPostsPage() {
             ? '이미지'
             : cat === 'pdf'
             ? 'PDF'
-            : cat === 'zip'
-            ? 'ZIP'
             : '파일'
         alert(
           `${label} 파일은 최대 ${limit}개까지 업로드할 수 있습니다. (${file.name})`
@@ -337,7 +398,7 @@ export default function AdminPostsPage() {
           post_id: editingId,
           file_url: path,
           file_name: file.name,
-          file_type: cat, // image / pdf / zip
+          file_type: cat, // image / pdf
         },
       ])
 
@@ -423,7 +484,24 @@ export default function AdminPostsPage() {
             : `새 게시글 작성 (${currentBoard?.name || ''})`}
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form 
+          onSubmit={handleSubmit} 
+          className="space-y-3"
+          onKeyDown={(e) => {
+            // 에디터 내부에서 Enter 키가 눌렸을 때 form submit 방지
+            if (e.key === 'Enter' && e.target instanceof HTMLElement) {
+              // ToastEditor 내부 요소인지 확인
+              const editorWrapper = e.target.closest('.toastui-editor-contents') || 
+                                    e.target.closest('.toastui-editor');
+              if (editorWrapper) {
+                // 에디터 내부의 Enter 키는 정상 동작하도록 허용
+                // form submit은 방지
+                e.stopPropagation();
+                return;
+              }
+            }
+          }}
+        >
           <div className="grid gap-3 md:grid-cols-2">
             <div>
               <label className="block text-xs font-medium text-gray-700">
@@ -488,16 +566,16 @@ export default function AdminPostsPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-700">
+            <label className="block text-xs font-medium text-gray-700 mb-2">
               내용
             </label>
-            <textarea
-              name="content"
-              value={form.content}
-              onChange={handleChange}
-              rows={6}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            />
+            <div className="mt-1 rounded-md border border-gray-300 overflow-hidden">
+              <ToastEditor 
+                key={editingId || 'new'} 
+                content={form.content} 
+                onChange={handleContentChange} 
+              />
+            </div>
           </div>
 
           <div className="flex items-center gap-2 text-xs">
@@ -537,37 +615,67 @@ export default function AdminPostsPage() {
         {/* 첨부파일 관리 */}
         {editingId && (
           <div className="mt-6 border-t pt-4">
-            <h3 className="mb-2 text-xs font-semibold text-gray-800">
+            <h3 className="mb-4 text-xs font-semibold text-gray-800">
               첨부파일 관리
             </h3>
 
-            <p className="mb-1 text-[11px] text-gray-600">
-              {isGeneralBoard
-                ? '일반자료실: 이미지/PDF/ZIP 각 10개까지 업로드 가능합니다.'
-                : '기타 게시판: 이미지/PDF/ZIP 각 5개까지 업로드 가능합니다.'}
-            </p>
-            <p className="mb-3 text-[11px] text-gray-500">
-              현재 이미지 {attachmentCounts.image}/{maxPerType.image} · PDF{' '}
-              {attachmentCounts.pdf}/{maxPerType.pdf} · ZIP{' '}
-              {attachmentCounts.zip}/{maxPerType.zip}
-            </p>
-
-            <div className="flex flex-col gap-2 md:flex-row md:items-center">
-              <input
-                type="file"
-                multiple
-                accept="image/*,application/pdf,application/zip,application/x-zip-compressed,.zip"
-                onChange={handleFileInputChange}
-                className="text-xs"
-              />
-              <button
-                type="button"
-                onClick={handleUploadFiles}
-                disabled={uploading}
-                className="inline-flex items-center rounded-md bg-gray-800 px-3 py-1 text-xs font-medium text-white hover:bg-gray-900 disabled:opacity-60"
-              >
-                {uploading ? '업로드 중...' : '선택 파일 업로드'}
-              </button>
+            {/* 파일첨부 UI */}
+            <div className="flex items-start gap-6">
+              <label className="flex h-24 w-24 cursor-pointer items-center justify-center rounded-lg border border-gray-300 bg-white transition hover:bg-gray-50">
+                <input
+                  type="file"
+                  multiple
+                  accept="image/gif,image/jpeg,image/jpg,image/png,application/pdf"
+                  onChange={handleFileInputChange}
+                  className="hidden"
+                  disabled={uploading}
+                />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-8 w-8 text-gray-800"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={1}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                  />
+                </svg>
+              </label>
+              <div className="flex-1">
+                <div className="mb-2 text-sm font-medium text-gray-800">
+                  파일첨부
+                </div>
+                <p className="mb-1 text-xs text-gray-700">
+                  파일첨부는 최대 4장까지 가능하며,
+                </p>
+                <p className="mb-3 text-xs text-gray-700">
+                  5MB이하의 GIF, JPG, JPEG, PNG, PDF 형태로 업로드해주세요.
+                </p>
+                {filesToUpload && filesToUpload.length > 0 && (
+                  <div className="mb-3">
+                    <p className="mb-1 text-xs font-medium text-gray-700">
+                      선택된 파일 ({filesToUpload.length}개):
+                    </p>
+                    <ul className="space-y-1 text-xs text-gray-600">
+                      {Array.from(filesToUpload).map((file, index) => (
+                        <li key={index}>• {file.name}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={handleUploadFiles}
+                  disabled={uploading || !filesToUpload || filesToUpload.length === 0}
+                  className="inline-flex items-center rounded-md bg-gray-800 px-3 py-1.5 text-xs font-medium text-white hover:bg-gray-900 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {uploading ? '업로드 중...' : '선택 파일 업로드'}
+                </button>
+              </div>
             </div>
 
             <div className="mt-3">

@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { PageShell } from '@/app/_components/PageShell'
+import { ArchiveHero } from '@/app/_components/ArchiveHero'
 import { createClient } from '@supabase/supabase-js'
+import NoticeCard from '@/components/notice-card'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -106,67 +106,43 @@ export default function ArchiveTechListPage() {
   }, [])
 
   return (
-    <PageShell
-      title="기술자료실"
-      subtitle="기술 자료, 매뉴얼, 스펙 문서를 공유합니다."
-    >
-      {loading ? (
-        <p className="text-gray-600">자료를 불러오는 중입니다...</p>
-      ) : error ? (
-        <p className="text-red-500">{error}</p>
-      ) : posts.length === 0 ? (
-        <p className="text-gray-600">등록된 자료가 없습니다.</p>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-3">
-          {posts.map((post) => {
-            const thumb = thumbMap[post.id] || null
-            const label = post.label || ''
+    <>
+      {/* Hero Section */}
+      <ArchiveHero title="기술자료실" />
 
-            return (
-              <Link
-                key={post.id}
-                href={`/archive/tech/detail?id=${post.id}`}
-                className="group flex flex-col overflow-hidden rounded-xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-              >
-                <div className="relative h-40 w-full bg-gray-100">
-                  {thumb ? (
-                    <img
-                      src={thumb}
-                      alt={post.title}
-                      className="h-full w-full object-cover transition group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
-                      이미지 없음
-                    </div>
-                  )}
-                </div>
+      {/* Main Content */}
+      <main className="min-h-screen bg-gray-50 px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
+          {loading ? (
+            <p className="text-gray-600">자료를 불러오는 중입니다...</p>
+          ) : error ? (
+            <p className="text-red-500">{error}</p>
+          ) : posts.length === 0 ? (
+            <p className="text-gray-600">등록된 자료가 없습니다.</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+              {posts.map((post) => {
+                const thumb = thumbMap[post.id] || null
+                const category = post.label || '기술자료' // 기본값
 
-                <div className="flex flex-1 flex-col p-3">
-                  <div className="mb-1 flex items-center justify-between gap-2">
-                    {label ? (
-                      <span className="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-[10px] text-gray-700">
-                        {label}
-                      </span>
-                    ) : (
-                      <span />
-                    )}
-                    <span className="text-[11px] text-gray-400">
-                      {new Date(post.created_at).toLocaleDateString('ko-KR')}
-                    </span>
-                  </div>
-                  <h3 className="line-clamp-2 text-sm font-semibold text-gray-900">
-                    {post.title}
-                  </h3>
-                  <p className="mt-1 line-clamp-2 text-xs text-gray-600">
-                    {post.content || ''}
-                  </p>
-                </div>
-              </Link>
-            )
-          })}
+                return (
+                  <NoticeCard
+                    key={post.id}
+                    basePath="/archive/tech"
+                    post={{
+                      id: post.id,
+                      title: post.title,
+                      category: category,
+                      created_at: post.created_at,
+                      thumbnail_url: thumb || undefined,
+                    }}
+                  />
+                )
+              })}
+            </div>
+          )}
         </div>
-      )}
-    </PageShell>
+      </main>
+    </>
   )
 }

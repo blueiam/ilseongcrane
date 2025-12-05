@@ -50,6 +50,7 @@ export default function NoticeDetailPage() {
   const [zips, setZips] = useState<PostFile[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
   useEffect(() => {
     if (!id) {
@@ -191,36 +192,34 @@ export default function NoticeDetailPage() {
 
         {/* 본문 텍스트 */}
         <section className="mt-4">
-          <div className="whitespace-pre-wrap text-sm leading-relaxed text-gray-800">
-            {post.content || '내용이 없습니다.'}
-          </div>
+          <div
+            className="prose prose-sm max-w-none text-sm leading-relaxed text-gray-800"
+            dangerouslySetInnerHTML={{
+              __html: post.content || '<p>내용이 없습니다.</p>',
+            }}
+          />
         </section>
 
         {/* 이미지 – 본문 아래 갤러리 */}
         {images.length > 0 && (
           <section className="mt-6 border-t pt-4">
-            <h3 className="mb-2 text-sm font-semibold text-gray-800">
-              첨부 이미지
-            </h3>
             <div className="grid gap-3 md:grid-cols-3">
               {images.map((img) => {
                 const url = getFileUrl(img.file_url)
                 return (
-                  <a
+                  <button
                     key={img.id}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group relative block overflow-hidden rounded-lg border bg-gray-50"
+                    onClick={() => setSelectedImage(url)}
+                    className="group relative block w-full overflow-hidden rounded-lg bg-gray-50"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={url}
                       alt={img.file_name || 'image'}
-                      className="h-40 w-full object-cover transition group-hover:scale-105"
+                      className="w-full h-auto object-contain transition group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-black/0 transition group-hover:bg-black/10" />
-                  </a>
+                  </button>
                 )
               })}
             </div>
@@ -290,6 +289,49 @@ export default function NoticeDetailPage() {
           목록으로
         </button>
       </div>
+
+      {/* 이미지 모달 */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              setSelectedImage(null)
+            }}
+            className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-gray-800 transition hover:bg-white"
+            aria-label="닫기"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <div
+            className="relative max-h-full max-w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={selectedImage}
+              alt="확대 이미지"
+              className="max-h-[90vh] max-w-full object-contain"
+            />
+          </div>
+        </div>
+      )}
     </PageShell>
   )
 }

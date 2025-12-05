@@ -30,10 +30,10 @@ export function NoticeHero() {
       {/* Title Content with Animation */}
       <div className="relative flex h-full items-center justify-center">
         <h1
-          className={`text-5xl font-bold text-white transition-all duration-[5000ms] ease-out ${
+          className={`text-5xl font-bold text-white transition-all duration-[2000ms] ease-out ${
             isVisible
               ? 'scale-100 opacity-100'
-              : 'scale-50 opacity-0'
+              : 'scale-[2] opacity-0'
           }`}
         >
           Notice & News

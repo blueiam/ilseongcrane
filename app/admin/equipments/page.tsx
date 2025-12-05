@@ -66,12 +66,14 @@ export default function AdminEquipmentsPage() {
   const [uploadingPdfCover, setUploadingPdfCover] = useState(false)
   const [uploadingDimensions, setUploadingDimensions] = useState(false)
   const [uploadingTechnical, setUploadingTechnical] = useState(false)
+  const [uploadingGallery, setUploadingGallery] = useState(false)
   const [thumbnailFileName, setThumbnailFileName] = useState('')
   const [mainImageFileName, setMainImageFileName] = useState('')
   const [pdfFileName, setPdfFileName] = useState('')
   const [pdfCoverFileName, setPdfCoverFileName] = useState('')
   const [dimensionsFileName, setDimensionsFileName] = useState('')
   const [technicalFileName, setTechnicalFileName] = useState('')
+  const [galleryImages, setGalleryImages] = useState<Array<{ id: string; file_path: string; url: string }>>([])
 
   // 목록 불러오기 (display_order 순서로 정렬)
   const loadEquipments = async () => {
@@ -404,10 +406,154 @@ export default function AdminEquipmentsPage() {
     setPdfCoverFileName('')
     setDimensionsFileName('')
     setTechnicalFileName('')
+    setGalleryImages([])
+  }
+
+  // Gallery 이미지 업로드 핸들러
+  const handleGalleryUpload = async (file: File) => {
+    if (!editingId) {
+      alert('먼저 장비를 선택하고 수정 모드로 들어가주세요.')
+      return
+    }
+
+    try {
+      setUploadingGallery(true)
+      const timestamp = Date.now()
+      const fileName = `gallery_${timestamp}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`
+      
+      // Storage에 업로드
+      const { error: uploadError } = await supabase.storage
+        .from('equipment-images')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false,
+        })
+
+      if (uploadError) throw uploadError
+
+      // equipment_images 테이블에 레코드 추가
+      const { data, error: dbError } = await supabase
+        .from('equipment_images')
+        .insert([{
+          equipment_id: editingId,
+          file_path: fileName,
+        }])
+        .select()
+        .single()
+
+      if (dbError) {
+        // 테이블이나 컬럼이 없는 경우 안내
+        if (dbError.message.includes('file_path') || dbError.message.includes('file_url') || dbError.message.includes('does not exist')) {
+          alert(
+            'equipment_images 테이블이 없거나 컬럼 구조가 다릅니다.\n\n' +
+            'Supabase SQL Editor에서 다음 SQL을 실행하세요:\n\n' +
+            'CREATE TABLE IF NOT EXISTS equipment_images (\n' +
+            '  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,\n' +
+            '  equipment_id UUID NOT NULL REFERENCES equipments(id) ON DELETE CASCADE,\n' +
+            '  file_path TEXT NOT NULL,\n' +
+            '  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n' +
+            ');\n\n' +
+            '또는 supabase_create_equipment_images.sql 파일을 참고하세요.'
+          )
+          throw dbError
+        }
+        throw dbError
+      }
+
+      // Public URL 가져오기
+      const { data: urlData } = supabase.storage
+        .from('equipment-images')
+        .getPublicUrl(fileName)
+
+      // Gallery 이미지 목록에 추가
+      setGalleryImages((prev) => [
+        ...prev,
+        {
+          id: data.id,
+          file_path: fileName,
+          url: urlData.publicUrl,
+        },
+      ])
+
+      alert('갤러리 이미지 업로드 완료!')
+    } catch (error: any) {
+      alert(`갤러리 이미지 업로드 실패: ${error.message}`)
+    } finally {
+      setUploadingGallery(false)
+    }
+  }
+
+  // Gallery 이미지 삭제 핸들러
+  const handleGalleryDelete = async (imageId: string, filePath: string) => {
+    if (!confirm('이 이미지를 삭제하시겠습니까?')) return
+
+    try {
+      // DB에서 삭제
+      const { error: dbError } = await supabase
+        .from('equipment_images')
+        .delete()
+        .eq('id', imageId)
+
+      if (dbError) throw dbError
+
+      // Storage에서 삭제
+      const { error: storageError } = await supabase.storage
+        .from('equipment-images')
+        .remove([filePath])
+
+      if (storageError) {
+        console.warn('Storage 삭제 실패:', storageError)
+        // DB는 이미 삭제되었으므로 계속 진행
+      }
+
+      // Gallery 이미지 목록에서 제거
+      setGalleryImages((prev) => prev.filter((img) => img.id !== imageId))
+      alert('이미지가 삭제되었습니다.')
+    } catch (error: any) {
+      alert(`이미지 삭제 실패: ${error.message}`)
+    }
+  }
+
+  // Gallery 이미지 로드
+  const loadGalleryImages = async (equipmentId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('equipment_images')
+        .select('id, file_path')
+        .eq('equipment_id', equipmentId)
+        .order('created_at', { ascending: true })
+
+      if (error) {
+        // 테이블이 없는 경우 빈 배열 반환
+        if (error.message.includes('does not exist') || error.message.includes('file_path')) {
+          console.warn('equipment_images 테이블이 없습니다. SQL을 실행해주세요.')
+          setGalleryImages([])
+          return
+        }
+        throw error
+      }
+
+      if (data) {
+        const imagesWithUrls = data.map((img: any) => {
+          const { data: urlData } = supabase.storage
+            .from('equipment-images')
+            .getPublicUrl(img.file_path)
+          return {
+            id: img.id,
+            file_path: img.file_path,
+            url: urlData.publicUrl,
+          }
+        })
+        setGalleryImages(imagesWithUrls)
+      }
+    } catch (error) {
+      console.error('갤러리 이미지 로드 실패:', error)
+      setGalleryImages([])
+    }
   }
 
   // 행 클릭 시 수정 모드로
-  const startEdit = (item: Equipment) => {
+  const startEdit = async (item: Equipment) => {
     setEditingId(item.id)
     setForm({
       model_name: item.model_name || item.name || '',
@@ -425,6 +571,9 @@ export default function AdminEquipmentsPage() {
       dimensions_image_url: item.dimensions_image_url || '',
       technical_data_image_url: item.technical_data_image_url || '',
     })
+    
+    // Gallery 이미지 로드
+    await loadGalleryImages(item.id)
     // 파일명 표시
     if (item.thumbnail_url) {
       const fileName = item.thumbnail_url.split('/').pop() || ''
@@ -849,6 +998,80 @@ export default function AdminEquipmentsPage() {
                 </span>
               )}
             </div>
+          </div>
+
+          {/* Photo Gallery 이미지 업로드 */}
+          <div className="space-y-2 md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Photo Gallery (작업 사진)
+            </label>
+            <p className="text-xs text-gray-500">
+              권장 사이즈: 1920x1080px (가로형)
+            </p>
+            {!editingId && (
+              <p className="text-xs text-orange-600">
+                ※ 먼저 장비를 선택하고 수정 모드로 들어가야 갤러리 이미지를 업로드할 수 있습니다.
+              </p>
+            )}
+            {editingId && (
+              <>
+                <div className="flex items-center gap-3">
+                  <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                    <span>📷</span>
+                    <span>이미지 업로드</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          handleGalleryUpload(file)
+                        }
+                      }}
+                      disabled={uploadingGallery}
+                    />
+                  </label>
+                  {uploadingGallery && (
+                    <span className="text-sm text-blue-600">업로드 중...</span>
+                  )}
+                </div>
+                {galleryImages.length > 0 && (
+                  <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
+                    {galleryImages.map((img) => (
+                      <div key={img.id} className="relative group">
+                        <img
+                          src={img.url}
+                          alt="Gallery"
+                          className="h-32 w-full rounded border object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleGalleryDelete(img.id, img.file_path)}
+                          className="absolute top-1 right-1 rounded-full bg-red-500 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                          title="삭제"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                            stroke="currentColor"
+                            className="h-4 w-4"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           <div className="flex items-center gap-3 md:col-span-2">

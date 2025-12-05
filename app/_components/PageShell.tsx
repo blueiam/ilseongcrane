@@ -12,7 +12,7 @@ type PageShellProps = {
   export function PageShell({ title, subtitle, children }: PageShellProps) {
     return (
       <main className="min-h-screen bg-gray-100 px-6 py-10">
-        <div className="mx-auto max-w-[1800px]">
+        <div className="mx-auto max-w-4xl">
           <h1 className="text-2xl font-bold">{title}</h1>
           {subtitle && (
             <p className="mt-2 text-gray-600">

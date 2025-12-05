@@ -30,3 +30,101 @@ body {
   background: var(--background);
   color: var(--foreground);
 }
+
+/* 5) Prose 클래스의 리스트 스타일 보장 (모든 prose 변형 포함) */
+.prose ul,
+.prose-sm ul,
+.prose-lg ul,
+.prose-xl ul {
+  list-style-type: disc !important;
+  padding-left: 1.5em !important;
+  margin-top: 1.25em !important;
+  margin-bottom: 1.25em !important;
+}
+
+.prose ol,
+.prose-sm ol,
+.prose-lg ol,
+.prose-xl ol {
+  list-style-type: decimal !important;
+  padding-left: 1.5em !important;
+  margin-top: 1.25em !important;
+  margin-bottom: 1.25em !important;
+}
+
+.prose li,
+.prose-sm li,
+.prose-lg li,
+.prose-xl li {
+  margin-top: 0.5em !important;
+  margin-bottom: 0.5em !important;
+  padding-left: 0.375em !important;
+  display: list-item !important;
+}
+
+.prose ul > li,
+.prose-sm ul > li,
+.prose-lg ul > li,
+.prose-xl ul > li {
+  position: relative;
+}
+
+.prose ul > li::marker,
+.prose-sm ul > li::marker,
+.prose-lg ul > li::marker,
+.prose-xl ul > li::marker {
+  color: inherit;
+}
+
+.prose ol > li,
+.prose-sm ol > li,
+.prose-lg ol > li,
+.prose-xl ol > li {
+  position: relative;
+}
+
+.prose ol > li::marker,
+.prose-sm ol > li::marker,
+.prose-lg ol > li::marker,
+.prose-xl ol > li::marker {
+  color: inherit;
+}
+
+/* 체크박스 리스트 (task list) 스타일 */
+.prose input[type="checkbox"],
+.prose-sm input[type="checkbox"],
+.prose-lg input[type="checkbox"],
+.prose-xl input[type="checkbox"] {
+  margin-right: 0.5em !important;
+  margin-top: 0.25em !important;
+  vertical-align: middle;
+  width: 1em !important;
+  height: 1em !important;
+  cursor: pointer;
+}
+
+.prose ul[data-task-list],
+.prose-sm ul[data-task-list],
+.prose-lg ul[data-task-list],
+.prose-xl ul[data-task-list] {
+  list-style: none !important;
+  padding-left: 0 !important;
+}
+
+.prose ul[data-task-list] li,
+.prose-sm ul[data-task-list] li,
+.prose-lg ul[data-task-list] li,
+.prose-xl ul[data-task-list] li {
+  display: flex !important;
+  align-items: flex-start;
+  padding-left: 0 !important;
+}
+
+.prose ul[data-task-list] li input[type="checkbox"],
+.prose-sm ul[data-task-list] li input[type="checkbox"],
+.prose-lg ul[data-task-list] li input[type="checkbox"],
+.prose-xl ul[data-task-list] li input[type="checkbox"] {
+  margin-right: 0.5em !important;
+  margin-top: 0.125em !important;
+  flex-shrink: 0;
+}

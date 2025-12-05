@@ -2,9 +2,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
 import { NoticeHero } from '@/app/_components/NoticeHero'
 import { createClient } from '@supabase/supabase-js'
+import NoticeCard from '@/components/notice-card'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -129,65 +129,24 @@ export default function NoticeListPage() {
           ) : posts.length === 0 ? (
             <p className="text-gray-600">등록된 공지/뉴스가 없습니다.</p>
           ) : (
-            <div className="grid gap-4 md:grid-cols-3">
-          {posts.map((post) => {
-            const thumb = thumbMap[post.id] || null
-            const label = post.label || '' // 공지/뉴스만 사용
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+              {posts.map((post) => {
+                const thumb = thumbMap[post.id] || null
+                const category = post.label || '공지' // 기본값 '공지'
 
-            return (
-              <Link
-                key={post.id}
-                href={`/archive/notice/detail?id=${post.id}`}
-                className="group flex flex-col overflow-hidden rounded-xl border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-              >
-                {/* 카드 이미지 */}
-                <div className="relative h-40 w-full bg-gray-100">
-                  {thumb ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={thumb}
-                      alt={post.title}
-                      className="h-full w-full object-cover transition group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center text-xs text-gray-400">
-                      이미지 없음
-                    </div>
-                  )}
-                </div>
-
-                {/* 카드 본문 */}
-                <div className="flex flex-1 flex-col p-3">
-                  <div className="mb-1 flex items-center justify-between gap-2">
-                    {label ? (
-                      <span
-                        className={`inline-flex rounded-full px-2 py-0.5 text-[10px] ${
-                          label === '공지'
-                            ? 'bg-red-100 text-red-700'
-                            : label === '뉴스'
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'bg-gray-100 text-gray-700'
-                        }`}
-                      >
-                        {label}
-                      </span>
-                    ) : (
-                      <span />
-                    )}
-                    <span className="text-[11px] text-gray-400">
-                      {new Date(post.created_at).toLocaleDateString('ko-KR')}
-                    </span>
-                  </div>
-                  <h3 className="line-clamp-2 text-sm font-semibold text-gray-900">
-                    {post.title}
-                  </h3>
-                  <p className="mt-1 line-clamp-2 text-xs text-gray-600">
-                    {post.content || ''}
-                  </p>
-                </div>
-              </Link>
-            )
-          })}
+                return (
+                  <NoticeCard
+                    key={post.id}
+                    post={{
+                      id: post.id,
+                      title: post.title,
+                      category: category,
+                      created_at: post.created_at,
+                      thumbnail_url: thumb || undefined,
+                    }}
+                  />
+                )
+              })}
             </div>
           )}
         </div>

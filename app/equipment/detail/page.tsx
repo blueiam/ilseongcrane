@@ -455,10 +455,12 @@ export default function EquipmentDetailPage() {
             <h2 className="mb-6 text-2xl font-bold text-[#003978]">
               Description
             </h2>
-            <div className="rounded-lg bg-white p-6 shadow-sm">
-              <p className="whitespace-pre-wrap leading-relaxed text-gray-700">
-                {equipment.description}
-              </p>
+            <div className="prose prose-lg max-w-none rounded-lg bg-white p-6 shadow-sm">
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: equipment.description,
+                }}
+              />
             </div>
           </section>
         )}
@@ -475,12 +477,10 @@ export default function EquipmentDetailPage() {
                 // 첫 번째 이미지는 왼쪽에 큰 사이즈, 나머지는 오른쪽에 작은 사이즈
                 if (index === 0) {
                   return (
-                    <a
+                    <div
                       key={img.id}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group relative col-span-1 row-span-2 overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:shadow-lg"
+                      onClick={() => setFullscreenImage(url)}
+                      className="group relative col-span-1 row-span-2 cursor-pointer overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:shadow-lg"
                     >
                       <div className="relative h-[600px] w-full">
                         <Image
@@ -490,17 +490,15 @@ export default function EquipmentDetailPage() {
                           className="object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       </div>
-                    </a>
+                    </div>
                   )
                 } else if (index <= 4) {
                   // 2-5번째 이미지는 오른쪽에 2x2 그리드
                   return (
-                    <a
+                    <div
                       key={img.id}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group relative col-span-1 overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:shadow-lg"
+                      onClick={() => setFullscreenImage(url)}
+                      className="group relative col-span-1 cursor-pointer overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:shadow-lg"
                     >
                       <div className="relative h-[290px] w-full">
                         <Image
@@ -510,17 +508,15 @@ export default function EquipmentDetailPage() {
                           className="object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       </div>
-                    </a>
+                    </div>
                   )
                 } else {
                   // 6번째 이후 이미지는 마지막에 큰 사이즈
                   return (
-                    <a
+                    <div
                       key={img.id}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group relative col-span-1 row-span-2 overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:shadow-lg"
+                      onClick={() => setFullscreenImage(url)}
+                      className="group relative col-span-1 row-span-2 cursor-pointer overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:shadow-lg"
                     >
                       <div className="relative h-[600px] w-full">
                         <Image
@@ -530,7 +526,7 @@ export default function EquipmentDetailPage() {
                           className="object-cover transition-transform duration-300 group-hover:scale-105"
                         />
                       </div>
-                    </a>
+                    </div>
                   )
                 }
               })}

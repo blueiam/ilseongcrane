@@ -151,7 +151,7 @@ export default function ArchiveGeneralDetailPage() {
   return (
     <PageShell
       title="일반자료실"
-      subtitle={post.label || '작업 사진 및 자료'}
+      subtitle=""
     >
       <article className="rounded-xl bg-white p-6 shadow-sm">
         <header className="border-b pb-4">
@@ -192,9 +192,12 @@ export default function ArchiveGeneralDetailPage() {
 
         {/* 본문 */}
         <section className="mt-4">
-          <div className="whitespace-pre-wrap text-sm leading-relaxed text-gray-800">
-            {post.content || '내용이 없습니다.'}
-          </div>
+          <div
+            className="prose prose-sm max-w-none text-sm leading-relaxed text-gray-800"
+            dangerouslySetInnerHTML={{
+              __html: post.content || '<p>내용이 없습니다.</p>',
+            }}
+          />
         </section>
 
         {/* 이미지 갤러리 */}

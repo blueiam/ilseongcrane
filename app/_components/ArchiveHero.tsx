@@ -1,10 +1,15 @@
-// app/_components/EquipmentHero.tsx
+// app/_components/ArchiveHero.tsx
 'use client'
 
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
-export function EquipmentHero() {
+interface ArchiveHeroProps {
+  title: string
+  backgroundImage?: string
+}
+
+export function ArchiveHero({ title, backgroundImage = '/hero/news_bg.jpg' }: ArchiveHeroProps) {
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
@@ -19,10 +24,10 @@ export function EquipmentHero() {
     <div className="relative h-[400px] w-full overflow-hidden">
       {/* Background Image */}
       <Image
-        src="/hero/crane_bg.jpg"
-        alt="Equipment Background"
+        src={backgroundImage}
+        alt={`${title} Background`}
         fill
-        className="object-cover object-[25%_center] md:object-center"
+        className="object-cover object-[75%_center] md:object-center"
         priority
         quality={80}
       />
@@ -36,7 +41,7 @@ export function EquipmentHero() {
               : 'scale-[2] opacity-0'
           }`}
         >
-          Equipment
+          {title}
         </h1>
       </div>
     </div>
