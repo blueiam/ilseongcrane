@@ -59,3 +59,4 @@ FROM information_schema.columns
 WHERE table_name = 'equipment_images'
 ORDER BY ordinal_position;
 
+

@@ -8,14 +8,21 @@ import {
   BuildingOfficeIcon, 
   MegaphoneIcon, 
   PlusCircleIcon,
-  ArrowRightIcon
+  ArrowRightIcon,
+  EnvelopeIcon
 } from '@heroicons/react/24/outline';
 
 export default function AdminDashboard() {
   const [counts, setCounts] = useState({
     equipment: 0,
     projects: 0,
-    posts: 0
+    posts: 0,
+    contacts: {
+      new: 0,
+      in_progress: 0,
+      done: 0,
+      total: 0
+    }
   });
   const [loading, setLoading] = useState(true);
 
@@ -33,15 +40,36 @@ export default function AdminDashboard() {
           .from('projects')
           .select('*', { count: 'exact', head: true });
 
-        // 3. 게시글 개수 (테이블이 있다면)
+        // 3. 게시글 개수
         const { count: postCount } = await supabase
           .from('posts')
           .select('*', { count: 'exact', head: true });
 
+        // 4. 견적문의 개수 (상태별)
+        const { data: contactsData } = await supabase
+          .from('contacts')
+          .select('status');
+
+        const contactsStats = {
+          new: 0,
+          in_progress: 0,
+          done: 0,
+          total: contactsData?.length || 0
+        };
+
+        if (contactsData) {
+          contactsData.forEach((contact) => {
+            if (contact.status === 'new') contactsStats.new++;
+            else if (contact.status === 'in_progress') contactsStats.in_progress++;
+            else if (contact.status === 'done') contactsStats.done++;
+          });
+        }
+
         setCounts({
           equipment: equipmentCount || 0,
           projects: projectCount || 0,
-          posts: postCount || 0
+          posts: postCount || 0,
+          contacts: contactsStats
         });
       } catch (error) {
         console.error('데이터를 불러오는 중 오류 발생:', error);
@@ -65,7 +93,7 @@ export default function AdminDashboard() {
 
         {/* 1. 요약 통계 (Stats Cards) */}
         <h2 className="text-xl font-bold text-white mb-4">사이트 현황</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           
           {/* 장비 현황 카드 */}
           <div className="bg-[#222] p-6 rounded-2xl shadow-sm border border-gray-700 flex items-center justify-between">
@@ -108,12 +136,42 @@ export default function AdminDashboard() {
               <MegaphoneIcon className="w-8 h-8" />
             </div>
           </div>
+
+          {/* 견적문의 현황 카드 */}
+          <div className="bg-[#222] p-6 rounded-2xl shadow-sm border border-gray-700">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-gray-400 text-sm font-medium mb-1">견적문의 총계</p>
+                <p className="text-4xl font-bold text-purple-400">
+                  {loading ? '-' : counts.contacts.total}
+                  <span className="text-lg text-gray-500 font-normal ml-1">건</span>
+                </p>
+              </div>
+              <div className="w-14 h-14 bg-purple-900/30 rounded-full flex items-center justify-center text-purple-400">
+                <EnvelopeIcon className="w-8 h-8" />
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-2 pt-4 border-t border-gray-700">
+              <div className="text-center">
+                <p className="text-xs text-gray-500 mb-1">신규</p>
+                <p className="text-lg font-bold text-yellow-400">{loading ? '-' : counts.contacts.new}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-gray-500 mb-1">처리중</p>
+                <p className="text-lg font-bold text-blue-400">{loading ? '-' : counts.contacts.in_progress}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-gray-500 mb-1">완료</p>
+                <p className="text-lg font-bold text-green-400">{loading ? '-' : counts.contacts.done}</p>
+              </div>
+            </div>
+          </div>
         </div>
 
 
         {/* 2. 바로가기 (Quick Links) */}
         <h2 className="text-xl font-bold text-white mb-4">바로가기</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           
           {/* 장비 관리 바로가기 */}
           <div className="group bg-[#222] p-6 rounded-2xl shadow-sm border border-gray-700 hover:border-blue-500 hover:shadow-md transition-all duration-300">
@@ -169,6 +227,26 @@ export default function AdminDashboard() {
             <Link 
               href="/admin/posts" 
               className="block w-full py-3 text-center text-sm font-bold text-white bg-green-600 rounded hover:bg-green-700 flex items-center justify-center gap-2 transition-colors"
+            >
+              <PlusCircleIcon className="w-4 h-4" /> 
+              관리하기
+            </Link>
+          </div>
+
+          {/* 견적문의 관리 바로가기 */}
+          <div className="group bg-[#222] p-6 rounded-2xl shadow-sm border border-gray-700 hover:border-purple-500 hover:shadow-md transition-all duration-300">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 rounded-lg bg-purple-900/30 flex items-center justify-center text-purple-400 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                <EnvelopeIcon className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">견적문의 관리</h3>
+                <p className="text-sm text-gray-400">문의 내역 확인 및 관리</p>
+              </div>
+            </div>
+            <Link 
+              href="/admin/contacts" 
+              className="block w-full py-3 text-center text-sm font-bold text-white bg-purple-600 rounded hover:bg-purple-700 flex items-center justify-center gap-2 transition-colors"
             >
               <PlusCircleIcon className="w-4 h-4" /> 
               관리하기
