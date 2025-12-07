@@ -200,8 +200,8 @@ export default function NoticeDetailPage() {
           />
         </section>
 
-        {/* 이미지 – 본문 아래 갤러리 */}
-        {images.length > 0 && (
+        {/* 이미지 – 본문 아래 갤러리 (미노출) */}
+        {/* {images.length > 0 && (
           <section className="mt-6 border-t pt-4">
             <div className="grid gap-3 md:grid-cols-3">
               {images.map((img) => {
@@ -212,7 +212,6 @@ export default function NoticeDetailPage() {
                     onClick={() => setSelectedImage(url)}
                     className="group relative block w-full overflow-hidden rounded-lg bg-gray-50"
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={url}
                       alt={img.file_name || 'image'}
@@ -224,7 +223,7 @@ export default function NoticeDetailPage() {
               })}
             </div>
           </section>
-        )}
+        )} */}
 
         {/* PDF 첨부 */}
         {pdfs.length > 0 && (

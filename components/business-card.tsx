@@ -43,7 +43,7 @@ export default function BusinessCard({
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent pt-24 pb-8 px-8 text-white">
           {/* 카테고리 */}
           {category && (
-            <p className="text-xs font-medium opacity-80 mb-2">{category}</p>
+            <p className="text-sm font-medium opacity-80 mb-2">{category}</p>
           )}
           {/* 제목: 한 줄로, 텍스트 크기 줄임 */}
           <h3 className="text-lg font-bold mb-2 line-clamp-1">{title}</h3>

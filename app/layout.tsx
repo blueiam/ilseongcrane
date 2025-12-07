@@ -22,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className={notoSansKR.className}>
+      <body className={notoSansKR.className} suppressHydrationWarning>
         {/* 헤더 고정 */}
         <Header />
         {/* 헤더 높이만큼 여백 주기 */}

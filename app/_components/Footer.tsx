@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 export function Footer() {
   return (
-    <footer className="mt-16 border-t border-gray-200 bg-gray-50">
+    <footer className="border-t border-gray-200 bg-gray-50">
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 text-xs text-gray-600 sm:flex-row sm:items-start sm:justify-between sm:text-[13px]">
         {/* 회사 정보 */}
         <div className="space-y-1">
