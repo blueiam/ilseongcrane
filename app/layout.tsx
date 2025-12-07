@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Noto_Sans_KR } from 'next/font/google'
 import { Header } from './_components/Header'
 import { Footer } from './_components/Footer'
+import { AdminLayoutWrapper } from './_components/AdminLayoutWrapper'
 
 const notoSansKR = Noto_Sans_KR({
   subsets: ['latin'],
@@ -23,13 +24,9 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={notoSansKR.className} suppressHydrationWarning>
-        {/* 헤더 고정 */}
-        <Header />
-        {/* 헤더 높이만큼 여백 주기 */}
-        <div className="pt-16">
+        <AdminLayoutWrapper>
           {children}
-        </div>
-        <Footer />
+        </AdminLayoutWrapper>
       </body>
     </html>
   )

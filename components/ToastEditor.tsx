@@ -104,43 +104,58 @@ export default function ToastEditor({ content, onChange }: ToastEditorProps) {
 
   // 4. 에디터 내부 Enter 키 이벤트 처리 (form submit 방지)
   useEffect(() => {
+    let editorElement: HTMLElement | null = null;
+    let handleKeyDown: ((e: KeyboardEvent) => void) | null = null;
+
     // 에디터가 초기화될 때까지 대기
     const timer = setTimeout(() => {
       if (!editorRef.current) return;
 
-      const instance = editorRef.current.getInstance();
-      if (!instance) return;
+      try {
+        // Toast UI Editor의 DOM 구조를 통해 에디터 컨텐츠 영역 찾기
+        // getRootElement()가 없는 경우를 대비해 여러 방법 시도
+        const editorWrapper = editorRef.current as any;
 
-      const editorElement = instance.getRootElement();
-      if (!editorElement) return;
-
-      const handleKeyDown = (e: KeyboardEvent) => {
-        // Enter 키가 눌렸을 때
-        if (e.key === 'Enter' || e.keyCode === 13) {
-          // 에디터 내부에서 발생한 이벤트인지 확인
-          const target = e.target as HTMLElement;
-          if (editorElement.contains(target)) {
-            // 에디터 내부의 Enter 키는 정상 동작하도록 허용
-            // form submit은 방지
-            e.stopPropagation();
-          }
+        // 방법 1: ref의 getRootElement 메서드 시도
+        if (typeof editorWrapper.getRootElement === 'function') {
+          editorElement = editorWrapper.getRootElement();
         }
-      };
+        // 방법 2: ref의 el 속성 확인
+        else if (editorWrapper.el?.current) {
+          editorElement = editorWrapper.el.current;
+        }
+        // 방법 3: DOM에서 직접 찾기
+        else {
+          editorElement = document.querySelector('.toastui-editor-contents') as HTMLElement ||
+                         document.querySelector('.toastui-editor') as HTMLElement;
+        }
+        
+        if (!editorElement) return;
 
-      editorElement.addEventListener('keydown', handleKeyDown, true);
-    }, 200);
+        handleKeyDown = (e: KeyboardEvent) => {
+          // Enter 키가 눌렸을 때
+          if (e.key === 'Enter' || e.keyCode === 13) {
+            // 에디터 내부에서 발생한 이벤트인지 확인
+            const target = e.target as HTMLElement;
+            if (editorElement && editorElement.contains(target)) {
+              // 에디터 내부의 Enter 키는 정상 동작하도록 허용
+              // form submit은 방지
+              e.stopPropagation();
+            }
+          }
+        };
+
+        editorElement.addEventListener('keydown', handleKeyDown, true);
+      } catch (error) {
+        console.warn('ToastEditor: 에디터 이벤트 리스너 설정 실패', error);
+      }
+    }, 500);
 
     return () => {
       clearTimeout(timer);
-      // cleanup: 에디터가 언마운트될 때 이벤트 리스너 제거
-      if (editorRef.current) {
-        const instance = editorRef.current.getInstance();
-        if (instance) {
-          const editorElement = instance.getRootElement();
-          if (editorElement) {
-            // 이벤트 리스너는 자동으로 제거됨 (컴포넌트 언마운트 시)
-          }
-        }
+      // cleanup: 이벤트 리스너 제거
+      if (editorElement && handleKeyDown) {
+        editorElement.removeEventListener('keydown', handleKeyDown, true);
       }
     };
   }, []);

@@ -452,8 +452,8 @@ export default function OverviewPage() {
           {/* 다운로드 버튼 */}
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <a 
-              href="/images/about/ci_logo.png" 
-              download 
+              href="/images/about/ci_logo.ai" 
+              download="ci_logo.ai"
               className="flex items-center justify-center px-8 py-4 bg-[#00427A] hover:bg-[#003366] text-white rounded-lg transition-all duration-300 shadow-lg group"
             >
               <span className="font-bold mr-3">AI 다운로드</span>
@@ -462,8 +462,8 @@ export default function OverviewPage() {
               </svg>
             </a>
             <a 
-              href="/images/about/ci_logo.png" 
-              download 
+              href="/images/about/ci_logos.png" 
+              download="ci_logos.png"
               className="flex items-center justify-center px-8 py-4 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-all duration-300 shadow-lg group"
             >
               <span className="font-bold mr-3">PNG 다운로드</span>

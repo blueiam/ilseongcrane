@@ -3,7 +3,9 @@
 
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
+import { ArrowLeftIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -18,8 +20,25 @@ export default function AdminLayout({
   const router = useRouter()
   const pathname = usePathname()
   const [checking, setChecking] = useState(true)
+  const [loggingOut, setLoggingOut] = useState(false)
 
   const isLoginPage = pathname === '/admin/login'
+  const isDashboardPage = pathname === '/admin'
+
+  const handleLogout = async () => {
+    if (loggingOut) return
+    
+    setLoggingOut(true)
+    try {
+      await supabase.auth.signOut()
+      router.push('/admin/login')
+    } catch (error) {
+      console.error('로그아웃 오류:', error)
+      alert('로그아웃 중 오류가 발생했습니다.')
+    } finally {
+      setLoggingOut(false)
+    }
+  }
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -36,7 +55,7 @@ export default function AdminLayout({
 
       // 이미 로그인 했는데 /admin/login 이면 → 대시보드로
       if (user && isLoginPage) {
-        router.replace('/admin/dashboard')
+        router.replace('/admin')
         setChecking(false)
         return
       }
@@ -55,11 +74,41 @@ export default function AdminLayout({
   // 다른 /admin/* 페이지들은 인증 결과 나올 때까지 로딩 표시
   if (checking) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center text-sm text-gray-600">
+      <div className="flex min-h-[50vh] items-center justify-center text-sm text-gray-400 bg-[#1a1a1a]">
         관리자 인증 확인 중입니다...
       </div>
     )
   }
 
-  return <>{children}</>
+  return (
+    <div className="min-h-screen bg-[#1a1a1a]">
+      {/* 관리자 상단 네비게이션 바 */}
+      <div className="bg-[#222] border-b border-gray-700 px-4 py-3">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          {/* 좌측: 관리자 대시보드로 돌아가기 버튼 (대시보드 페이지 제외) */}
+          {!isDashboardPage && (
+            <Link
+              href="/admin"
+              className="inline-flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white transition-colors"
+            >
+              <ArrowLeftIcon className="w-4 h-4" />
+              관리자 대시보드로 돌아가기
+            </Link>
+          )}
+          {isDashboardPage && <div></div>}
+          
+          {/* 우측: 로그아웃 버튼 */}
+          <button
+            onClick={handleLogout}
+            disabled={loggingOut}
+            className="inline-flex items-center gap-2 text-sm font-medium text-red-400 hover:text-red-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <ArrowRightOnRectangleIcon className="w-4 h-4" />
+            {loggingOut ? '로그아웃 중...' : '로그아웃'}
+          </button>
+        </div>
+      </div>
+      {children}
+    </div>
+  )
 }
