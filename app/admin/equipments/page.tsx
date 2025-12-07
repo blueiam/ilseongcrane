@@ -620,14 +620,14 @@ export default function AdminEquipmentsPage() {
       subtitle="보유장비 정보를 등록/수정/삭제할 수 있습니다."
     >
       {/* 장비 등록/수정 폼 */}
-      <section className="mx-auto mb-10 max-w-[1800px] rounded-xl bg-white p-4 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold">
+      <section className="mx-auto mb-10 max-w-[1800px] rounded-xl bg-[#222] border border-gray-700 p-4 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-white">
           {editingId ? '장비 정보 수정' : '신규 장비 등록'}
         </h2>
 
         <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               모델명 (필수)
             </label>
             <input
@@ -635,13 +635,13 @@ export default function AdminEquipmentsPage() {
               name="model_name"
               value={form.model_name}
               onChange={handleChange}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-600 bg-[#1a1a1a] text-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               placeholder="예: SCE8000A"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               제조사
             </label>
             <input
@@ -649,13 +649,13 @@ export default function AdminEquipmentsPage() {
               name="manufacturer"
               value={form.manufacturer}
               onChange={handleChange}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-600 bg-[#1a1a1a] text-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               placeholder="예: SANY"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               톤수
             </label>
             <input
@@ -663,20 +663,20 @@ export default function AdminEquipmentsPage() {
               name="tonnage"
               value={form.tonnage}
               onChange={handleChange}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-600 bg-[#1a1a1a] text-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               placeholder="예: 800t"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               카테고리
             </label>
             <select
               name="category"
               value={form.category}
               onChange={handleChange}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-600 bg-[#1a1a1a] text-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               {CATEGORY_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -687,7 +687,7 @@ export default function AdminEquipmentsPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               노출 순서 (Display Order)
             </label>
             <input
@@ -695,25 +695,25 @@ export default function AdminEquipmentsPage() {
               name="display_order"
               value={form.display_order}
               onChange={handleChange}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-600 bg-[#1a1a1a] text-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               placeholder="0"
               min="0"
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-400">
               작은 숫자가 먼저 보여집니다. (예: 1, 2, 3...)
             </p>
           </div>
 
           {/* 썸네일 이미지 업로드 */}
           <div className="space-y-2 md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               썸네일 이미지
             </label>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-400">
               권장 사이즈: 400x400px (정사각형)
             </p>
             <div className="flex items-center gap-3">
-              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-600 bg-[#1a1a1a] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#2a2a2a]">
                 <span>📁</span>
                 <span>이미지 업로드</span>
                 <input
@@ -730,10 +730,10 @@ export default function AdminEquipmentsPage() {
                 />
               </label>
               {uploadingThumbnail && (
-                <span className="text-sm text-blue-600">업로드 중...</span>
+                <span className="text-sm text-blue-400">업로드 중...</span>
               )}
               {thumbnailFileName && !uploadingThumbnail && (
-                <span className="text-sm text-green-600">
+                <span className="text-sm text-green-400">
                   ✓ 업로드 완료: {thumbnailFileName}
                 </span>
               )}
@@ -751,14 +751,14 @@ export default function AdminEquipmentsPage() {
 
           {/* 상세 페이지용 메인 이미지 업로드 */}
           <div className="space-y-2 md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               상세 페이지용 메인 이미지 (고화질)
             </label>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-400">
               권장 사이즈: 1920x1080px (가로형)
             </p>
             <div className="flex items-center gap-3">
-              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-600 bg-[#1a1a1a] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#2a2a2a]">
                 <span>🖼️</span>
                 <span>이미지 업로드</span>
                 <input
@@ -775,10 +775,10 @@ export default function AdminEquipmentsPage() {
                 />
               </label>
               {uploadingMainImage && (
-                <span className="text-sm text-blue-600">업로드 중...</span>
+                <span className="text-sm text-blue-400">업로드 중...</span>
               )}
               {mainImageFileName && !uploadingMainImage && (
-                <span className="text-sm text-green-600">
+                <span className="text-sm text-green-400">
                   ✓ 업로드 완료: {mainImageFileName}
                 </span>
               )}
@@ -796,11 +796,11 @@ export default function AdminEquipmentsPage() {
 
           {/* 제원표 PDF 업로드 */}
           <div className="space-y-2 md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               제원표 PDF
             </label>
             <div className="flex items-center gap-3">
-              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-600 bg-[#1a1a1a] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#2a2a2a]">
                 <span>📄</span>
                 <span>PDF 업로드</span>
                 <input
@@ -817,10 +817,10 @@ export default function AdminEquipmentsPage() {
                 />
               </label>
               {uploadingPdf && (
-                <span className="text-sm text-blue-600">업로드 중...</span>
+                <span className="text-sm text-blue-400">업로드 중...</span>
               )}
               {pdfFileName && !uploadingPdf && (
-                <span className="text-sm text-green-600">
+                <span className="text-sm text-green-400">
                   ✓ 업로드 완료: {pdfFileName}
                 </span>
               )}
@@ -829,14 +829,14 @@ export default function AdminEquipmentsPage() {
 
           {/* PDF 브로슈어 표지 이미지 */}
           <div className="space-y-2 md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               PDF 브로슈어 표지 이미지
             </label>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-400">
               권장 사이즈: 216x294px (세로형, A4 비율)
             </p>
             <div className="flex items-center gap-3">
-              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-600 bg-[#1a1a1a] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#2a2a2a]">
                 <span>📄</span>
                 <span>이미지 업로드</span>
                 <input
@@ -853,10 +853,10 @@ export default function AdminEquipmentsPage() {
                 />
               </label>
               {uploadingPdfCover && (
-                <span className="text-sm text-blue-600">업로드 중...</span>
+                <span className="text-sm text-blue-400">업로드 중...</span>
               )}
               {pdfCoverFileName && !uploadingPdfCover && (
-                <span className="text-sm text-green-600">
+                <span className="text-sm text-green-400">
                   ✓ 업로드 완료: {pdfCoverFileName}
                 </span>
               )}
@@ -875,14 +875,14 @@ export default function AdminEquipmentsPage() {
           {/* 구분선 */}
           <div className="md:col-span-2">
             <hr className="my-4 border-t-2 border-gray-200" />
-            <h3 className="text-base font-semibold text-gray-800">
+            <h3 className="text-base font-semibold text-gray-300">
               상세 스펙 정보 (선택사항)
             </h3>
           </div>
 
           {/* Max Boom Length */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               최대 붐 길이 (Max. Boom Length)
             </label>
             <input
@@ -890,14 +890,14 @@ export default function AdminEquipmentsPage() {
               name="max_boom_length"
               value={form.max_boom_length}
               onChange={handleChange}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-600 bg-[#1a1a1a] text-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               placeholder="예: 111m"
             />
           </div>
 
           {/* Max Lifting Capacity */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               최대 인양 능력 (Max. Lifting Capacity)
             </label>
             <input
@@ -905,14 +905,14 @@ export default function AdminEquipmentsPage() {
               name="max_lifting_capacity"
               value={form.max_lifting_capacity}
               onChange={handleChange}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-600 bg-[#1a1a1a] text-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               placeholder="예: 800 T"
             />
           </div>
 
           {/* Max Lifting Moment */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               최대 리프팅 모멘트 (Max. Lifting Moment)
             </label>
             <input
@@ -920,7 +920,7 @@ export default function AdminEquipmentsPage() {
               name="max_lifting_moment"
               value={form.max_lifting_moment}
               onChange={handleChange}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-md border border-gray-600 bg-[#1a1a1a] text-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               placeholder="예: 12016t·m"
             />
           </div>
@@ -930,14 +930,14 @@ export default function AdminEquipmentsPage() {
 
           {/* Dimensions 이미지 업로드 */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               치수 도면 이미지 (Dimensions)
             </label>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-400">
               권장 사이즈: 1200x800px (가로형)
             </p>
             <div className="flex items-center gap-3">
-              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-600 bg-[#1a1a1a] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#2a2a2a]">
                 <span>📐</span>
                 <span>도면 업로드</span>
                 <input
@@ -954,10 +954,10 @@ export default function AdminEquipmentsPage() {
                 />
               </label>
               {uploadingDimensions && (
-                <span className="text-sm text-blue-600">업로드 중...</span>
+                <span className="text-sm text-blue-400">업로드 중...</span>
               )}
               {dimensionsFileName && !uploadingDimensions && (
-                <span className="text-sm text-green-600">
+                <span className="text-sm text-green-400">
                   ✓ {dimensionsFileName}
                 </span>
               )}
@@ -966,14 +966,14 @@ export default function AdminEquipmentsPage() {
 
           {/* Technical Data 이미지 업로드 */}
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               기술 데이터 차트 (Technical Data)
             </label>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-400">
               권장 사이즈: 1200x900px (가로형)
             </p>
             <div className="flex items-center gap-3">
-              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+              <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-600 bg-[#1a1a1a] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#2a2a2a]">
                 <span>📊</span>
                 <span>차트 업로드</span>
                 <input
@@ -990,10 +990,10 @@ export default function AdminEquipmentsPage() {
                 />
               </label>
               {uploadingTechnical && (
-                <span className="text-sm text-blue-600">업로드 중...</span>
+                <span className="text-sm text-blue-400">업로드 중...</span>
               )}
               {technicalFileName && !uploadingTechnical && (
-                <span className="text-sm text-green-600">
+                <span className="text-sm text-green-400">
                   ✓ {technicalFileName}
                 </span>
               )}
@@ -1002,21 +1002,21 @@ export default function AdminEquipmentsPage() {
 
           {/* Photo Gallery 이미지 업로드 */}
           <div className="space-y-2 md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-300">
               Photo Gallery (작업 사진)
             </label>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-400">
               권장 사이즈: 1920x1080px (가로형)
             </p>
             {!editingId && (
-              <p className="text-xs text-orange-600">
+              <p className="text-xs text-orange-400">
                 ※ 먼저 장비를 선택하고 수정 모드로 들어가야 갤러리 이미지를 업로드할 수 있습니다.
               </p>
             )}
             {editingId && (
               <>
                 <div className="flex items-center gap-3">
-                  <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+                  <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-600 bg-[#1a1a1a] px-4 py-2 text-sm font-medium text-gray-300 hover:bg-[#2a2a2a]">
                     <span>📷</span>
                     <span>이미지 업로드</span>
                     <input
@@ -1033,7 +1033,7 @@ export default function AdminEquipmentsPage() {
                     />
                   </label>
                   {uploadingGallery && (
-                    <span className="text-sm text-blue-600">업로드 중...</span>
+                    <span className="text-sm text-blue-400">업로드 중...</span>
                   )}
                 </div>
                 {galleryImages.length > 0 && (
@@ -1086,7 +1086,7 @@ export default function AdminEquipmentsPage() {
               <button
                 type="button"
                 onClick={resetForm}
-                className="text-sm text-gray-600 hover:underline"
+                className="text-sm text-gray-400 hover:underline"
               >
                 수정 취소
               </button>
@@ -1096,65 +1096,65 @@ export default function AdminEquipmentsPage() {
       </section>
 
       {/* 장비 목록 테이블 */}
-      <section className="mx-auto max-w-[1800px] rounded-xl bg-white p-4 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold">장비 목록</h2>
+      <section className="mx-auto max-w-[1800px] rounded-xl bg-[#222] border border-gray-700 p-4 shadow-sm">
+        <h2 className="mb-4 text-lg font-semibold text-white">장비 목록</h2>
 
         {loading ? (
-          <p className="text-gray-600">목록을 불러오는 중입니다...</p>
+          <p className="text-gray-400">목록을 불러오는 중입니다...</p>
         ) : error ? (
-          <p className="text-red-500">
+          <p className="text-red-400">
             데이터를 불러오는 중 오류가 발생했습니다: {error}
           </p>
         ) : equipments.length === 0 ? (
-          <p className="text-gray-600">등록된 장비가 없습니다.</p>
+          <p className="text-gray-400">등록된 장비가 없습니다.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full border text-sm">
-              <thead className="bg-gray-50">
+            <table className="min-w-full border border-gray-600 text-sm">
+              <thead className="bg-[#1a1a1a]">
                 <tr>
-                  <th className="border px-2 py-1 text-left">순서</th>
-                  <th className="border px-2 py-1 text-left">모델명</th>
-                  <th className="border px-2 py-1 text-left">제조사</th>
-                  <th className="border px-2 py-1 text-left">톤수</th>
-                  <th className="border px-2 py-1 text-left">카테고리</th>
-                  <th className="border px-2 py-1 text-left">썸네일</th>
-                  <th className="border px-2 py-1 text-left">제원표</th>
-                  <th className="border px-2 py-1 text-left">관리</th>
+                  <th className="border border-gray-600 px-2 py-1 text-left text-gray-300">순서</th>
+                  <th className="border border-gray-600 px-2 py-1 text-left text-gray-300">모델명</th>
+                  <th className="border border-gray-600 px-2 py-1 text-left text-gray-300">제조사</th>
+                  <th className="border border-gray-600 px-2 py-1 text-left text-gray-300">톤수</th>
+                  <th className="border border-gray-600 px-2 py-1 text-left text-gray-300">카테고리</th>
+                  <th className="border border-gray-600 px-2 py-1 text-left text-gray-300">썸네일</th>
+                  <th className="border border-gray-600 px-2 py-1 text-left text-gray-300">제원표</th>
+                  <th className="border border-gray-600 px-2 py-1 text-left text-gray-300">관리</th>
                 </tr>
               </thead>
               <tbody>
                 {equipments.map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-50">
-                    <td className="border px-2 py-1 text-center font-semibold">
+                  <tr key={item.id} className="hover:bg-[#2a2a2a]">
+                    <td className="border border-gray-600 px-2 py-1 text-center font-semibold text-white">
                       {item.display_order || 0}
                     </td>
-                    <td className="border px-2 py-1">{item.model_name || item.name || '-'}</td>
-                    <td className="border px-2 py-1">
+                    <td className="border border-gray-600 px-2 py-1 text-gray-300">{item.model_name || item.name || '-'}</td>
+                    <td className="border border-gray-600 px-2 py-1 text-gray-300">
                       {item.manufacturer || '-'}
                     </td>
-                    <td className="border px-2 py-1">
+                    <td className="border border-gray-600 px-2 py-1 text-gray-300">
                       {item.tonnage || '-'}
                     </td>
-                    <td className="border px-2 py-1">{item.category}</td>
-                    <td className="border px-2 py-1">
+                    <td className="border border-gray-600 px-2 py-1 text-gray-300">{item.category}</td>
+                    <td className="border border-gray-600 px-2 py-1 text-gray-300">
                       {item.thumbnail_url ? 'O' : '-'}
                     </td>
-                    <td className="border px-2 py-1">
+                    <td className="border border-gray-600 px-2 py-1 text-gray-300">
                       {item.spec_pdf_url ? 'O' : '-'}
                     </td>
-                    <td className="border px-2 py-1">
+                    <td className="border border-gray-600 px-2 py-1">
                       <div className="flex gap-2">
                         <button
                           type="button"
                           onClick={() => startEdit(item)}
-                          className="text-xs text-blue-600 hover:underline"
+                          className="text-xs text-blue-400 hover:text-blue-300 hover:underline"
                         >
                           수정
                         </button>
                         <button
                           type="button"
                           onClick={() => handleDelete(item.id)}
-                          className="text-xs text-red-600 hover:underline"
+                          className="text-xs text-red-400 hover:text-red-300 hover:underline"
                         >
                           삭제
                         </button>

@@ -8,7 +8,7 @@ export default function NetworkPage() {
       title="Our Network"
       subtitle="Our Network"
     >
-      <p className="text-gray-700">
+      <p className="text-gray-300">
         Our Network
       </p>
     </PageShell>

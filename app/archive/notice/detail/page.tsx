@@ -113,7 +113,13 @@ export default function NoticeDetailPage() {
 
   if (!id) {
     return (
-      <PageShell title="공지 / 뉴스" subtitle="">
+      <PageShell 
+        title="공지 / 뉴스" 
+        subtitle=""
+        bgColor="bg-[#eeeeee]"
+        textColor="text-gray-900"
+        subtitleColor="text-gray-600"
+      >
         <p className="text-gray-600">
           잘못된 경로입니다. 공지/뉴스 목록에서 다시 선택해주세요.
         </p>
@@ -123,7 +129,13 @@ export default function NoticeDetailPage() {
 
   if (loading) {
     return (
-      <PageShell title="공지 / 뉴스" subtitle="">
+      <PageShell 
+        title="공지 / 뉴스" 
+        subtitle=""
+        bgColor="bg-[#eeeeee]"
+        textColor="text-gray-900"
+        subtitleColor="text-gray-600"
+      >
         <p className="text-gray-600">게시글을 불러오는 중입니다...</p>
       </PageShell>
     )
@@ -131,7 +143,13 @@ export default function NoticeDetailPage() {
 
   if (error || !post) {
     return (
-      <PageShell title="공지 / 뉴스" subtitle="">
+      <PageShell 
+        title="공지 / 뉴스" 
+        subtitle=""
+        bgColor="bg-[#eeeeee]"
+        textColor="text-gray-900"
+        subtitleColor="text-gray-600"
+      >
         <p className="text-red-500">
           게시글을 불러오는 중 오류가 발생했거나, 존재하지 않는 글입니다.
         </p>
@@ -149,7 +167,13 @@ export default function NoticeDetailPage() {
   }
 
   return (
-    <PageShell title="공지 / 뉴스" subtitle={label || undefined}>
+    <PageShell 
+      title="공지 / 뉴스" 
+      subtitle={label || undefined}
+      bgColor="bg-[#eeeeee]"
+      textColor="text-gray-900"
+      subtitleColor="text-gray-600"
+    >
       <article className="rounded-xl bg-white p-6 shadow-sm">
         {/* 헤더 */}
         <header className="border-b pb-4">

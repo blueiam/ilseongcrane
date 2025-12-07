@@ -35,79 +35,79 @@ export default function BusinessAreasPage() {
             {/* --- Top Row --- */}
             
             {/* Civil & Construction (Yellow) */}
-            <div className="relative bg-gradient-to-br from-yellow-400 to-yellow-500 p-8 rounded-lg shadow-md flex items-center justify-center min-h-[140px]">
+            <div className="relative bg-gradient-to-br from-yellow-500 to-yellow-600 p-8 rounded-lg shadow-md flex items-center justify-center min-h-[140px]">
               Civil & Construction Field
               
               {/* PC용 하단 화살표 */}
-              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[12px] border-t-yellow-500 md:block hidden"></div>
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[12px] border-t-yellow-600 md:block hidden"></div>
               
               {/* 모바일용 하단 화살표 */}
-              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[12px] border-t-yellow-500 block md:hidden"></div>
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[12px] border-t-yellow-600 block md:hidden"></div>
             </div>
 
             {/* Factor & Plant (Orange) */}
-            <div className="relative bg-gradient-to-br from-orange-400 to-orange-500 p-8 rounded-lg shadow-md flex items-center justify-center min-h-[140px]">
+            <div className="relative bg-gradient-to-br from-orange-500 to-orange-600 p-8 rounded-lg shadow-md flex items-center justify-center min-h-[140px]">
               Factor & Plant Field
               
               {/* PC용 하단 화살표 */}
-              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[12px] border-t-orange-500 md:block hidden"></div>
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[12px] border-t-orange-600 md:block hidden"></div>
               
               {/* 모바일용 하단 화살표 */}
-              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[12px] border-t-orange-500 block md:hidden"></div>
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[12px] border-t-orange-600 block md:hidden"></div>
             </div>
 
             {/* Power station (Blue) */}
-            <div className="relative bg-gradient-to-br from-blue-400 to-blue-600 p-8 rounded-lg shadow-md flex items-center justify-center min-h-[140px]">
+            <div className="relative bg-gradient-to-br from-blue-500 to-blue-700 p-8 rounded-lg shadow-md flex items-center justify-center min-h-[140px]">
               Power station &<br/>On/offshore<br/>Windpower Field
               
               {/* PC용 좌측 화살표 (기존 유지) */}
-              <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[12px] border-r-blue-500 md:block hidden"></div>
+              <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[12px] border-r-blue-600 md:block hidden"></div>
               
               {/* 모바일용 하단 화살표 */}
-              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[12px] border-t-blue-500 block md:hidden"></div>
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[12px] border-t-blue-600 block md:hidden"></div>
             </div>
 
 
             {/* --- Middle Row (나머지) --- */}
             
             {/* Logistics (Green) */}
-            <div className="relative bg-gradient-to-br from-green-500 to-green-600 p-8 rounded-lg shadow-md flex items-center justify-center min-h-[140px]">
+            <div className="relative bg-gradient-to-br from-green-600 to-green-700 p-8 rounded-lg shadow-md flex items-center justify-center min-h-[140px]">
               Logistics & Port Field
               
               {/* PC용 좌측 화살표 (기존 유지) */}
-              <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[12px] border-r-green-500 md:block hidden"></div>
+              <div className="absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[12px] border-r-green-600 md:block hidden"></div>
               
               {/* 모바일용 하단 화살표 */}
-              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[12px] border-t-green-500 block md:hidden"></div>
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[12px] border-t-green-600 block md:hidden"></div>
             </div>
 
 
             {/* --- Bottom Row --- */}
 
             {/* Engineering (Teal) */}
-            <div className="relative bg-gradient-to-br from-teal-500 to-teal-600 p-8 rounded-lg shadow-md flex items-center justify-center min-h-[140px]">
+            <div className="relative bg-gradient-to-br from-teal-600 to-teal-700 p-8 rounded-lg shadow-md flex items-center justify-center min-h-[140px]">
               Engineering &<br/>Consulting Field
               
               {/* PC용 우측 화살표 (-> Specialty) */}
-              <div className="absolute top-1/2 -right-3 -translate-y-1/2 w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[12px] border-l-teal-500 md:block hidden"></div>
+              <div className="absolute top-1/2 -right-3 -translate-y-1/2 w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[12px] border-l-teal-600 md:block hidden"></div>
               
               {/* 모바일용 하단 화살표 */}
-              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[12px] border-t-teal-500 block md:hidden"></div>
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[12px] border-t-teal-600 block md:hidden"></div>
             </div>
 
             {/* Specialty (Purple) */}
-            <div className="relative bg-gradient-to-br from-purple-500 to-purple-700 p-8 rounded-lg shadow-md flex items-center justify-center min-h-[140px]">
+            <div className="relative bg-gradient-to-br from-purple-600 to-purple-800 p-8 rounded-lg shadow-md flex items-center justify-center min-h-[140px]">
               Specialty Field
               
               {/* PC용 우측 화살표 (-> Shipbuilding) */}
-              <div className="absolute top-1/2 -right-3 -translate-y-1/2 w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[12px] border-l-purple-600 md:block hidden"></div>
+              <div className="absolute top-1/2 -right-3 -translate-y-1/2 w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-l-[12px] border-l-purple-700 md:block hidden"></div>
               
               {/* 모바일용 하단 화살표 */}
-              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[12px] border-t-purple-600 block md:hidden"></div>
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[12px] border-t-purple-700 block md:hidden"></div>
             </div>
 
             {/* Shipbuilding (Red) */}
-            <div className="relative bg-gradient-to-br from-red-500 to-red-700 p-8 rounded-lg shadow-md flex items-center justify-center min-h-[140px]">
+            <div className="relative bg-gradient-to-br from-red-600 to-red-800 p-8 rounded-lg shadow-md flex items-center justify-center min-h-[140px]">
               Shipbuilding &<br/>Offshore Field
               
               {/* [삭제됨] PC용 화살표 삭제 */}

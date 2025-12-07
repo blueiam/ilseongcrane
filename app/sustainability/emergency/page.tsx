@@ -6,6 +6,9 @@ export default function EmergencyPage() {
     <PageShell
       title="Emergency"
       subtitle="Emergency"
+      bgColor="bg-white"
+      textColor="text-gray-900"
+      subtitleColor="text-gray-600"
     >
       <p className="text-gray-700">
         탭/슬라이드와 함께 각 영역의 설명과 사진이 배치될 예정입니다.

@@ -176,7 +176,7 @@ export default function HistoryPage() {
               {/* Group 2: 풍력사업 */}
               <div className="relative bg-[#222] border border-gray-700 p-6 rounded-xl z-10">
                 <span className="absolute top-2 right-4 text-xs text-gray-500 italic">Outsourcing</span>
-                <div className="bg-white text-black font-bold text-lg py-3 rounded text-center mb-6 border-2 border-dashed border-gray-400">
+                <div className="bg-white text-black font-bold text-lg py-3 rounded text-center mb-6 border-2 border-dashed border-gray-400 mt-4">
                   풍력사업 (CEO)
                 </div>
                 

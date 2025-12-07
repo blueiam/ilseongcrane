@@ -20,7 +20,7 @@ const navItems: NavItem[] = [
     children: [
       { label: '인사말 / 회사개요', href: '/company/about' },
       { label: '비전 /기업이념/CI', href: '/company/overview' },
-      { label: '회사연혁', href: '/company/history' },
+      { label: '회사연혁/조직도', href: '/company/history' },
       { label: '네트워크', href: '/company/network' },
       { label: '찾아오시는 길', href: '/company/location' },
     ],

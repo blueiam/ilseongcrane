@@ -8,7 +8,7 @@ export default function VisionCiPage() {
       title="Vision & CI"
       subtitle="Vision & CI"
     >
-      <p className="text-gray-700">
+      <p className="text-gray-300">
         Vision & CI
       </p>
     </PageShell>

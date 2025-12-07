@@ -395,7 +395,7 @@ export default function OverviewPage() {
             
             <div className="text-gray-300 leading-relaxed text-lg max-w-3xl mx-auto space-y-2">
               <p>
-                일성크레인의 CI는 <span className="text-white font-bold">‘신뢰(Trust)’</span>와 <span className="text-white font-bold">‘연결(Connection)’</span>을 모티브로 하여,<br className="hidden md:block"/>
+                일성크레인의 CI는 <span className="text-white font-bold">'신뢰(Trust)'</span>와 <span className="text-white font-bold">'연결(Connection)'</span>을 모티브로 하여,<br className="hidden md:block"/>
                 고객과 함께 성장하고자 하는 굳건한 의지를 형상화했습니다.
               </p>
               <p className="text-gray-400 text-base mt-4 font-light">

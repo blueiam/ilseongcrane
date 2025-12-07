@@ -132,7 +132,13 @@ export default function ArchiveHrDetailPage() {
 
   if (!id) {
     return (
-      <PageShell title="인사자료실" subtitle="">
+      <PageShell 
+        title="인사자료실" 
+        subtitle=""
+        bgColor="bg-[#eeeeee]"
+        textColor="text-gray-900"
+        subtitleColor="text-gray-600"
+      >
         <p className="text-gray-600">
           잘못된 경로입니다. 인사자료실 목록에서 다시 선택해주세요.
         </p>
@@ -142,7 +148,13 @@ export default function ArchiveHrDetailPage() {
 
   if (loading) {
     return (
-      <PageShell title="인사자료실" subtitle="">
+      <PageShell 
+        title="인사자료실" 
+        subtitle=""
+        bgColor="bg-[#eeeeee]"
+        textColor="text-gray-900"
+        subtitleColor="text-gray-600"
+      >
         <p className="text-gray-600">자료를 불러오는 중입니다...</p>
       </PageShell>
     )
@@ -150,7 +162,13 @@ export default function ArchiveHrDetailPage() {
 
   if (error || !post) {
     return (
-      <PageShell title="인사자료실" subtitle="">
+      <PageShell 
+        title="인사자료실" 
+        subtitle=""
+        bgColor="bg-[#eeeeee]"
+        textColor="text-gray-900"
+        subtitleColor="text-gray-600"
+      >
         <p className="text-red-500">
           게시글을 불러오는 중 오류가 발생했거나, 존재하지 않는 글입니다.
         </p>
@@ -172,6 +190,9 @@ export default function ArchiveHrDetailPage() {
     <PageShell
       title="인사자료실"
       subtitle=""
+      bgColor="bg-[#eeeeee]"
+      textColor="text-gray-900"
+      subtitleColor="text-gray-600"
     >
       <article className="rounded-xl bg-white p-6 shadow-sm">
         {/* 헤더 */}

@@ -6,6 +6,9 @@ export default function CertificationsPage() {
     <PageShell
       title="Certifications"
       subtitle="Certifications"
+      bgColor="bg-white"
+      textColor="text-gray-900"
+      subtitleColor="text-gray-600"
     >
       <p className="text-gray-700">
         Certifications
