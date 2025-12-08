@@ -3,27 +3,28 @@
 import Image from 'next/image';
 import { CustomersHero } from '@/app/_components/CustomersHero';
 
-// 고객사 데이터 (실제 파일명에 맞춰 경로 수정)
+// 고객사 데이터 (logo 폴더 사용)
 const customers = [
-  { name: '삼성물산', src: '/images/customers/_0025_samsung-cnt.png' },
-  { name: '삼성엔지니어링', src: '/images/customers/_0024_samsung-engineering.png' },
-  { name: 'CJ 대한통운', src: '/images/customers/_0023_cj-logistics.png' },
-  { name: '동방', src: '/images/customers/_0022_dongbang.png' },
-  { name: 'GS 칼텍스', src: '/images/customers/_0021_gs-caltex.png' },
-  { name: '현대제철', src: '/images/customers/_0020_hyundai-steel.png' },
-  { name: '롯데케미칼', src: '/images/customers/_0019_lotte-chemical.png' },
-  { name: '롯데건설', src: '/images/customers/_0018_lotte-enc.png' },
-  { name: 'SK 에코플랜트', src: '/images/customers/_0017_sk-ecoplant.png' },
-  { name: '대아이앤씨', src: '/images/customers/_0016_daea-enc.png' },
-  { name: '대우에스티', src: '/images/customers/_0015_daewoo-st.png' },
-  { name: 'CNPLUS', src: '/images/customers/_0014_cnplus.png' },
-  { name: '두산중공업', src: '/images/customers/_0013_doosan.png' },
-  { name: '포스코플랜텍', src: '/images/customers/_0012_posco-plantec.png' },
-  { name: '현대오일뱅크', src: '/images/customers/_0011_hyundai-oilbank.png' },
-  { name: '효성중공업', src: '/images/customers/_0010_hyosung.png' },
-  { name: 'DL E&C', src: '/images/customers/_0009_dl-enc.png' },
-  { name: '삼표 E&C', src: '/images/customers/_0008_sampyo.png' },
-  { name: '세방', src: '/images/customers/_0007_sebang.png' },
+  { name: '삼성', src: '/images/logo/logo_0000_01-samsung.png' },
+  { name: '삼성엔지니어링', src: '/images/logo/logo_0001_02-samsung-en.png' },
+  { name: 'CJ', src: '/images/logo/logo_0002_03-cj.png' },
+  { name: '동방', src: '/images/logo/logo_0003_04-dongbang.png' },
+  { name: 'GS', src: '/images/logo/logo_0004_05-GS-gs.png' },
+  { name: '현대', src: '/images/logo/logo_0005_06-hyundai.png' },
+  { name: '롯데', src: '/images/logo/logo_0006_07-lotte.png' },
+  { name: '롯데건설', src: '/images/logo/logo_0007_08-lotte-enc.png' },
+  { name: 'SK 에코플랜트', src: '/images/logo/logo_0008_09-skecoplant.png' },
+  { name: '두산', src: '/images/logo/logo_0009_11-dosan.png' },
+  { name: 'CNPLUS', src: '/images/logo/logo_0010_12-cnpluse.png' },
+  { name: '대우', src: '/images/logo/logo_0011_13-dawoo.png' },
+  { name: '대아이앤씨', src: '/images/logo/logo_0012_14-da-enc.png' },
+  { name: 'YH', src: '/images/logo/logo_0013_21-yh.png' },
+  { name: 'KEC', src: '/images/logo/logo_0014_20-kec.png' },
+  { name: '세방', src: '/images/logo/logo_0015_18-sebang.png' },
+  { name: '삼표 E&C', src: '/images/logo/logo_0016_17sampyo-ec.png' },
+  { name: 'DL E&C', src: '/images/logo/logo_0017_16-dl-enc.png' },
+  { name: '효성', src: '/images/logo/logo_0018_16-hyosung.png' },
+  { name: '오일뱅크', src: '/images/logo/logo_0019_15-ollbank.png' },
 ];
 
 export default function CustomersPage() {

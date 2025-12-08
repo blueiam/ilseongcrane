@@ -5,11 +5,11 @@ import Link from 'next/link'
 
 export function Footer() {
   return (
-    <footer className="border-t border-gray-200 bg-gray-50">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 text-xs text-gray-600 sm:flex-row sm:items-start sm:justify-between sm:text-[13px]">
+    <footer className="border-t border-gray-800 bg-[#1a1a1a]">
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 text-xs text-gray-400 sm:flex-row sm:items-start sm:justify-between sm:text-[13px]">
         {/* 회사 정보 */}
         <div className="space-y-1">
-          <div className="font-semibold text-gray-900">
+          <div className="font-semibold text-white">
             일성크레인 주식회사
           </div>
           <div>주소: 경기도 평택시 고덕갈평6길 25, 813호</div>
@@ -25,7 +25,7 @@ export function Footer() {
           <div className="flex gap-4">
             <Link
               href="/privacy"
-              className="text-gray-600 hover:text-gray-900 hover:underline"
+              className="text-gray-400 hover:text-white hover:underline transition-colors"
             >
               개인정보처리방침
             </Link>
@@ -46,13 +46,13 @@ export function Footer() {
               }
             }}
           >
-            <label htmlFor="family" className="text-gray-700">
+            <label htmlFor="family" className="text-gray-300">
               패밀리 사이트
             </label>
             <select
               id="family"
               name="family"
-              className="rounded-md border border-gray-300 bg-white px-2 py-1 text-xs"
+              className="rounded-md border border-gray-700 bg-gray-800 px-2 py-1 text-xs text-white focus:border-gray-600 focus:outline-none"
               defaultValue=""
             >
               <option value="" disabled>
@@ -63,7 +63,7 @@ export function Footer() {
             </select>
             <button
               type="submit"
-              className="rounded-md bg-gray-800 px-3 py-1 text-xs font-medium text-white hover:bg-gray-900"
+              className="rounded-md bg-gray-700 px-3 py-1 text-xs font-medium text-white hover:bg-gray-600 transition-colors"
             >
               이동
             </button>

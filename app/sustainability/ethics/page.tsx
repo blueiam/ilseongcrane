@@ -69,8 +69,8 @@ export default function EthicsPage() {
               {/* Mobile: Vertical Stack / Desktop: Absolute positioning relative to center */}
               <div className="md:absolute md:w-full md:h-full md:top-0 md:left-0 pointer-events-none">
                 
-                {/* Item 1 - Top */}
-                <div className="md:absolute md:top-[5%] md:left-1/2 md:-translate-x-1/2 flex items-center gap-4 bg-white border border-gray-300 px-6 py-4 rounded-xl shadow-lg w-64 md:w-auto pointer-events-auto">
+                {/* Item 1 - Top Left */}
+                <div className="md:absolute md:top-[5%] md:left-[20%] flex items-center gap-4 bg-white border border-gray-300 px-6 py-4 rounded-xl shadow-lg w-64 md:w-auto pointer-events-auto">
                   <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">01</div>
                   <div className="text-left">
                     <p className="font-bold text-gray-900">윤리규범 체계</p>
@@ -79,7 +79,7 @@ export default function EthicsPage() {
                 </div>
 
                 {/* Item 2 - Top Right */}
-                <div className="md:absolute md:top-[15%] md:right-[15%] flex items-center gap-4 bg-white border border-gray-300 px-6 py-4 rounded-xl shadow-lg w-64 md:w-auto pointer-events-auto">
+                <div className="md:absolute md:top-[5%] md:right-[20%] flex items-center gap-4 bg-white border border-gray-300 px-6 py-4 rounded-xl shadow-lg w-64 md:w-auto pointer-events-auto">
                   <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">02</div>
                   <div className="text-left">
                     <p className="font-bold text-gray-900">윤리경영 교육</p>
@@ -87,8 +87,8 @@ export default function EthicsPage() {
                   </div>
                 </div>
 
-                {/* Item 3 - Right */}
-                <div className="md:absolute md:top-1/2 md:right-[5%] md:-translate-y-1/2 flex items-center gap-4 bg-white border border-gray-300 px-6 py-4 rounded-xl shadow-lg w-64 md:w-auto pointer-events-auto">
+                {/* Item 3 - Left */}
+                <div className="md:absolute md:top-1/2 md:left-[5%] md:-translate-y-1/2 flex items-center gap-4 bg-white border border-gray-300 px-6 py-4 rounded-xl shadow-lg w-64 md:w-auto pointer-events-auto">
                   <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">03</div>
                   <div className="text-left">
                     <p className="font-bold text-gray-900">제보채널 운영</p>
@@ -96,8 +96,8 @@ export default function EthicsPage() {
                   </div>
                 </div>
 
-                {/* Item 4 - Bottom Right */}
-                <div className="md:absolute md:bottom-[15%] md:right-[15%] flex items-center gap-4 bg-white border border-gray-300 px-6 py-4 rounded-xl shadow-lg w-64 md:w-auto pointer-events-auto">
+                {/* Item 4 - Right */}
+                <div className="md:absolute md:top-1/2 md:right-[5%] md:-translate-y-1/2 flex items-center gap-4 bg-white border border-gray-300 px-6 py-4 rounded-xl shadow-lg w-64 md:w-auto pointer-events-auto">
                   <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">04</div>
                   <div className="text-left">
                     <p className="font-bold text-gray-900">사규</p>
@@ -105,8 +105,8 @@ export default function EthicsPage() {
                   </div>
                 </div>
 
-                {/* Item 5 - Bottom Left */}
-                <div className="md:absolute md:bottom-[15%] md:left-[15%] flex items-center gap-4 bg-white border border-gray-300 px-6 py-4 rounded-xl shadow-lg w-64 md:w-auto pointer-events-auto">
+                {/* Item 5 - Bottom */}
+                <div className="md:absolute md:bottom-[5%] md:left-1/2 md:-translate-x-1/2 flex items-center gap-4 bg-white border border-gray-300 px-6 py-4 rounded-xl shadow-lg w-64 md:w-auto pointer-events-auto">
                   <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">05</div>
                   <div className="text-left">
                     <p className="font-bold text-gray-900">실천 시스템</p>
@@ -114,19 +114,6 @@ export default function EthicsPage() {
                   </div>
                 </div>
 
-                {/* Connector Lines (Desktop Only) - Dashed lines from center to items */}
-                <svg className="hidden md:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full -z-10" overflow="visible">
-                  {/* Top */}
-                  <path d="M 400 0 L 400 100" stroke="#d1d5db" strokeWidth="2" strokeDasharray="4 4" fill="none" />
-                  {/* Top Right */}
-                  <path d="M 550 100 L 650 150" stroke="#d1d5db" strokeWidth="2" strokeDasharray="4 4" fill="none" />
-                  {/* Right */}
-                  <path d="M 750 250 L 650 250" stroke="#d1d5db" strokeWidth="2" strokeDasharray="4 4" fill="none" />
-                  {/* Bottom Right */}
-                  <path d="M 650 350 L 550 400" stroke="#d1d5db" strokeWidth="2" strokeDasharray="4 4" fill="none" />
-                  {/* Bottom Left */}
-                  <path d="M 250 400 L 150 350" stroke="#d1d5db" strokeWidth="2" strokeDasharray="4 4" fill="none" />
-                </svg>
 
               </div>
             </div>
