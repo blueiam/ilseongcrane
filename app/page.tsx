@@ -3,7 +3,29 @@
 import { useRef, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowUpRight, ChevronLeft, ChevronRight, Factory, Wind, Ship, Container, AlertTriangle, DraftingCompass } from 'lucide-react';
+
+// 교량 아이콘 (커스텀 SVG)
+const BridgeIcon = ({ className }: { className?: string }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    {/* 교량 상판 */}
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3 12h18M3 12v2h18v-2M3 12v-2h18v2" />
+    {/* 교각들 */}
+    <path strokeLinecap="round" strokeLinejoin="round" d="M6 14v6M10 14v6M14 14v6M18 14v6" />
+    {/* 지면 */}
+    <path strokeLinecap="round" strokeLinejoin="round" d="M2 20h20" />
+  </svg>
+);
+
+// 싸이렌/비상 아이콘 (제공된 SVG 사용)
+const SirenIcon = ({ className }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 98 85" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M49.2627 29C53.3158 29 55.3426 28.9997 57.0723 29.2529C66.9265 30.6962 74.866 38.0761 77.0244 47.7988C77.4033 49.5054 77.5509 51.5268 77.8467 55.5693L80 85H19L20.6484 56.0322C20.8821 51.9256 20.9987 49.8722 21.3564 48.1416C23.3957 38.2762 31.3794 30.7343 41.3447 29.2588C43.0928 29 45.1495 29 49.2627 29ZM49.3135 35C37.6104 35.0002 27.945 44.1413 27.293 55.8262L26 79H73L71.3125 55.4766C70.4846 43.9381 60.8817 35 49.3135 35Z" fill="currentColor"/>
+    <rect x="45" width="10" height="24" rx="5" fill="currentColor"/>
+    <rect y="19.071" width="10" height="24" rx="5" transform="rotate(-45 0 19.071)" fill="currentColor"/>
+    <rect width="10" height="24" rx="5" transform="matrix(-0.707107 -0.707107 -0.707107 0.707107 97.0417 19.071)" fill="currentColor"/>
+  </svg>
+);
 
 // ----------------------------------------------------------------------
 // 데이터 정의
@@ -21,52 +43,88 @@ const equipmentList = [
 const businessFields = [
   {
     id: 1,
-    title: '토목건설',
-    eng: 'Civil & Construction Field',
-    desc: '교량, 대형거더설치, 엔지니어링, 조달청 및 공공인프라',
-    icon: '/images/landing/01_Civil_Construction-Field.png', 
+    title: '사회간접자본 인프라',
+    eng: 'SOC Infra',
+    desc: '국가 기간산업의 핵심이 되는 대규모 건설 현장에 최적화된 리프팅 솔루션을 제공합니다.',
+    details: [
+      '도로/철도/교량/터널/댐 등 국가 기간산업 건설 현장 지원',
+      '대형 크레인 투입 및 특수 리프팅 솔루션 제공',
+      '중·대형 구조물 설치/해체 작업 수행'
+    ],
+    icon: <BridgeIcon className="w-28 h-28" />,
+    bgImage: '/images/business/soc.jpeg',
   },
   {
     id: 2,
-    title: '공장플랜트',
-    eng: 'Factory & Plant Field',
-    desc: '정유석유화학, 공장플랜트, 철강제련 및 반도체',
-    icon: '/images/landing/02_Factory_Plant-Field.png',
+    title: '공장 및 플랜트 산업',
+    eng: 'Factory / Plants',
+    desc: '반도체, 화학, 정유 등 첨단 산업 시설의 정밀한 중장비 설치와 유지보수를 책임집니다.',
+    details: [
+      '반도체·화학·정유·발전 플랜트의 중장비 설치',
+      '터빈, 압축기, 보일러 등 중량물 Hoisting & Rigging',
+      '정비(Shut Down) 기간 리프팅 작업 지원'
+    ],
+    icon: <Factory className="w-28 h-28" />,
   },
   {
     id: 3,
-    title: '풍력에너지',
-    eng: 'Power station & Windpower',
-    desc: '화력/수력/원자력 발전소, 육해상풍력 T&I',
-    icon: '/images/landing/03_Powerstation_windpower.png',
+    title: '풍력 에너지 (육상/해상 T&I)',
+    eng: 'Wind Energy',
+    desc: '신재생 에너지의 핵심인 풍력 발전 단지 조성을 위한 운송부터 설치까지 Total Solution을 제공합니다.',
+    details: [
+      '풍력 기자재 운송(Transport) 및 현장 반입',
+      '타워·나셀·블레이드 등 고중량물 설치(Installation)',
+      '해상 풍력의 T&I 컨소시엄 운용 및 프로젝트 수행'
+    ],
+    icon: <Wind className="w-28 h-28" />,
   },
   {
     id: 4,
-    title: '물류항만',
-    eng: 'Logistics & Port Field',
-    desc: '항만물류, 창고/물류센터, 중량물설치',
-    icon: '/images/landing/04_Logistics.png',
+    title: '조선·해양 산업',
+    eng: 'Shipbuilding / Offshore',
+    desc: '초대형 선박 및 해양 플랜트 구조물의 탑재와 이동을 위한 고난이도 리프팅을 수행합니다.',
+    details: [
+      '대형 모듈 블록 리프팅 및 탑재',
+      'FPSO, 해양플랫폼, Subsea 구조물 설치 지원',
+      '도크 투입 및 진수 지원 리프팅'
+    ],
+    icon: <Ship className="w-28 h-28" />,
   },
   {
     id: 5,
-    title: '조선해양',
-    eng: 'Shipbuilding & Offshore Field',
-    desc: '선박블록, 해양모듈/플랫폼, Oil&가스',
-    icon: '/images/landing/05_Shipbuilding.png',
+    title: '물류·항만',
+    eng: 'Port Logistics',
+    desc: '항만 크레인 설치부터 특수 화물 하역까지, 물류 흐름의 핵심 거점에서 활약합니다.',
+    details: [
+      '항만 크레인(GC, QC 등) 설치 및 해체',
+      '컨테이너 및 초중량물 하역 서비스',
+      'SPMT 연계한 Heavy Cargo Handling 및 국내외 이동'
+    ],
+    icon: <Container className="w-28 h-28" />,
   },
   {
     id: 6,
-    title: '특수사업',
-    eng: 'Specialty Field',
-    desc: '긴급구난, 재난구조, 대형조형물, 구조물 해체',
-    icon: '/images/landing/06_Specialty.png',
+    title: '특수부문 / 중량물 프로젝트',
+    eng: 'Special Projects',
+    desc: '극한의 조건과 정밀함이 요구되는 특수 프로젝트에서 독보적인 기술력을 발휘합니다.',
+    details: [
+      '초중량 구조물 이동 및 설치',
+      '교량 거더 리프팅, 터널 TBM 반입 및 조립',
+      '긴급 복구 및 재난 대응 리프팅 긴급 지원'
+    ],
+    icon: <SirenIcon className="w-28 h-28" />,
   },
   {
     id: 7,
-    title: '엔지니어링, 컨설팅',
-    eng: 'Engineering & Consulting Field',
-    desc: '기술설계, 안정성검토, 교육',
-    icon: '/images/landing/07_Engineering.png',
+    title: '엔지니어링 / 컨설팅',
+    eng: 'Engineering & Consulting',
+    desc: '단순 장비 임대를 넘어, 설계부터 안전 관리까지 프로젝트의 성공을 위한 기술적 토대를 마련합니다.',
+    details: [
+      'Rigging Plan / Lifting Plan 전문 설계 및 시뮬레이션',
+      '로드서베이(Road Survey) 및 운송성 검토',
+      '풍력 T&I 기술 컨설팅 및 PM/안전관리 체계 구축'
+    ],
+    icon: <DraftingCompass className="w-28 h-28" />,
   },
 ];
 
@@ -423,25 +481,34 @@ export default function LandingPage() {
                       width: itemsPerSlide === 1 ? '100%' : `${100 / itemsPerSlide}%`
                     }}
                   >
-                    <div className="group relative w-full h-[450px] rounded-2xl overflow-hidden border border-gray-800 hover:border-blue-500 transition-all duration-300 bg-[#161616]">
-                      <div className="absolute inset-0 bg-[#161616]">
-                         <div className="w-full h-full bg-gradient-to-br from-[#2a2a2a] to-[#121212] opacity-50" />
-                      </div>
-                      <div className="absolute top-8 left-8 right-8 flex justify-between items-start z-10">
-                        <p className="text-[11px] text-blue-400 font-bold uppercase tracking-widest border border-blue-500/30 px-3 py-1.5 rounded bg-[#1a1a1a]/80 backdrop-blur-sm">
+                    <Link href="/business/areas">
+                      <div className="group relative w-full h-[450px] rounded-2xl overflow-hidden border border-gray-800 hover:border-blue-500 transition-all duration-300 bg-[#161616] cursor-pointer">
+                      {/* 배경 이미지 (있는 경우) */}
+                      {field.bgImage && (
+                        <div className="absolute inset-0 z-0">
+                          <Image
+                            src={field.bgImage}
+                            alt={field.title}
+                            fill
+                            className="object-cover opacity-30 group-hover:opacity-50 transition-opacity duration-300"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-br from-[#2a2a2a] to-[#121212] opacity-70" />
+                        </div>
+                      )}
+                      {!field.bgImage && (
+                        <div className="absolute inset-0 bg-[#161616]">
+                          <div className="w-full h-full bg-gradient-to-br from-[#2a2a2a] to-[#121212] opacity-50" />
+                        </div>
+                      )}
+                      <div className="absolute top-8 left-8 right-8 z-10">
+                        <p className="text-[11px] text-blue-400 font-bold uppercase tracking-widest border border-blue-500/30 px-3 py-1.5 rounded bg-[#1a1a1a]/80 backdrop-blur-sm inline-block">
                           {field.eng}
                         </p>
-                        <ArrowUpRight className="text-gray-500 w-5 h-5 group-hover:text-blue-500 transition-colors duration-300" />
                       </div>
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none">
+                      <div className="absolute top-[calc(50%-60px)] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none text-blue-400">
                         {field.icon ? (
-                          <div className="relative w-28 h-28 opacity-100 scale-100 group-hover:scale-110 transition-transform duration-300 ease-out">
-                            <Image
-                              src={field.icon}
-                              alt={field.title}
-                              fill
-                              className="object-contain drop-shadow-2xl"
-                            />
+                          <div className="opacity-100 scale-100 group-hover:scale-110 transition-transform duration-300 ease-out drop-shadow-2xl">
+                            {field.icon}
                           </div>
                         ) : (
                           <div className="w-24 h-24 rounded-full bg-gray-800/30 animate-pulse" />
@@ -454,8 +521,19 @@ export default function LandingPage() {
                         <p className="text-gray-400 text-sm leading-relaxed border-t border-gray-700 pt-4 group-hover:text-gray-300 transition-colors">
                           {field.desc}
                         </p>
+                        {field.details && field.details.length > 0 && (
+                          <ul className="mt-3 space-y-1.5 text-xs text-gray-500">
+                            {field.details.slice(0, 2).map((detail: string, idx: number) => (
+                              <li key={idx} className="flex items-start">
+                                <span className="mr-2 text-blue-500 shrink-0 mt-0.5">•</span>
+                                <span>{detail}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
                       </div>
-                    </div>
+                      </div>
+                    </Link>
                   </div>
                 ))}
               </div>
@@ -502,7 +580,7 @@ export default function LandingPage() {
             {[...allCustomers, ...allCustomers].map((logo, index) => (
               <li key={`customer-${index}`}>
                  {/* 로고 가시성 개선 */}
-                 <div className="relative w-40 h-20 md:w-48 md:h-24 opacity-100 hover:opacity-100 transition-opacity duration-300 bg-white/20 rounded-lg p-2">
+                 <div className="relative w-40 h-20 md:w-48 md:h-24 opacity-100 hover:opacity-100 transition-opacity duration-300 bg-white/50 rounded-lg p-2">
                     <Image 
                       src={`/images/logo/${logo}`} 
                       alt="customer logo" 

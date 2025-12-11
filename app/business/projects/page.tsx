@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import Image from 'next/image'
+import { X } from 'lucide-react'
 import BusinessCard from '@/components/business-card';
 import { ProjectsHero } from '@/app/_components/ProjectsHero';
 import { createClient } from '@supabase/supabase-js'
@@ -23,13 +25,13 @@ type Project = {
 
 const CATEGORY_OPTIONS = [
   { value: 'all', label: '전체' },
-  { value: '풍력 발전', label: '풍력 발전' },
-  { value: '토목', label: '토목' },
-  { value: '건축', label: '건축' },
-  { value: '석유화학', label: '석유화학' },
-  { value: '발전소', label: '발전소' },
+  { value: 'SOC', label: 'SOC' },
   { value: '플랜트', label: '플랜트' },
-  { value: '기타', label: '기타' },
+  { value: '에너지', label: '에너지' },
+  { value: '조선해양', label: '조선해양' },
+  { value: '물류항만', label: '물류항만' },
+  { value: '특수부분', label: '특수부분' },
+  { value: '엔지니어링', label: '엔지니어링' },
 ] as const
 
 type CategoryValue = typeof CATEGORY_OPTIONS[number]['value']
@@ -40,6 +42,7 @@ export default function ProjectsPage() {
   const [error, setError] = useState<string | null>(null)
   const [category, setCategory] = useState<CategoryValue>('all')
   const [keyword, setKeyword] = useState('')
+  const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
   // 전체 사업 실적 데이터 가져오기 (display_order 순서로 정렬)
   useEffect(() => {
@@ -189,6 +192,7 @@ export default function ProjectsPage() {
                       imageUrl={project.image_url || '/test1.jpg'}
                       href={`/projects/${project.id}`}
                       category={project.category}
+                      onImageClick={(imageUrl) => setSelectedImage(imageUrl)}
                     />
                   ))}
                 </div>
@@ -197,6 +201,38 @@ export default function ProjectsPage() {
           )}
         </div>
       </main>
+
+      {/* 이미지 확대 모달 (Lightbox) - certifications와 동일한 스타일 */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setSelectedImage(null)}
+        >
+          {/* 닫기 버튼 */}
+          <button 
+            className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-10"
+            onClick={() => setSelectedImage(null)}
+          >
+            <X className="w-10 h-10" />
+          </button>
+
+          {/* 모달 이미지 컨테이너 */}
+          <div 
+            className="relative w-full h-full max-w-4xl max-h-[90vh] flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()} // 이미지 클릭 시 닫기 방지
+          >
+            <div className="relative w-full h-full">
+              <Image
+                src={selectedImage}
+                alt="Project Detail"
+                fill
+                className="object-contain"
+                quality={95}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

@@ -22,13 +22,13 @@ type Project = {
 }
 
 const CATEGORY_OPTIONS = [
-  { value: '풍력 발전', label: '풍력 발전' },
-  { value: '토목', label: '토목' },
-  { value: '건축', label: '건축' },
-  { value: '석유화학', label: '석유화학' },
-  { value: '발전소', label: '발전소' },
+  { value: 'SOC', label: 'SOC' },
   { value: '플랜트', label: '플랜트' },
-  { value: '기타', label: '기타' },
+  { value: '에너지', label: '에너지' },
+  { value: '조선해양', label: '조선해양' },
+  { value: '물류항만', label: '물류항만' },
+  { value: '특수부분', label: '특수부분' },
+  { value: '엔지니어링', label: '엔지니어링' },
 ]
 
 export default function AdminProjectsPage() {
@@ -42,7 +42,7 @@ export default function AdminProjectsPage() {
     title: '',
     subtitle: '',
     description: '',
-    category: '풍력 발전',
+    category: 'SOC',
     image_url: '',
     display_order: 0,
   })
@@ -116,8 +116,8 @@ export default function AdminProjectsPage() {
       setSaving(false)
       return
     }
-    if (!form.category) {
-      alert('카테고리는 필수입니다.')
+    if (!form.category || form.category.trim() === '') {
+      alert('카테고리는 필수입니다. 카테고리를 선택해주세요.')
       setSaving(false)
       return
     }
@@ -126,15 +126,22 @@ export default function AdminProjectsPage() {
       setSaving(false)
       return
     }
+    
+    // 카테고리 값 정리 (공백 제거)
+    const cleanedCategory = form.category.trim()
 
     // 기본 payload 생성
     const basePayload: any = {
       title: form.title.trim(),
       description: form.description.trim(),
-      category: form.category,
+      category: cleanedCategory, // 정리된 카테고리 값 사용
       // 고객사(subtitle): 항상 포함, 값이 있으면 그 값을, 없으면 null
       subtitle: form.subtitle.trim() || null,
     }
+
+    // 디버깅: payload 확인
+    console.log('Saving payload:', basePayload)
+    console.log('Category value:', cleanedCategory)
 
     // 선택적 컬럼들
     if (form.image_url.trim()) {
@@ -145,8 +152,10 @@ export default function AdminProjectsPage() {
     }
 
     // 존재하지 않는 컬럼을 자동으로 제거하는 헬퍼 함수
+    // 단, 필수 필드(title, description, category)는 제거하지 않음
     const removeMissingColumns = (payload: any, errorMessage: string): any => {
       const cleanedPayload = { ...payload }
+      const requiredFields = ['title', 'description', 'category'] // 필수 필드는 제거하지 않음
       const patterns = [
         /column ['"](\w+)['"]/,
         /column (\w+)/,
@@ -160,7 +169,10 @@ export default function AdminProjectsPage() {
         const match = errorMessage.match(pattern)
         if (match && match[1]) {
           const missingColumn = match[1]
-          delete cleanedPayload[missingColumn]
+          // 필수 필드는 제거하지 않음
+          if (!requiredFields.includes(missingColumn)) {
+            delete cleanedPayload[missingColumn]
+          }
           break
         }
       }
@@ -178,25 +190,41 @@ export default function AdminProjectsPage() {
         let result: any
 
         if (isUpdate && id) {
+          // 업데이트 후 업데이트된 데이터 반환
           result = await supabase
             .from('projects')
             .update(currentPayload)
             .eq('id', id)
+            .select() // 업데이트된 행 반환
         } else {
-          result = await supabase.from('projects').insert([currentPayload])
+          result = await supabase.from('projects').insert([currentPayload]).select() // 삽입된 행 반환
         }
 
+        // Supabase 응답 확인: error가 없으면 성공 (update는 빈 배열도 정상)
         if (!result.error) {
-          return { success: true, error: null }
+          console.log('저장 성공:', result.data)
+          // update의 경우 빈 배열도 정상 응답일 수 있음
+          return { success: true, error: null, data: result.data || [] }
         }
 
-        // 컬럼 관련 에러인 경우 해당 컬럼 제거 후 재시도
-        if (result.error.message.includes('column') || result.error.message.includes('Column')) {
-          currentPayload = removeMissingColumns(currentPayload, result.error.message)
-          lastError = result.error
-          continue
-        } else {
-          return { success: false, error: result.error }
+        // 에러가 있는 경우
+        if (result.error) {
+          console.error(`저장 시도 ${attempt + 1} 실패:`, result.error)
+          console.error('에러 상세:', {
+            message: result.error.message,
+            details: result.error.details,
+            hint: result.error.hint,
+            code: result.error.code
+          })
+          
+          // 컬럼 관련 에러인 경우 해당 컬럼 제거 후 재시도
+          if (result.error.message.includes('column') || result.error.message.includes('Column')) {
+            currentPayload = removeMissingColumns(currentPayload, result.error.message)
+            lastError = result.error
+            continue
+          } else {
+            return { success: false, error: result.error }
+          }
         }
       }
 
@@ -208,8 +236,8 @@ export default function AdminProjectsPage() {
         // 수정
         const result = await trySaveWithRetry(basePayload, true, editingId)
 
-        if (result.error) {
-          let errorMessage = result.error.message
+        if (!result.success || result.error) {
+          let errorMessage = result.error?.message || '알 수 없는 오류가 발생했습니다.'
           console.error('수정 오류:', result.error)
           console.error('Payload:', basePayload)
           if (errorMessage.includes('row-level security') || errorMessage.includes('RLS')) {
@@ -217,19 +245,24 @@ export default function AdminProjectsPage() {
               'Supabase에서 RLS 정책을 설정해야 합니다.\n' +
               'SQL Editor에서 RLS 정책을 설정하세요.'
           }
-          alert('수정 중 오류: ' + errorMessage)
+          alert('수정 중 오류: ' + errorMessage + '\n\n저장하려던 카테고리: ' + basePayload.category)
+          setSaving(false)
         } else {
-          alert('수정되었습니다.')
+          console.log('수정 성공:', result.data)
+          alert(`수정되었습니다.\n카테고리: ${basePayload.category}`)
           setEditingId(null)
           resetForm()
-          loadProjects()
+          // 약간의 지연 후 목록 새로고침 (데이터베이스 반영 시간 고려)
+          setTimeout(() => {
+            loadProjects()
+          }, 300)
         }
       } else {
         // 신규 등록
         const result = await trySaveWithRetry(basePayload, false)
 
-        if (result.error) {
-          let errorMessage = result.error.message
+        if (!result.success || result.error) {
+          let errorMessage = result.error?.message || '알 수 없는 오류가 발생했습니다.'
           console.error('등록 오류:', result.error)
           console.error('Payload:', basePayload)
           if (errorMessage.includes('row-level security') || errorMessage.includes('RLS')) {
@@ -237,11 +270,16 @@ export default function AdminProjectsPage() {
               'Supabase에서 RLS 정책을 설정해야 합니다.\n' +
               'SQL Editor에서 RLS 정책을 설정하세요.'
           }
-          alert('등록 중 오류: ' + errorMessage)
+          alert('등록 중 오류: ' + errorMessage + '\n\n저장하려던 카테고리: ' + basePayload.category)
+          setSaving(false)
         } else {
-          alert('등록되었습니다.')
+          console.log('등록 성공:', result.data)
+          alert(`등록되었습니다.\n카테고리: ${basePayload.category}`)
           resetForm()
-          loadProjects()
+          // 약간의 지연 후 목록 새로고침 (데이터베이스 반영 시간 고려)
+          setTimeout(() => {
+            loadProjects()
+          }, 300)
         }
       }
     } catch (err: any) {
@@ -297,7 +335,7 @@ export default function AdminProjectsPage() {
       title: '',
       subtitle: '',
       description: '',
-      category: '풍력 발전',
+      category: 'SOC',
       image_url: '',
       display_order: 0,
     })
@@ -312,7 +350,7 @@ export default function AdminProjectsPage() {
       title: item.title || '',
       subtitle: item.subtitle || '',
       description: item.description || '',
-      category: item.category || '풍력 발전',
+      category: item.category || 'SOC',
       image_url: item.image_url || '',
       display_order: item.display_order || 0,
     })
@@ -375,6 +413,12 @@ export default function AdminProjectsPage() {
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               required
             >
+              {/* 기존 카테고리 값이 옵션 목록에 없으면 동적으로 추가 */}
+              {!CATEGORY_OPTIONS.some(opt => opt.value === form.category) && form.category && (
+                <option value={form.category} key="current-category">
+                  {form.category} (기존)
+                </option>
+              )}
               {CATEGORY_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}

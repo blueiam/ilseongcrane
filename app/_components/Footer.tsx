@@ -2,6 +2,7 @@
 'use client'
 
 import Link from 'next/link'
+import { Download } from 'lucide-react'
 
 export function Footer() {
   return (
@@ -69,24 +70,34 @@ export function Footer() {
             </button>
           </form>
 
-          {/* SNS */}
+          {/* PDF 다운로드 및 SNS */}
           <div className="flex items-center gap-3 text-xs">
+            <a
+              href="/documents/company_introduction.pdf"
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-1.5 rounded-full bg-gray-600 px-2 py-1 text-[11px] font-semibold text-white hover:bg-gray-700 transition-colors"
+            >
+              <Download className="w-3 h-3" />
+              회사소개서
+            </a>
+            <a
+              href="/documents/certificate.pdf"
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-1.5 rounded-full bg-gray-600 px-2 py-1 text-[11px] font-semibold text-white hover:bg-gray-700 transition-colors"
+            >
+              <Download className="w-3 h-3" />
+              지명원
+            </a>
             <a
               href="https://www.youtube.com"
               target="_blank"
               rel="noreferrer"
-              className="rounded-full bg-red-500 px-2 py-1 text-[11px] font-semibold text-white hover:bg-red-600"
+              className="rounded-full bg-gray-600 px-2 py-1 text-[11px] font-semibold text-white hover:bg-gray-700 transition-colors"
             >
               YouTube
             </a>
-            {/* <a
-              href="https://www.instagram.com"
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 px-2 py-1 text-[11px] font-semibold text-white hover:brightness-110"
-            >
-              Instagram
-            </a> */}
           </div>
         </div>
       </div>

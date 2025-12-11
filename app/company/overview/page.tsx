@@ -199,22 +199,29 @@ export default function OverviewPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#1a1a1a] text-white py-24">
-      <div className="container mx-auto px-4 max-w-5xl">
+    <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30">
+      
+      {/* 배경 그리드 효과 */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none" />
+      <div className="fixed inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none" />
+
+      <div className="container mx-auto px-4 md:px-6 relative z-10 py-24 max-w-5xl">
         
         {/* ========================================================================
             SECTION 1: 2030 VISION
            ======================================================================== */}
-        <section className="mb-32">
-          <div className="text-center mb-16">
-            <span className="block text-blue-500 font-bold text-sm tracking-widest mb-3 uppercase">
+        <section className="mb-40">
+          <div className="text-center mb-20">
+            <span className="inline-block py-1 px-3 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest mb-4 uppercase">
               Future Roadmap
             </span>
-            <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight">
-              2030 VISION
+            <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-500">
+                2030 VISION
+              </span>
             </h1>
-            <p className="text-gray-400 text-lg">
-              일성크레인의 단계별 성장 전략과 미래 비전입니다.
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto font-light">
+              일성크레인의 <span className="text-white font-medium">단계별 성장 전략</span>과 <span className="text-white font-medium">미래 비전</span>입니다.
             </p>
           </div>
 
@@ -222,10 +229,10 @@ export default function OverviewPage() {
             {visionSteps.map((item) => (
               <div 
                 key={item.id} 
-                className={`rounded-2xl border transition-all duration-300 overflow-hidden
+                className={`rounded-2xl border transition-all duration-300 overflow-hidden backdrop-blur-md
                   ${activeStep === item.id 
-                    ? 'bg-[#222] border-blue-600 shadow-[0_0_30px_rgba(37,99,235,0.15)]' 
-                    : 'bg-[#1f1f1f] border-gray-800 hover:border-gray-600'
+                    ? 'bg-white/10 border-blue-500/50 shadow-[0_0_30px_rgba(59,130,246,0.2)]' 
+                    : 'bg-white/5 border-white/10 hover:border-blue-500/30 hover:bg-white/8'
                   }`}
               >
                 {/* Header */}
@@ -234,20 +241,20 @@ export default function OverviewPage() {
                   className="w-full text-left p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-4"
                 >
                   <div className="flex items-start gap-6">
-                    <div className={`shrink-0 px-4 py-2 rounded-lg font-bold text-lg 
-                      ${activeStep === item.id ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-400'}`}>
+                    <div className={`shrink-0 px-4 py-2 rounded-lg font-bold text-lg transition-all duration-300
+                      ${activeStep === item.id ? 'bg-blue-600 text-white shadow-[0_0_20px_rgba(59,130,246,0.4)]' : 'bg-white/10 text-gray-300 border border-white/20'}`}>
                       {item.step}
                     </div>
                     <div>
                       <h3 className={`text-2xl md:text-3xl font-bold mb-2 transition-colors
-                        ${activeStep === item.id ? 'text-white' : 'text-gray-400'}`}>
+                        ${activeStep === item.id ? 'text-white' : 'text-gray-300'}`}>
                         {item.title}
                       </h3>
                       <p className="text-blue-400 font-medium">{item.period}</p>
                     </div>
                   </div>
                   <div className={`transform transition-transform duration-300 ${activeStep === item.id ? 'rotate-180' : ''}`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-8 h-8 text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={`w-8 h-8 transition-colors ${activeStep === item.id ? 'text-blue-400' : 'text-gray-400'}`}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                     </svg>
                   </div>
@@ -257,15 +264,15 @@ export default function OverviewPage() {
                 <div className={`transition-all duration-500 ease-in-out px-6 md:px-8
                     ${activeStep === item.id ? 'max-h-[2000px] opacity-100 pb-8' : 'max-h-0 opacity-0 overflow-hidden'}`}
                 >
-                  <hr className="border-gray-700 mb-8" />
+                  <hr className="border-white/10 mb-8" />
                   <div className="grid grid-cols-1 gap-10">
                     
                     {/* 핵심 목표 */}
-                    <div className="bg-[#2a2a2a] p-6 rounded-xl border border-gray-700">
+                    <div className="bg-white/5 border border-white/10 p-6 rounded-xl backdrop-blur-sm hover:border-blue-500/30 transition-all duration-300">
                       <h4 className="text-blue-400 font-bold mb-4 text-sm uppercase tracking-wider">핵심 목표 (Core Goals)</h4>
                       <ul className="space-y-3">
                         {item.goals.map((goal, idx) => (
-                          <li key={idx} className="flex items-start text-white text-lg font-medium">
+                          <li key={idx} className="flex items-start text-gray-200 text-lg font-medium">
                             <span className="mr-3 text-blue-500 mt-1">✓</span> {goal}
                           </li>
                         ))}
@@ -281,13 +288,13 @@ export default function OverviewPage() {
                         </h4>
                         <div className="space-y-6">
                           {item.strategies.map((strategy, idx) => (
-                            <div key={idx} className="pl-4 border-l-2 border-gray-700">
+                            <div key={idx} className="pl-4 border-l-2 border-white/20 hover:border-blue-500/50 transition-colors duration-300">
                               <h5 className="text-gray-200 font-bold mb-2">{strategy.category}</h5>
                               {strategy.items.length > 0 && (
                                 <ul className="space-y-1">
                                   {strategy.items.map((subItem, sIdx) => (
-                                    <li key={sIdx} className="text-gray-400 text-sm pl-2 relative">
-                                      <span className="absolute left-0 top-2 w-1 h-1 bg-gray-500 rounded-full"></span>
+                                    <li key={sIdx} className="text-gray-300 text-sm pl-2 relative">
+                                      <span className="absolute left-0 top-2 w-1 h-1 bg-blue-500 rounded-full"></span>
                                       {subItem}
                                     </li>
                                   ))}
@@ -304,10 +311,10 @@ export default function OverviewPage() {
                           <span className="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
                           주요 사업
                         </h4>
-                        <div className="bg-[#1a1a1a] p-5 rounded-lg border border-gray-800">
+                        <div className="bg-white/5 border border-white/10 p-5 rounded-lg backdrop-blur-sm hover:border-blue-500/30 transition-all duration-300">
                           <ul className="space-y-3">
                             {item.majorBusiness.map((biz, idx) => (
-                              <li key={idx} className="text-gray-300">
+                              <li key={idx} className="text-gray-200">
                                 {biz}
                               </li>
                             ))}
@@ -323,7 +330,7 @@ export default function OverviewPage() {
           </div>
 
           {/* 공통 고객산업 */}
-          <div className="bg-[#222] p-8 rounded-2xl border border-gray-700 text-center">
+          <div className="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm text-center hover:border-blue-500/30 transition-all duration-300">
             <h4 className="text-lg font-bold text-white mb-4 uppercase tracking-wider text-blue-400">
               주요 고객 산업 (Client Industries)
             </h4>
@@ -338,16 +345,18 @@ export default function OverviewPage() {
         {/* ========================================================================
             SECTION 2: Corporate Philosophy
            ======================================================================== */}
-        <section className="mb-32 pt-16 border-t border-gray-800">
-          <div className="text-center mb-16">
-            <span className="block text-blue-500 font-bold text-sm tracking-widest mb-3 uppercase">
+        <section className="mb-40 pt-20 border-t border-white/10">
+          <div className="text-center mb-20">
+            <span className="inline-block py-1 px-3 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest mb-4 uppercase">
               Core Values
             </span>
-            <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-white">
-              Corporate Philosophy
+            <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-500">
+                Corporate Philosophy
+              </span>
             </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              일성크레인이 지키고자 하는 4가지 핵심 가치입니다.<br/>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto font-light">
+              일성크레인이 지키고자 하는 <span className="text-white font-medium">4가지 핵심 가치</span>입니다.<br/>
               투명하고 안전한 경영을 통해 지속 가능한 미래를 만듭니다.
             </p>
           </div>
@@ -356,21 +365,21 @@ export default function OverviewPage() {
             {philosophies.map((item, index) => (
               <div 
                 key={index}
-                className={`bg-[#222] p-8 rounded-2xl border ${item.borderColor} hover:bg-[#2a2a2a] transition-all duration-300 group`}
+                className={`bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm hover:border-blue-500/30 hover:bg-white/8 transition-all duration-300 group`}
               >
                 <div className="flex items-start gap-6">
-                  <div className={`shrink-0 w-16 h-16 rounded-xl bg-[#1a1a1a] flex items-center justify-center ${item.color} group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                  <div className={`shrink-0 w-16 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center ${item.color} group-hover:scale-110 group-hover:border-blue-500/50 transition-all duration-300 shadow-lg`}>
                     {item.icon}
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold text-white mb-1 flex items-center gap-2">
                       {item.title}
-                      <span className="text-sm font-medium text-gray-500 uppercase tracking-wider opacity-60">
+                      <span className="text-sm font-medium text-gray-400 uppercase tracking-wider opacity-60">
                         {item.eng}
                       </span>
                     </h3>
-                    <div className="w-10 h-1 bg-gray-700 rounded-full mb-4 mt-2 group-hover:bg-blue-600 transition-colors"></div>
-                    <p className="text-gray-400 leading-relaxed whitespace-pre-line text-sm md:text-base">
+                    <div className="w-10 h-1 bg-white/20 rounded-full mb-4 mt-2 group-hover:bg-blue-500 transition-colors"></div>
+                    <p className="text-gray-300 leading-relaxed whitespace-pre-line text-sm md:text-base">
                       {item.desc}
                     </p>
                   </div>
@@ -384,21 +393,23 @@ export default function OverviewPage() {
         {/* ========================================================================
             SECTION 3: Corporate Identity (CI) - [신규 통합]
            ======================================================================== */}
-        <section className="pt-16 border-t border-gray-800">
-          <div className="text-center mb-16">
-            <span className="block text-blue-500 font-bold text-sm tracking-widest mb-3 uppercase">
+        <section className="pt-20 border-t border-white/10">
+          <div className="text-center mb-20">
+            <span className="inline-block py-1 px-3 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest mb-4 uppercase">
               Corporate Identity
             </span>
-            <h2 className="text-4xl md:text-5xl font-extrabold mb-8 tracking-tight text-white">
-              CI 소개
+            <h2 className="text-4xl md:text-5xl font-black mb-8 tracking-tight">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-500">
+                CI 소개
+              </span>
             </h2>
             
-            <div className="text-gray-300 leading-relaxed text-lg max-w-3xl mx-auto space-y-2">
+            <div className="text-gray-300 leading-relaxed text-lg max-w-3xl mx-auto space-y-2 font-light">
               <p>
                 일성크레인의 CI는 <span className="text-white font-bold">'신뢰(Trust)'</span>와 <span className="text-white font-bold">'연결(Connection)'</span>을 모티브로 하여,<br className="hidden md:block"/>
                 고객과 함께 성장하고자 하는 굳건한 의지를 형상화했습니다.
               </p>
-              <p className="text-gray-400 text-base mt-4 font-light">
+              <p className="text-gray-400 text-base mt-4">
                 굵고 단단한 서체는 중장비 산업의 핵심 가치인 <strong>안전성</strong>을 상징하며,<br className="hidden md:block"/>
                 진취적인 <strong>블루(Blue)</strong> 컬러는 대한민국을 넘어 글로벌 리딩 기업으로 도약하는<br className="hidden md:block"/>
                 일성크레인의 혁신적인 미래 비전을 담고 있습니다.
@@ -407,10 +418,10 @@ export default function OverviewPage() {
           </div>
 
           {/* 로고 비주얼 영역 (Grid Background) */}
-          <div className="bg-white rounded-2xl p-8 md:p-16 mb-12 shadow-2xl relative overflow-hidden">
+          <div className="bg-[#eeeeee] border border-white/20 rounded-2xl p-8 md:p-16 mb-12 shadow-2xl relative overflow-hidden backdrop-blur-sm">
             {/* 모눈종이 배경 효과 */}
-            <div className="absolute inset-0 opacity-10 pointer-events-none" 
-                 style={{ backgroundImage: 'linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
+            <div className="absolute inset-0 opacity-20 pointer-events-none" 
+                 style={{ backgroundImage: 'linear-gradient(#999 1px, transparent 1px), linear-gradient(90deg, #999 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
             </div>
 
             <div className="relative z-10 flex flex-col items-center justify-center">
@@ -429,8 +440,8 @@ export default function OverviewPage() {
 
           {/* 컬러 시스템 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            <div className="bg-[#222] p-8 rounded-2xl border border-gray-800 flex items-center gap-6">
-              <div className="w-20 h-20 rounded-full bg-[#00427A] shadow-lg shrink-0 border-4 border-[#1a1a1a]"></div>
+            <div className="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm flex items-center gap-6 hover:border-blue-500/30 transition-all duration-300">
+              <div className="w-20 h-20 rounded-full bg-[#00427A] shadow-lg shrink-0 border-4 border-white/10"></div>
               <div>
                 <h4 className="text-xl font-bold text-white mb-1">Ilseong Blue</h4>
                 <p className="text-gray-400 text-sm mb-2">Main Color</p>
@@ -438,8 +449,8 @@ export default function OverviewPage() {
                 <p className="text-gray-500 text-xs mt-1">C100 M80 Y10 K0</p>
               </div>
             </div>
-            <div className="bg-[#222] p-8 rounded-2xl border border-gray-800 flex items-center gap-6">
-              <div className="w-20 h-20 rounded-full bg-[#002845] shadow-lg shrink-0 border-4 border-[#1a1a1a]"></div>
+            <div className="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm flex items-center gap-6 hover:border-blue-500/30 transition-all duration-300">
+              <div className="w-20 h-20 rounded-full bg-[#002845] shadow-lg shrink-0 border-4 border-white/10"></div>
               <div>
                 <h4 className="text-xl font-bold text-white mb-1">Deep Navy</h4>
                 <p className="text-gray-400 text-sm mb-2">Sub Color</p>
@@ -454,7 +465,7 @@ export default function OverviewPage() {
             <a 
               href="/images/about/ci_logo.ai" 
               download="ci_logo.ai"
-              className="flex items-center justify-center px-8 py-4 bg-[#00427A] hover:bg-[#003366] text-white rounded-lg transition-all duration-300 shadow-lg group"
+              className="flex items-center justify-center px-8 py-4 bg-[#00427A] hover:bg-[#003366] text-white rounded-lg transition-all duration-300 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 group"
             >
               <span className="font-bold mr-3">AI 다운로드</span>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 group-hover:translate-y-1 transition-transform">
@@ -464,7 +475,7 @@ export default function OverviewPage() {
             <a 
               href="/images/about/ci_logos.png" 
               download="ci_logos.png"
-              className="flex items-center justify-center px-8 py-4 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-all duration-300 shadow-lg group"
+              className="flex items-center justify-center px-8 py-4 bg-white/10 border border-white/20 hover:bg-white/15 hover:border-blue-500/50 text-white rounded-lg transition-all duration-300 shadow-lg group"
             >
               <span className="font-bold mr-3">PNG 다운로드</span>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 group-hover:translate-y-1 transition-transform">

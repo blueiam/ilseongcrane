@@ -36,19 +36,26 @@ export default function NetworkPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#1a1a1a] text-white py-24">
-      <div className="container mx-auto px-4 max-w-7xl">
+    <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30">
+      
+      {/* 배경 그리드 효과 */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none" />
+      <div className="fixed inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none" />
+
+      <div className="container mx-auto px-4 md:px-6 relative z-10 py-24 max-w-7xl">
         
         {/* 헤더 영역 */}
-        <div className="text-center mb-16">
-          <span className="block text-blue-500 font-bold text-sm tracking-widest mb-3 uppercase">
+        <div className="text-center mb-20">
+          <span className="inline-block py-1 px-3 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest mb-4 uppercase">
             Local Network
           </span>
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight">
-            네트워크
+          <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-500">
+              네트워크
+            </span>
           </h1>
-          <p className="text-gray-400 text-lg">
-            전국 주요 거점을 연결하여 신속하고 효율적인 서비스를 제공합니다.
+          <p className="text-gray-400 text-lg max-w-2xl mx-auto font-light">
+            전국 주요 거점을 연결하여 <span className="text-white font-medium">신속하고 효율적인</span> 서비스를 제공합니다.
           </p>
         </div>
 
@@ -108,17 +115,17 @@ export default function NetworkPage() {
           {networks.map((site) => (
             <div 
               key={site.id} 
-              className={`p-6 rounded-2xl border transition-all duration-300 flex items-center gap-4 group hover:-translate-y-1
+              className={`p-6 rounded-2xl border backdrop-blur-sm transition-all duration-300 flex items-center gap-4 group hover:-translate-y-1 hover:shadow-lg
                 ${site.isMain 
-                  ? 'bg-[#2a2a2a] border-red-900/30 hover:border-red-500/50' 
-                  : 'bg-[#1f1f1f] border-gray-800 hover:border-blue-500/50'}`}
+                  ? 'bg-white/5 border-red-500/30 hover:border-red-500/50 hover:bg-white/8' 
+                  : 'bg-white/5 border-white/10 hover:border-blue-500/50 hover:bg-white/8'}`}
             >
-              <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-lg font-bold shadow-lg transition-colors
-                ${site.isMain ? 'bg-red-950 text-red-500 group-hover:bg-red-900' : 'bg-blue-950 text-blue-500 group-hover:bg-blue-900'}`}>
+              <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-lg font-bold shadow-lg transition-all duration-300 group-hover:scale-110
+                ${site.isMain ? 'bg-red-500/20 text-red-400 border border-red-500/30 group-hover:bg-red-500/30 group-hover:border-red-500/50' : 'bg-blue-500/20 text-blue-400 border border-blue-500/30 group-hover:bg-blue-500/30 group-hover:border-blue-500/50'}`}>
                 {site.id}
               </div>
               <div>
-                <h3 className={`text-lg font-bold mb-0.5 ${site.isMain ? 'text-red-50 text-shadow-sm' : 'text-white'}`}>
+                <h3 className={`text-lg font-bold mb-0.5 ${site.isMain ? 'text-red-300' : 'text-white'}`}>
                   {site.name}
                 </h3>
               </div>

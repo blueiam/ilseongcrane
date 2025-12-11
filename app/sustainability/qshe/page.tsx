@@ -1,206 +1,268 @@
-'use client'
+'use client';
 
-import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import { ShieldCheck, Award, Leaf, Quote, CheckCircle2 } from 'lucide-react';
 
-export default function QSHEPage() {
-  const [isVisible, setIsVisible] = useState(false)
+// ----------------------------------------------------------------------
+// 1. 애니메이션 훅
+// ----------------------------------------------------------------------
+function useScrollAnimation() {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // 컴포넌트 마운트 후 애니메이션 시작
-    const timer = setTimeout(() => {
-      setIsVisible(true)
-    }, 100)
-    return () => clearTimeout(timer)
-  }, [])
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setIsVisible(true);
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -100px 0px" }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => { if (ref.current) observer.unobserve(ref.current); };
+  }, []);
+
+  return { ref, isVisible };
+}
+
+// 애니메이션 래퍼 컴포넌트
+function FadeInUp({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) {
+  const { ref, isVisible } = useScrollAnimation();
+  return (
+    <div 
+      ref={ref}
+      className={`transition-all duration-1000 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  );
+}
+
+// ----------------------------------------------------------------------
+// 2. 메인 컴포넌트
+// ----------------------------------------------------------------------
+export default function QSHEPage() {
+  const [scrollY, setScrollY] = useState(0);
+
+  // 패럴랙스 효과를 위한 스크롤 위치 추적
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <>
-      {/* Hero Section */}
-      <div className="relative h-[400px] w-full overflow-hidden">
-        {/* Background Image */}
-        <Image
-          src="/images/sustainability/section4.png"
-          alt="QSHE Sustainability"
-          fill
-          className="object-cover object-center"
-          priority
-          quality={80}
-        />
+    <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30">
+      
+      {/* 배경 그리드 효과 */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none z-0" />
 
-        {/* Title Content with Animation */}
-        <div className="relative flex h-full items-center justify-center">
-          <h1
-            className={`text-5xl font-bold text-white transition-all duration-[2000ms] ease-out translate-y-[80px] ${
-              isVisible
-                ? 'scale-100 opacity-100'
-                : 'scale-[2] opacity-0'
-            }`}
-          >
-            QSHE 경영
-          </h1>
+      {/* ==================================================================
+          HERO SECTION: 인터랙티브 배경 및 타이틀
+      ================================================================== */}
+      <section className="relative h-[90vh] md:h-screen overflow-hidden flex items-center justify-center">
+        
+        {/* 배경 이미지 (Parallax Effect) */}
+        <div 
+          className="absolute inset-0 z-0"
+          style={{ transform: `translateY(${scrollY * 0.5}px)` }} // 스크롤 속도의 절반으로 이동
+        >
+          <Image
+            src="/images/sustainability/bg.jpg"
+            alt="QHSE 경영방침 배경"
+            fill
+            className="object-cover scale-110 brightness-100" // 밝게 표시
+            priority
+          />
         </div>
-      </div>
 
-      {/* Main Content */}
-      <main className="min-h-screen bg-white text-gray-900 py-24">
-        <div className="container mx-auto px-4 max-w-6xl">
-
-
-        {/* ====================================================================
-            SECTION 2: 4대 핵심 축 (4 Core Pillars)
-           ==================================================================== */}
-        <section className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4 text-gray-900">QSHE 4대 핵심 축</h2>
-            <p className="text-gray-600">각 영역별 명확한 목표와 전략을 수립하여 실천합니다.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-            
-            {/* 1. Quality */}
-            <div className="bg-white p-6 md:p-8 rounded-2xl border-t-4 border-blue-500 shadow-lg hover:bg-gray-50 transition-all border border-gray-200 min-w-0">
-              <h3 className="text-xl font-bold text-blue-600 mb-4">Quality (품질)</h3>
-              <ul className="text-gray-700 text-sm space-y-3">
-                <li className="flex items-start"><span className="mr-2 text-blue-600 shrink-0 mt-0.5">▪</span><span>ISO 9001 기반 품질관리체계 운영</span></li>
-                <li className="flex items-start"><span className="mr-2 text-blue-600 shrink-0 mt-0.5">▪</span><span>표준 작업절차(SOP) 준수</span></li>
-                <li className="flex items-start"><span className="mr-2 text-blue-600 shrink-0 mt-0.5">▪</span><span>고객만족 극대화 및 무결점 시공</span></li>
-              </ul>
-            </div>
-
-            {/* 2. Safety */}
-            <div className="bg-white p-6 md:p-8 rounded-2xl border-t-4 border-yellow-500 shadow-lg hover:bg-gray-50 transition-all border border-gray-200 min-w-0">
-              <h3 className="text-xl font-bold text-yellow-600 mb-4">Safety (안전)</h3>
-              <ul className="text-gray-700 text-sm space-y-3">
-                <li className="flex items-start"><span className="mr-2 text-yellow-600 shrink-0 mt-0.5">▪</span><span>위험성평가 중심 자율안전관리</span></li>
-                <li className="flex items-start"><span className="mr-2 text-yellow-600 shrink-0 mt-0.5">▪</span><span>IoT 기반 실시간 모니터링</span></li>
-                <li className="flex items-start"><span className="mr-2 text-yellow-600 shrink-0 mt-0.5">▪</span><span>Zero Accident (무재해) 달성</span></li>
-              </ul>
-            </div>
-
-            {/* 3. Health */}
-            <div className="bg-white p-6 md:p-8 rounded-2xl border-t-4 border-green-500 shadow-lg hover:bg-gray-50 transition-all border border-gray-200 min-w-0">
-              <h3 className="text-xl font-bold text-green-600 mb-4">Health (보건)</h3>
-              <ul className="text-gray-700 text-sm space-y-3">
-                <li className="flex items-start"><span className="mr-2 text-green-600 shrink-0 mt-0.5">▪</span><span>근로자 건강보호 및 작업환경 개선</span></li>
-                <li className="flex items-start"><span className="mr-2 text-green-600 shrink-0 mt-0.5">▪</span><span>고위험 작업자 집중 관리</span></li>
-                <li className="flex items-start"><span className="mr-2 text-green-600 shrink-0 mt-0.5">▪</span><span>직업병 예방 프로그램 운영</span></li>
-              </ul>
-            </div>
-
-            {/* 4. Environment */}
-            <div className="bg-white p-6 md:p-8 rounded-2xl border-t-4 border-teal-500 shadow-lg hover:bg-gray-50 transition-all border border-gray-200 min-w-0">
-              <h3 className="text-xl font-bold text-teal-600 mb-4">Environment (환경)</h3>
-              <ul className="text-gray-700 text-sm space-y-3">
-                <li className="flex items-start"><span className="mr-2 text-teal-600 shrink-0 mt-0.5">▪</span><span>친환경 장비(전기/하이브리드) 도입</span></li>
-                <li className="flex items-start"><span className="mr-2 text-teal-600 shrink-0 mt-0.5">▪</span><span>온실가스 감축 및 에너지 절감</span></li>
-                <li className="flex items-start"><span className="mr-2 text-teal-600 shrink-0 mt-0.5">▪</span><span>폐기물 관리 강화</span></li>
-              </ul>
-            </div>
-
-          </div>
-        </section>
-
-
-        {/* ====================================================================
-            SECTION 3: 비전 및 운영체계 (Vision & System)
-           ==================================================================== */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 pt-12 mb-12">
+        {/* 히어로 콘텐츠 */}
+        <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
+          <FadeInUp>
+            <span className="inline-block py-1 px-4 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-300 text-sm font-bold tracking-widest mb-6 uppercase animate-pulse drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+              Sustainability
+            </span>
+          </FadeInUp>
           
-          {/* 왼쪽: QSHE 비전 */}
-          <div className="bg-gradient-to-br from-gray-50 to-white p-10 rounded-3xl border border-gray-300">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-300 pb-4">
-              Vision 2030과 함께하는 QSHE
-            </h3>
-            <p className="text-gray-700 leading-relaxed mb-8">
-              일성크레인은 2030년까지 안정적 사업기반을 넘어 고부가가치 사업다각화와 글로벌 리프팅 기업 도약을 목표로 하고 있습니다.
-              QSHE 통합경영체계는 이 목표를 실현하는 핵심 실행 프레임입니다.
-            </p>
-            
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold border border-blue-300">1</div>
-                <div>
-                  <p className="text-blue-600 text-xs font-bold uppercase">Step 1</p>
-                  <p className="text-gray-900 font-medium">안정적 사업기반 & 안전관리 시스템 구축</p>
-                </div>
-              </div>
-              <div className="w-0.5 h-6 bg-gray-300 ml-6"></div>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold border border-blue-300">2</div>
-                <div>
-                  <p className="text-blue-600 text-xs font-bold uppercase">Step 2</p>
-                  <p className="text-gray-900 font-medium">스마트 운영 & 고부가가치 사업 확장</p>
-                </div>
-              </div>
-              <div className="w-0.5 h-6 bg-gray-300 ml-6"></div>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold shadow-[0_0_15px_rgba(37,99,235,0.3)]">3</div>
-                <div>
-                  <p className="text-blue-600 text-xs font-bold uppercase">Step 3</p>
-                  <p className="text-gray-900 font-medium">글로벌 종합 리프팅 & 친환경 리딩 기업</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <FadeInUp delay={200}>
+            <h1 className="text-4xl md:text-7xl font-black mb-6 tracking-tight leading-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
+              QHSE경영방침<br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-blue-400 to-green-400 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
+                (안전·품질·환경)
+              </span>
+            </h1>
+          </FadeInUp>
 
-          {/* 오른쪽: 운영 체계 (PDCA Cycle) */}
-          <div className="bg-gradient-to-br from-gray-50 to-white p-10 rounded-3xl border border-gray-300">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6 border-b border-gray-300 pb-4">
-              QSHE 운영 체계
-            </h3>
-            <p className="text-gray-700 leading-relaxed mb-8">
-              계획 수립부터 교육·점검·성과관리까지, 전사적인 통합관리 프로세스(PDCA)를 운영합니다.
+          <FadeInUp delay={400}>
+            <p className="text-xl md:text-2xl text-white max-w-2xl mx-auto font-light leading-relaxed mb-12 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+              안전은 기본, 품질은 약속, 환경은 책임입니다.
             </p>
+          </FadeInUp>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-white p-4 rounded-xl border border-gray-200">
-                <p className="text-xs text-gray-500 font-bold uppercase mb-1">01. Plan</p>
-                <p className="font-bold text-gray-900">정책 및 목표 수립</p>
-              </div>
-              <div className="bg-white p-4 rounded-xl border border-gray-200">
-                <p className="text-xs text-gray-500 font-bold uppercase mb-1">02. Do</p>
-                <p className="font-bold text-gray-900">시스템 구축 및 교육</p>
-              </div>
-              <div className="bg-white p-4 rounded-xl border border-gray-200">
-                <p className="text-xs text-gray-500 font-bold uppercase mb-1">03. Check</p>
-                <p className="font-bold text-gray-900">점검 및 모니터링</p>
-              </div>
-              <div className="bg-white p-4 rounded-xl border border-gray-200">
-                <p className="text-xs text-gray-500 font-bold uppercase mb-1">04. Action</p>
-                <p className="font-bold text-gray-900">성과 분석 및 개선</p>
-              </div>
+          {/* 스크롤 유도 아이콘 */}
+          <FadeInUp delay={600}>
+            <div className="flex justify-center animate-bounce">
+              <svg className="w-6 h-6 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
             </div>
-          </div>
+          </FadeInUp>
+        </div>
+      </section>
+
+      <div className="container mx-auto px-4 md:px-6 relative z-10 pt-24 pb-32">
+
+        {/* =================================================================
+            1. 헤더 및 개요 (Intro)
+           ================================================================= */}
+        <section className="mb-32 text-center max-w-4xl mx-auto">
+          <FadeInUp>
+            <div className="space-y-6 text-lg md:text-xl font-light text-gray-300 leading-relaxed break-keep">
+              <p>
+                일성크레인은 안전한 현장, 완벽한 품질, 지속가능한 환경을 핵심 경영 가치로 삼고 있습니다.
+              </p>
+              <p>
+                모든 임직원은 안전수칙을 철저히 준수하고, 고객 만족과 사회적 책임을 동시에 실현하기 위해<br className="hidden md:block"/>
+                <strong className="text-white border-b-2 border-blue-500/50">안전·보건·품질·환경 경영시스템(SQHES)</strong>을 지속적으로 강화하고 있습니다.
+              </p>
+            </div>
+          </FadeInUp>
+        </section>
+
+
+        {/* =================================================================
+            2. 핵심 3대 방침 (Policies - 3 Columns)
+           ================================================================= */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
+          
+          {/* 1. 안전보건경영방침 */}
+          <PolicyCard 
+            id="01"
+            title="안전보건경영방침"
+            icon={<ShieldCheck className="w-10 h-10 text-orange-500" />}
+            accentColor="border-orange-500/50 hover:shadow-orange-500/20"
+            delay={0}
+          >
+            <ul className="space-y-4 text-gray-400 text-sm md:text-base">
+              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />모든 현장의 무재해 실현을 최우선 목표로 합니다.</li>
+              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />체계적인 위험성 평가 및 예방활동을 통해 안전사고를 근본적으로 차단합니다.</li>
+              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />전 임직원이 참여하는 안전문화 정착을 추진하며, 정기적인 교육과 점검을 통해 자율안전관리체계를 운영합니다.</li>
+              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-orange-500 shrink-0 mt-0.5" />협력업체와의 상생안전관리를 통해 안전한 산업 생태계를 구축합니다.</li>
+            </ul>
+          </PolicyCard>
+
+          {/* 2. 품질경영방침 */}
+          <PolicyCard 
+            id="02"
+            title="품질경영방침"
+            icon={<Award className="w-10 h-10 text-blue-500" />}
+            accentColor="border-blue-500/50 hover:shadow-blue-500/20"
+            delay={100}
+          >
+            <ul className="space-y-4 text-gray-400 text-sm md:text-base">
+              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />고객 요구사항을 정확히 이해하고, 최고 수준의 품질로 보답합니다.</li>
+              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />ISO 품질경영시스템을 기반으로, 프로세스 중심의 시공 및 관리체계를 유지합니다.</li>
+              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />장비와 기술력의 지속적인 개선을 통해 서비스 경쟁력과 신뢰성을 확보합니다.</li>
+              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />품질 불만 발생 시 즉각적인 원인 분석 및 재발 방지 활동을 실시합니다.</li>
+            </ul>
+          </PolicyCard>
+
+          {/* 3. 환경경영방침 */}
+          <PolicyCard 
+            id="03"
+            title="환경경영방침"
+            icon={<Leaf className="w-10 h-10 text-green-500" />}
+            accentColor="border-green-500/50 hover:shadow-green-500/20"
+            delay={200}
+          >
+            <ul className="space-y-4 text-gray-400 text-sm md:text-base">
+              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />환경보호를 경영의 필수 가치로 인식하고, 친환경 경영체계를 실천합니다.</li>
+              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />에너지 절감, 자원 재활용, 오염물질 최소화를 통해 지속가능한 현장 운영을 지향합니다.</li>
+              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />친환경 장비 도입과 효율적 운용으로 탄소배출 저감에 앞장섭니다.</li>
+              <li className="flex gap-3"><CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />모든 임직원이 환경보전에 대한 책임과 의무를 자발적으로 실천하도록 교육합니다.</li>
+            </ul>
+          </PolicyCard>
 
         </section>
 
 
-        {/* ====================================================================
-            SECTION 4: 성과 및 인증 현황 (Certifications)
-           ==================================================================== */}
-        <section className="bg-gray-50 rounded-3xl p-10 md:p-16 text-center border border-gray-300">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900">QSHE 성과 및 인증 현황</h2>
-          <p className="text-gray-700 mb-10 max-w-2xl mx-auto">
-            일성크레인은 ISO 통합인증 추진과 무재해 목표 달성을 통해<br/>
-            고객과 사회로부터 신뢰받는 파트너가 되기 위해 노력하고 있습니다.
-          </p>
-
-          <div className="flex flex-wrap justify-center gap-4 md:gap-8">
-            <div className="bg-white px-8 py-4 rounded-full border border-gray-300 text-gray-700 font-medium shadow-sm">
-              🏆 중대재해 Zero 목표 운영
-            </div>
-            <div className="bg-white px-8 py-4 rounded-full border border-gray-300 text-gray-700 font-medium shadow-sm">
-              📜 ISO 9001 / 14001 통합 인증
-            </div>
-            <div className="bg-white px-8 py-4 rounded-full border border-gray-300 text-gray-700 font-medium shadow-sm">
-              🛡️ 안전보건경영시스템 확립
-            </div>
-          </div>
-        </section>
+        {/* =================================================================
+            3. 경영이념 및 실천 다짐 (Closing)
+           ================================================================= */}
+        <ClosingSection />
 
       </div>
     </main>
-    </>
-  )
+  );
+}
+
+// ----------------------------------------------------------------------
+// 서브 컴포넌트: 정책 카드
+// ----------------------------------------------------------------------
+function PolicyCard({ id, title, icon, children, accentColor, delay }: any) {
+  const { ref, isVisible } = useScrollAnimation();
+
+  return (
+    <div 
+      ref={ref}
+      style={{ transitionDelay: `${delay}ms` }}
+      className={`group relative p-8 rounded-3xl bg-[#121212] border border-white/10 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+    >
+      {/* Top Accent Line */}
+      <div className={`absolute top-0 left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-gray-500 to-transparent group-hover:via-white transition-all duration-500`}></div>
+      
+      <div className="flex items-center justify-between mb-8">
+        <div className="p-4 rounded-2xl bg-white/5 group-hover:scale-110 transition-transform duration-300">
+          {icon}
+        </div>
+        <span className="text-4xl font-black text-white/5 group-hover:text-white/10 transition-colors">
+          {id}
+        </span>
+      </div>
+
+      <h3 className="text-2xl font-bold mb-6 text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-400 transition-all">
+        {title}
+      </h3>
+
+      <div className="leading-relaxed break-keep">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ----------------------------------------------------------------------
+// 서브 컴포넌트: 하단 다짐 섹션
+// ----------------------------------------------------------------------
+function ClosingSection() {
+  const { ref, isVisible } = useScrollAnimation();
+
+  return (
+    <section 
+      ref={ref}
+      className={`relative rounded-[3rem] overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-white/10 p-10 md:p-20 text-center transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
+    >
+      {/* Background Decoration */}
+      <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_0%,rgba(59,130,246,0.1),transparent_70%)] pointer-events-none"></div>
+      <Quote className="w-16 h-16 text-white/10 mx-auto mb-8" />
+
+      <h2 className="text-3xl md:text-4xl font-bold text-white mb-10 leading-normal">
+        경영이념 및 실천 다짐
+      </h2>
+
+      <div className="mb-12 space-y-4">
+        <p className="text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-blue-400 to-green-400 leading-tight">
+          “모든 작업은 안전하게,<br />
+          모든 품질은 완벽하게,<br />
+          모든 환경은 지속가능하게.”
+        </p>
+      </div>
+
+      <p className="text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto break-keep">
+        일성크레인은 사람 중심의 안전, 고객 중심의 품질, 그리고 미래 중심의 환경경영으로
+        지속가능한 산업 발전에 기여하는 리프팅 전문기업이 되겠습니다.
+      </p>
+    </section>
+  );
 }

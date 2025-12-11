@@ -11,6 +11,7 @@ interface BusinessCardProps {
   imageUrl: string;     // 이미지 경로
   href?: string;        // 클릭 시 이동할 링크 (선택사항)
   category?: string;    // 카테고리
+  onImageClick?: (imageUrl: string) => void; // 이미지 클릭 핸들러
 }
 
 export default function BusinessCard({
@@ -20,9 +21,21 @@ export default function BusinessCard({
   imageUrl,
   href = '#', // 기본값 설정
   category,
+  onImageClick,
 }: BusinessCardProps) {
-  return (
-    <Link href={href} className="group relative block w-full max-w-[400px] mx-auto">
+  const handleClick = (e: React.MouseEvent) => {
+    if (onImageClick) {
+      e.preventDefault();
+      e.stopPropagation();
+      onImageClick(imageUrl);
+    }
+  };
+
+  const CardContent = (
+    <div 
+      className={`group relative block w-full max-w-[400px] mx-auto ${onImageClick ? 'cursor-pointer' : ''}`}
+      onClick={handleClick}
+    >
       {/* 메인 카드 영역 
         - rounded-[32px]: 이미지의 큰 둥근 모서리 구현
         - shadow-2xl: 깊은 그림자 효과
@@ -66,6 +79,17 @@ export default function BusinessCard({
           </div>
         </div>
       </div>
+    </div>
+  );
+
+  // onImageClick이 있으면 모달용으로 사용, 없으면 기존 Link 방식
+  if (onImageClick) {
+    return CardContent;
+  }
+
+  return (
+    <Link href={href}>
+      {CardContent}
     </Link>
   );
 }
