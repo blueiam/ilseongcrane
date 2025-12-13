@@ -62,7 +62,7 @@ const businessAreas = [
       '정비(Shut Down) 기간 리프팅 작업 지원'
     ],
     icon: <Factory className="w-8 h-8" />,
-    bgImage: '/images/business/factory_plants.jpeg',
+    bgImage: '/images/business/01-plant.jpg',
   },
   {
     id: 3,
@@ -75,7 +75,7 @@ const businessAreas = [
       '해상 풍력의 T&I 컨소시엄 운용 및 프로젝트 수행'
     ],
     icon: <Wind className="w-8 h-8" />,
-    bgImage: '/images/business/wind_energy.jpeg',
+    bgImage: '/images/business/04-energy..png',
   },
   {
     id: 4,
@@ -101,7 +101,7 @@ const businessAreas = [
       'SPMT 연계한 Heavy Cargo Handling 및 국내외 이동'
     ],
     icon: <Container className="w-8 h-8" />,
-    bgImage: '/images/business/port_logistics.jpg',
+    bgImage: '/images/business/Shipbuilding.png',
   },
   {
     id: 6,
