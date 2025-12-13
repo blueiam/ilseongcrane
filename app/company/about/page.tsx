@@ -62,7 +62,7 @@ export default function CompanyAboutPage() {
       {/* ==================================================================
           [NEW] HERO SECTION: 인터랙티브 배경 및 타이틀
       ================================================================== */}
-      <section className="relative h-[90vh] md:h-screen overflow-hidden flex items-center justify-center">
+      <section className="relative h-[90vh] md:h-screen overflow-hidden flex items-start justify-center pt-20 md:pt-32">
         
         {/* 배경 이미지 (Parallax Effect) */}
         <div 
@@ -79,7 +79,7 @@ export default function CompanyAboutPage() {
         </div>
 
         {/* 히어로 콘텐츠 */}
-        <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
+        <div className="container mx-auto px-4 md:px-6 relative z-10 text-center pt-8 md:pt-12">
           <FadeInUp>
             <span className="inline-block py-1 px-4 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-300 text-sm font-bold tracking-widest mb-6 uppercase animate-pulse drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
               Global Leader in Heavy Lifting

@@ -4,7 +4,8 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import { PageShell } from '@/app/_components/PageShell'
-import ToastEditor from '@/components/ToastEditor'
+import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -62,26 +63,16 @@ const GENERAL_MAX: Record<FileCategory, number> = {
 }
 
 export default function AdminPostsPage() {
+  const searchParams = useSearchParams()
+  const boardIdFromUrl = searchParams.get('board')
+  
   const [boards, setBoards] = useState<Board[]>([])
   const [currentBoardId, setCurrentBoardId] = useState<string | null>(null)
   const [posts, setPosts] = useState<Post[]>([])
 
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [form, setForm] = useState({
-    title: '',
-    content: '',
-    is_notice: false,
-    label: '',
-    external_link: '',
-  })
-
-  const [attachments, setAttachments] = useState<PostFile[]>([])
-  const [filesToUpload, setFilesToUpload] = useState<FileList | null>(null)
-
   const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
-  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [boardsLoaded, setBoardsLoaded] = useState(false)
 
   // boards 불러오기
   const loadBoards = async () => {
@@ -97,8 +88,18 @@ export default function AdminPostsPage() {
 
     const list = (data || []) as Board[]
     setBoards(list)
+    setBoardsLoaded(true)
 
     if (list.length > 0) {
+      // URL 파라미터에서 board ID가 있으면 사용, 없으면 공지사항 또는 첫 번째 게시판
+      const boardIdFromUrl = searchParams.get('board')
+      if (boardIdFromUrl) {
+        const boardExists = list.find((b) => b.id === boardIdFromUrl)
+        if (boardExists) {
+          setCurrentBoardId(boardIdFromUrl)
+          return
+        }
+      }
       const notice = list.find((b) => b.code === 'notice')
       setCurrentBoardId((notice || list[0]).id)
     }
@@ -123,129 +124,32 @@ export default function AdminPostsPage() {
     setLoading(false)
   }
 
-  // 첨부파일 목록
-  const loadAttachments = async (postId: string) => {
-    const { data, error } = await supabase
-      .from('post_files')
-      .select('id, file_url, file_name, file_type')
-      .eq('post_id', postId)
-      .order('created_at', { ascending: true })
-
-    if (!error && data) {
-      setAttachments(data as PostFile[])
-    } else {
-      setAttachments([])
-    }
-  }
-
   useEffect(() => {
     loadBoards()
   }, [])
 
+  // URL 파라미터 변경 감지 및 게시판 변경
+  useEffect(() => {
+    if (!boardsLoaded || boards.length === 0) return
+
+    if (boardIdFromUrl) {
+      const boardExists = boards.find((b) => b.id === boardIdFromUrl)
+      if (boardExists) {
+        setCurrentBoardId(boardIdFromUrl)
+      }
+    } else {
+      // URL에 board 파라미터가 없으면 기본 게시판으로 설정
+      const notice = boards.find((b) => b.code === 'notice')
+      const defaultBoardId = (notice || boards[0]).id
+      setCurrentBoardId(defaultBoardId)
+    }
+  }, [boardIdFromUrl, boards, boardsLoaded])
+
   useEffect(() => {
     if (currentBoardId) {
       loadPosts(currentBoardId)
-      resetForm()
     }
   }, [currentBoardId])
-
-  const resetForm = () => {
-    setForm({
-      title: '',
-      content: '',
-      is_notice: false,
-      label: '',
-      external_link: '',
-    })
-    setEditingId(null)
-    setAttachments([])
-    setFilesToUpload(null)
-  }
-
-  const handleChange = (
-    e:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
-      | React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const { name, value, type, checked } = e.target as any
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }))
-  }
-
-  const handleContentChange = (htmlContent: string) => {
-    setForm((prev) => ({
-      ...prev,
-      content: htmlContent,
-    }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    // form submit 시 스크롤 방지
-    e.stopPropagation()
-    
-    if (!currentBoardId) {
-      alert('먼저 게시판을 선택해주세요.')
-      return
-    }
-    if (!form.title.trim()) {
-      alert('제목을 입력해주세요.')
-      return
-    }
-
-    setSaving(true)
-
-    const payload: any = {
-      board_id: currentBoardId,
-      title: form.title.trim(),
-      content: form.content.trim() || null,
-      is_notice: form.is_notice,
-      label: form.label.trim() || null,
-      external_link: form.external_link.trim() || null,
-    }
-
-    if (editingId) {
-      const { error } = await supabase
-        .from('posts')
-        .update(payload)
-        .eq('id', editingId)
-
-      if (error) {
-        alert('수정 중 오류: ' + error.message)
-      } else {
-        alert('수정되었습니다.')
-        loadPosts(currentBoardId)
-      }
-    } else {
-      const { error } = await supabase.from('posts').insert([payload])
-
-      if (error) {
-        alert('등록 중 오류: ' + error.message)
-      } else {
-        alert('등록되었습니다.')
-        loadPosts(currentBoardId)
-        resetForm()
-      }
-    }
-
-    setSaving(false)
-  }
-
-  const startEdit = (post: Post) => {
-    setEditingId(post.id)
-    setForm({
-      title: post.title,
-      content: post.content || '',
-      is_notice: post.is_notice,
-      label: post.label || '',
-      external_link: post.external_link || '',
-    })
-    loadAttachments(post.id)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
 
   const handleDelete = async (id: string) => {
     if (!currentBoardId) return
@@ -257,462 +161,62 @@ export default function AdminPostsPage() {
     } else {
       alert('삭제되었습니다.')
       loadPosts(currentBoardId)
-      if (editingId === id) resetForm()
     }
-  }
-
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files || files.length === 0) {
-      setFilesToUpload(null)
-      return
-    }
-
-    // 최대 4개 파일 제한 검증
-    if (files.length > 4) {
-      alert('파일첨부는 최대 4개까지 가능합니다.')
-      e.target.value = ''
-      setFilesToUpload(null)
-      return
-    }
-
-    // 파일 크기 검증 (5MB = 5 * 1024 * 1024 bytes)
-    const maxSize = 5 * 1024 * 1024
-    const invalidFiles: string[] = []
-    Array.from(files).forEach((file) => {
-      if (file.size > maxSize) {
-        invalidFiles.push(file.name)
-      }
-    })
-
-    if (invalidFiles.length > 0) {
-      alert(`다음 파일들이 5MB를 초과합니다:\n${invalidFiles.join('\n')}`)
-      e.target.value = ''
-      setFilesToUpload(null)
-      return
-    }
-
-    setFilesToUpload(files)
   }
 
   const currentBoard = boards.find((b) => b.id === currentBoardId)
-  const isGeneralBoard = currentBoard?.code === 'archive_general'
-  const maxPerType: Record<FileCategory, number> =
-    isGeneralBoard ? GENERAL_MAX : BASE_MAX
-
-  // 현재 첨부파일 개수
-  const attachmentCounts = (() => {
-    const counts: Record<FileCategory, number> = {
-      image: 0,
-      pdf: 0,
-      zip: 0,
-      other: 0,
-    }
-    attachments.forEach((f) => {
-      const cat = getCategoryFromName(f.file_name || f.file_url)
-      counts[cat]++
-    })
-    return counts
-  })()
-
-  const handleUploadFiles = async () => {
-    if (!editingId) {
-      alert('먼저 게시글을 저장한 후 첨부파일을 등록할 수 있습니다.')
-      return
-    }
-    if (!filesToUpload || filesToUpload.length === 0) {
-      alert('업로드할 파일을 선택해주세요.')
-      return
-    }
-
-    const filesArray = Array.from(filesToUpload)
-
-    // 최대 4개 파일 제한 검증
-    if (filesArray.length > 4) {
-      alert('파일첨부는 최대 4개까지 가능합니다.')
-      return
-    }
-
-    // 파일 크기 검증 (5MB = 5 * 1024 * 1024 bytes)
-    const maxSize = 5 * 1024 * 1024
-    const invalidFiles: string[] = []
-    filesArray.forEach((file) => {
-      if (file.size > maxSize) {
-        invalidFiles.push(file.name)
-      }
-    })
-
-    if (invalidFiles.length > 0) {
-      alert(`다음 파일들이 5MB를 초과합니다:\n${invalidFiles.join('\n')}`)
-      return
-    }
-
-    const counts: Record<FileCategory, number> = { ...attachmentCounts }
-
-    setUploading(true)
-
-    for (const file of filesArray) {
-      const cat = getCategoryFromName(file.name)
-
-      // GIF, JPG, JPEG, PNG, PDF만 허용 (ZIP 제외)
-      if (cat === 'zip' || cat === 'other') {
-        alert(`지원하지 않는 파일 형식입니다: ${file.name}\n(GIF, JPG, JPEG, PNG, PDF만 가능)`)
-        continue
-      }
-
-      const limit = maxPerType[cat]
-      if (limit <= 0) {
-        alert(`이 게시판에서는 해당 파일 형식을 업로드할 수 없습니다: ${file.name}`)
-        continue
-      }
-
-      if (counts[cat] >= limit) {
-        const label =
-          cat === 'image'
-            ? '이미지'
-            : cat === 'pdf'
-            ? 'PDF'
-            : '파일'
-        alert(
-          `${label} 파일은 최대 ${limit}개까지 업로드할 수 있습니다. (${file.name})`
-        )
-        continue
-      }
-
-      const path = `${editingId}/${Date.now()}-${file.name}`
-
-      const { error: uploadError } = await supabase.storage
-        .from('post-files')
-        .upload(path, file, {
-          cacheControl: '3600',
-          upsert: false,
-        })
-
-      if (uploadError) {
-        alert(`파일 업로드 실패: ${file.name} (${uploadError.message})`)
-        continue
-      }
-
-      const { error: insertError } = await supabase.from('post_files').insert([
-        {
-          post_id: editingId,
-          file_url: path,
-          file_name: file.name,
-          file_type: cat, // image / pdf
-        },
-      ])
-
-      if (insertError) {
-        alert(`파일 정보 저장 실패: ${file.name} (${insertError.message})`)
-        continue
-      }
-
-      counts[cat]++
-    }
-
-    setUploading(false)
-    setFilesToUpload(null)
-    loadAttachments(editingId)
-  }
-
-  const handleDeleteFile = async (file: PostFile) => {
-    if (!editingId) return
-    if (!confirm('이 첨부파일을 삭제하시겠습니까?')) return
-
-    const { error: storageError } = await supabase.storage
-      .from('post-files')
-      .remove([file.file_url])
-
-    if (storageError) {
-      alert('Storage 파일 삭제 중 오류: ' + storageError.message)
-      return
-    }
-
-    const { error: dbError } = await supabase
-      .from('post_files')
-      .delete()
-      .eq('id', file.id)
-
-    if (dbError) {
-      alert('DB 파일 정보 삭제 중 오류: ' + dbError.message)
-      return
-    }
-
-    loadAttachments(editingId)
-  }
-
-  const getFileUrl = (filePath: string) => {
-    const { data } = supabase.storage.from('post-files').getPublicUrl(filePath)
-    return data.publicUrl
-  }
 
   return (
     <PageShell
       title="관리자 - 게시글 관리"
       subtitle="공지/뉴스 및 일반자료실 등 게시글을 통합 관리합니다."
     >
+      {/* Tab 네비게이션 */}
+      <div className="mb-6 flex gap-2 border-b border-gray-700">
+        <Link
+          href={`/admin/posts${currentBoardId ? `?board=${currentBoardId}` : ''}`}
+          className="border-b-2 border-blue-500 px-4 py-2 text-sm font-medium text-[#eeeeee]"
+        >
+          게시글 목록
+        </Link>
+        <Link
+          href={`/admin/posts/write${currentBoardId ? `?board=${currentBoardId}` : ''}`}
+          className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-[#eeeeee]"
+        >
+          새 게시글 작성
+        </Link>
+        <Link
+          href="#"
+          className="px-4 py-2 text-sm font-medium text-gray-400 opacity-50 cursor-not-allowed"
+          onClick={(e) => e.preventDefault()}
+        >
+          게시글 수정
+        </Link>
+      </div>
+
       {/* 게시판 선택 */}
       <div className="mb-4 flex flex-wrap items-center gap-2 text-sm">
-        <span className="text-gray-700">게시판 선택:</span>
+        <span className="text-[#eeeeee]">게시판 선택:</span>
         {boards.length === 0 ? (
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-gray-400">
             boards 테이블에 게시판이 아직 없습니다.
           </span>
         ) : (
           boards.map((b) => (
-            <button
+            <Link
               key={b.id}
-              type="button"
-              onClick={() => setCurrentBoardId(b.id)}
+              href={`/admin/posts?board=${b.id}`}
               className={`rounded-full px-3 py-1 text-xs font-medium transition ${
                 currentBoardId === b.id
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-white text-gray-900 hover:bg-gray-100'
               }`}
             >
               {b.name}
-            </button>
+            </Link>
           ))
         )}
       </div>
-
-      {/* 글 입력 + 첨부파일 */}
-      <section className="mx-auto mb-8 max-w-[1800px] rounded-xl bg-white p-4 shadow-sm">
-        <h2 className="mb-3 text-sm font-semibold text-gray-800">
-          {editingId
-            ? `게시글 수정 (${currentBoard?.name || ''})`
-            : `새 게시글 작성 (${currentBoard?.name || ''})`}
-        </h2>
-
-        <form 
-          onSubmit={handleSubmit} 
-          className="space-y-3"
-          onKeyDown={(e) => {
-            // 에디터 내부에서 Enter 키가 눌렸을 때 form submit 방지
-            if (e.key === 'Enter' && e.target instanceof HTMLElement) {
-              // ToastEditor 내부 요소인지 확인
-              const editorWrapper = e.target.closest('.toastui-editor-contents') || 
-                                    e.target.closest('.toastui-editor');
-              if (editorWrapper) {
-                // 에디터 내부의 Enter 키는 정상 동작하도록 허용
-                // form submit은 방지
-                e.stopPropagation();
-                return;
-              }
-            }
-          }}
-        >
-          <div className="grid gap-3 md:grid-cols-2">
-            <div>
-              <label className="block text-xs font-medium text-gray-700">
-                제목
-              </label>
-              <input
-                type="text"
-                name="title"
-                value={form.title}
-                onChange={handleChange}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-gray-700">
-                레이블 (뱃지)
-              </label>
-
-              {currentBoard?.code === 'notice' ? (
-  <select
-    name="label"
-    value={form.label}
-    onChange={handleChange}
-    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-  >
-    <option value="공지">공지</option>
-    <option value="뉴스">뉴스</option>
-  </select>
-) : (
-  // 일반자료실 등 다른 게시판: 자유 입력
-  <input
-    type="text"
-    name="label"
-    value={form.label}
-    onChange={handleChange}
-    className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-    placeholder="예: 작업사진, 영상, 현장 스케치 등"
-  />
-)}
-
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-gray-700">
-              외부 링크 (YouTube URL 등)
-            </label>
-            <input
-              type="text"
-              name="external_link"
-              value={form.external_link}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              placeholder="https://www.youtube.com/watch?v=..."
-            />
-            {currentBoard?.code === 'archive_general' && (
-              <p className="mt-1 text-[11px] text-gray-500">
-                일반자료실의 경우 유튜브 링크를 입력하면 상세 페이지에서 영상이 임베드 됩니다.
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-gray-700 mb-2">
-              내용
-            </label>
-            <div className="mt-1 rounded-md border border-gray-300 overflow-hidden">
-              <ToastEditor 
-                key={editingId || 'new'} 
-                content={form.content} 
-                onChange={handleContentChange} 
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs">
-            <input
-              id="is_notice"
-              type="checkbox"
-              name="is_notice"
-              checked={form.is_notice}
-              onChange={handleChange}
-              className="h-3 w-3 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-            />
-            <label htmlFor="is_notice" className="text-gray-700">
-              공지/상단 고정 (이 게시판에서 위로 고정)
-            </label>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              type="submit"
-              disabled={saving || !currentBoardId}
-              className="rounded-md bg-blue-600 px-4 py-2 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-60"
-            >
-              {editingId ? '수정 저장' : '등록'}
-            </button>
-            {editingId && (
-              <button
-                type="button"
-                onClick={resetForm}
-                className="text-xs text-gray-600 hover:underline"
-              >
-                수정 취소
-              </button>
-            )}
-          </div>
-        </form>
-
-        {/* 첨부파일 관리 */}
-        {editingId && (
-          <div className="mt-6 border-t pt-4">
-            <h3 className="mb-4 text-xs font-semibold text-gray-800">
-              첨부파일 관리
-            </h3>
-
-            {/* 파일첨부 UI */}
-            <div className="flex items-start gap-6">
-              <label className="flex h-24 w-24 cursor-pointer items-center justify-center rounded-lg border border-gray-300 bg-white transition hover:bg-gray-50">
-                <input
-                  type="file"
-                  multiple
-                  accept="image/gif,image/jpeg,image/jpg,image/png,application/pdf"
-                  onChange={handleFileInputChange}
-                  className="hidden"
-                  disabled={uploading}
-                />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-gray-800"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={1}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 4.5v15m7.5-7.5h-15"
-                  />
-                </svg>
-              </label>
-              <div className="flex-1">
-                <div className="mb-2 text-sm font-medium text-gray-800">
-                  파일첨부
-                </div>
-                <p className="mb-1 text-xs text-gray-700">
-                  파일첨부는 최대 4장까지 가능하며,
-                </p>
-                <p className="mb-3 text-xs text-gray-700">
-                  5MB이하의 GIF, JPG, JPEG, PNG, PDF 형태로 업로드해주세요.
-                </p>
-                {filesToUpload && filesToUpload.length > 0 && (
-                  <div className="mb-3">
-                    <p className="mb-1 text-xs font-medium text-gray-700">
-                      선택된 파일 ({filesToUpload.length}개):
-                    </p>
-                    <ul className="space-y-1 text-xs text-gray-600">
-                      {Array.from(filesToUpload).map((file, index) => (
-                        <li key={index}>• {file.name}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                <button
-                  type="button"
-                  onClick={handleUploadFiles}
-                  disabled={uploading || !filesToUpload || filesToUpload.length === 0}
-                  className="inline-flex items-center rounded-md bg-gray-800 px-3 py-1.5 text-xs font-medium text-white hover:bg-gray-900 disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {uploading ? '업로드 중...' : '선택 파일 업로드'}
-                </button>
-              </div>
-            </div>
-
-            <div className="mt-3">
-              {attachments.length === 0 ? (
-                <p className="text-[11px] text-gray-500">
-                  등록된 첨부파일이 없습니다.
-                </p>
-              ) : (
-                <ul className="space-y-1 text-xs">
-                  {attachments.map((f) => (
-                    <li
-                      key={f.id}
-                      className="flex items-center justify-between gap-2"
-                    >
-                      <a
-                        href={getFileUrl(f.file_url)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
-                      >
-                        {f.file_name || f.file_url}
-                      </a>
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteFile(f)}
-                        className="text-[11px] text-red-600 hover:underline"
-                      >
-                        삭제
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
-        )}
-      </section>
 
       {/* 글 목록 */}
       <section className="mx-auto max-w-[1800px] rounded-xl bg-white p-4 shadow-sm">
@@ -721,25 +225,25 @@ export default function AdminPostsPage() {
         </h2>
 
         {loading ? (
-          <p className="text-gray-600">목록을 불러오는 중입니다...</p>
+          <p className="text-[#eeeeee]">목록을 불러오는 중입니다...</p>
         ) : error ? (
-          <p className="text-red-500">
+          <p className="text-red-400">
             데이터를 불러오는 중 오류가 발생했습니다: {error}
           </p>
         ) : posts.length === 0 ? (
-          <p className="text-gray-600">등록된 게시글이 없습니다.</p>
+          <p className="text-[#eeeeee]">등록된 게시글이 없습니다.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full text-xs">
-            <thead className="bg-gray-50">
-  <tr>
-    <th className="border-b px-2 py-1 text-left">제목</th>
-    <th className="border-b px-2 py-1 text-left">레이블</th>
-    <th className="w-24 border-b px-2 py-1 text-center">작성일</th>
-    <th className="w-24 border-b px-2 py-1 text-center">관리</th>
-  </tr>
-</thead>
-
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="border-b px-2 py-1 text-left">상태</th>
+                  <th className="border-b px-2 py-1 text-left">제목</th>
+                  <th className="border-b px-2 py-1 text-left">레이블</th>
+                  <th className="w-24 border-b px-2 py-1 text-center">작성일</th>
+                  <th className="w-24 border-b px-2 py-1 text-center">관리</th>
+                </tr>
+              </thead>
               <tbody>
                 {posts.map((p) => (
                   <tr key={p.id} className="hover:bg-gray-50">
@@ -772,13 +276,12 @@ export default function AdminPostsPage() {
                         : ''}
                     </td>
                     <td className="border-b px-2 py-1 text-center">
-                      <button
-                        type="button"
-                        onClick={() => startEdit(p)}
+                      <Link
+                        href={`/admin/posts/edit?id=${p.id}${currentBoardId ? `&board=${currentBoardId}` : ''}`}
                         className="mr-2 text-[11px] text-blue-600 hover:underline"
                       >
                         수정
-                      </button>
+                      </Link>
                       <button
                         type="button"
                         onClick={() => handleDelete(p.id)}

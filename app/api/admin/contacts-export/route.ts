@@ -26,17 +26,34 @@ export async function GET() {
 
   // 2) CSV 헤더 정의
   const header = [
-    'created_at',
-    'category',
-    'company',
-    'name',
-    'phone',
-    'email',
-    'message',
-    'status',
+    '생성일시',
+    '유형',
+    '회사명',
+    '담당자',
+    '연락처',
+    '이메일',
+    '문의 내용',
+    '상태',
   ]
 
-  // 3) CSV 각 셀을 안전하게 감싸는 함수
+  // 3) 날짜 포맷팅 함수
+  const formatDateTime = (dateString: string | null) => {
+    if (!dateString) return ''
+    const date = new Date(dateString)
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+    const hours = date.getHours()
+    const minutes = date.getMinutes()
+    const seconds = date.getSeconds()
+    
+    const ampm = hours >= 12 ? 'pm' : 'am'
+    const displayHours = hours % 12 || 12
+    
+    return `${year}. ${month}. ${day}. ${ampm} ${displayHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+  }
+
+  // 4) CSV 각 셀을 안전하게 감싸는 함수
   const escapeCell = (value: unknown) => {
     if (value === null || value === undefined) return ''
     const str = String(value)
@@ -47,22 +64,25 @@ export async function GET() {
     return str
   }
 
-  // 4) rows -> CSV 문자열 변환
+  // 5) rows -> CSV 문자열 변환
   const lines: string[] = []
   // 헤더
   lines.push(header.join(','))
 
   // 데이터
   for (const row of rows as any[]) {
+    const categoryLabel = row.category === 'wind' ? '풍력' : row.category === 'equipment' ? '장비' : ''
+    const statusLabel = row.status === 'new' ? '신규' : row.status === 'in_progress' ? '처리중' : row.status === 'done' ? '완료' : ''
+    
     const line = [
-      row.created_at ?? '',
-      row.category ?? '',
+      formatDateTime(row.created_at),
+      categoryLabel,
       row.company ?? '',
       row.name ?? '',
       row.phone ?? '',
       row.email ?? '',
       row.message ?? '',
-      row.status ?? '',
+      statusLabel,
     ].map(escapeCell).join(',')
     lines.push(line)
   }

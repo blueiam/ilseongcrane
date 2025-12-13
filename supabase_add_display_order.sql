@@ -20,3 +20,6 @@ WHERE table_name = 'equipments' AND column_name = 'display_order';
 
 
 
+
+
+

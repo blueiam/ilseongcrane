@@ -51,8 +51,7 @@ const businessFields = [
       '대형 크레인 투입 및 특수 리프팅 솔루션 제공',
       '중·대형 구조물 설치/해체 작업 수행'
     ],
-    icon: <BridgeIcon className="w-28 h-28" />,
-    bgImage: '/images/business/soc.jpeg',
+    icon: <BridgeIcon className="w-[90px] h-[90px]" />,
   },
   {
     id: 2,
@@ -64,7 +63,7 @@ const businessFields = [
       '터빈, 압축기, 보일러 등 중량물 Hoisting & Rigging',
       '정비(Shut Down) 기간 리프팅 작업 지원'
     ],
-    icon: <Factory className="w-28 h-28" />,
+    icon: <Factory className="w-[90px] h-[90px]" />,
   },
   {
     id: 3,
@@ -76,7 +75,7 @@ const businessFields = [
       '타워·나셀·블레이드 등 고중량물 설치(Installation)',
       '해상 풍력의 T&I 컨소시엄 운용 및 프로젝트 수행'
     ],
-    icon: <Wind className="w-28 h-28" />,
+    icon: <Wind className="w-[90px] h-[90px]" />,
   },
   {
     id: 4,
@@ -88,7 +87,7 @@ const businessFields = [
       'FPSO, 해양플랫폼, Subsea 구조물 설치 지원',
       '도크 투입 및 진수 지원 리프팅'
     ],
-    icon: <Ship className="w-28 h-28" />,
+    icon: <Ship className="w-[90px] h-[90px]" />,
   },
   {
     id: 5,
@@ -100,7 +99,7 @@ const businessFields = [
       '컨테이너 및 초중량물 하역 서비스',
       'SPMT 연계한 Heavy Cargo Handling 및 국내외 이동'
     ],
-    icon: <Container className="w-28 h-28" />,
+    icon: <Container className="w-[90px] h-[90px]" />,
   },
   {
     id: 6,
@@ -112,7 +111,7 @@ const businessFields = [
       '교량 거더 리프팅, 터널 TBM 반입 및 조립',
       '긴급 복구 및 재난 대응 리프팅 긴급 지원'
     ],
-    icon: <SirenIcon className="w-28 h-28" />,
+    icon: <SirenIcon className="w-[90px] h-[90px]" />,
   },
   {
     id: 7,
@@ -124,7 +123,7 @@ const businessFields = [
       '로드서베이(Road Survey) 및 운송성 검토',
       '풍력 T&I 기술 컨설팅 및 PM/안전관리 체계 구축'
     ],
-    icon: <DraftingCompass className="w-28 h-28" />,
+    icon: <DraftingCompass className="w-[90px] h-[90px]" />,
   },
 ];
 
@@ -483,29 +482,16 @@ export default function LandingPage() {
                   >
                     <Link href="/business/areas">
                       <div className="group relative w-full h-[450px] rounded-2xl overflow-hidden border border-gray-800 hover:border-blue-500 transition-all duration-300 bg-[#161616] cursor-pointer">
-                      {/* 배경 이미지 (있는 경우) */}
-                      {field.bgImage && (
-                        <div className="absolute inset-0 z-0">
-                          <Image
-                            src={field.bgImage}
-                            alt={field.title}
-                            fill
-                            className="object-cover opacity-30 group-hover:opacity-50 transition-opacity duration-300"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-br from-[#2a2a2a] to-[#121212] opacity-70" />
-                        </div>
-                      )}
-                      {!field.bgImage && (
-                        <div className="absolute inset-0 bg-[#161616]">
-                          <div className="w-full h-full bg-gradient-to-br from-[#2a2a2a] to-[#121212] opacity-50" />
-                        </div>
-                      )}
+                      {/* 배경 */}
+                      <div className="absolute inset-0 bg-[#161616]">
+                        <div className="w-full h-full bg-gradient-to-br from-[#2a2a2a] to-[#121212] opacity-50" />
+                      </div>
                       <div className="absolute top-8 left-8 right-8 z-10">
                         <p className="text-[11px] text-blue-400 font-bold uppercase tracking-widest border border-blue-500/30 px-3 py-1.5 rounded bg-[#1a1a1a]/80 backdrop-blur-sm inline-block">
                           {field.eng}
                         </p>
                       </div>
-                      <div className="absolute top-[calc(50%-60px)] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none text-blue-400">
+                      <div className="absolute top-[calc(25%+20px)] md:top-[calc(50%-60px)] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none text-blue-400">
                         {field.icon ? (
                           <div className="opacity-100 scale-100 group-hover:scale-110 transition-transform duration-300 ease-out drop-shadow-2xl">
                             {field.icon}

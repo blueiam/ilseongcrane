@@ -247,10 +247,14 @@ export default function ContactPage() {
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       rows={5}
+                      maxLength={2000}
                       className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-gray-500 focus:border-blue-500 focus:bg-white/10 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-all resize-none"
                       placeholder="장비명, 현장 위치, 일정 등 문의 내용을 자세히 적어주세요."
                       required
                     />
+                    <div className="mt-1 text-right text-xs text-gray-400">
+                      {message.length} / 2000자
+                    </div>
                   </div>
 
                   {/* reCAPTCHA 영역 */}

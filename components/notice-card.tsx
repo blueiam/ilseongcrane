@@ -34,19 +34,12 @@ export default function NoticeCard({ post, basePath = '/archive/notice' }: Notic
         
         {/* 1. 카드 이미지 영역 (400px x 400px 비율 유지 & Radius 8px) */}
         <div className="relative w-full aspect-square overflow-hidden rounded-[8px] bg-gray-100">
-          {post.thumbnail_url ? (
-            <Image
-              src={post.thumbnail_url}
-              alt={post.title}
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-          ) : (
-            // 이미지가 없을 때 보여줄 회색 박스
-            <div className="flex items-center justify-center h-full text-gray-400">
-              <span className="text-sm">No Image</span>
-            </div>
-          )}
+          <Image
+            src={post.thumbnail_url || '/images/Posts/no_image.jpg'}
+            alt={post.title}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+          />
         </div>
         {/* 2. 텍스트 영역 (Stroke 없음) */}
         <div className="flex flex-col items-start gap-2">
