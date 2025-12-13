@@ -54,3 +54,7 @@ WHERE tablename = 'equipments';
 
 
 
+
+
+
+
