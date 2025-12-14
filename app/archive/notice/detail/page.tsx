@@ -224,30 +224,37 @@ export default function NoticeDetailPage() {
           />
         </section>
 
-        {/* 이미지 – 본문 아래 갤러리 (미노출) */}
-        {/* {images.length > 0 && (
+        {/* 이미지 갤러리 */}
+        {images.length > 0 && (
           <section className="mt-6 border-t pt-4">
-            <div className="grid gap-3 md:grid-cols-3">
+            <h3 className="mb-3 text-sm font-semibold text-gray-800">
+              첨부 이미지 ({images.length}개)
+            </h3>
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {images.map((img) => {
                 const url = getFileUrl(img.file_url)
                 return (
                   <button
                     key={img.id}
                     onClick={() => setSelectedImage(url)}
-                    className="group relative block w-full overflow-hidden rounded-lg bg-gray-50"
+                    className="group relative block w-full overflow-hidden rounded-lg bg-gray-50 aspect-video"
                   >
                     <img
                       src={url}
                       alt={img.file_name || 'image'}
-                      className="w-full h-auto object-contain transition group-hover:scale-105"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      onError={(e) => {
+                        console.error('이미지 로드 실패:', url)
+                        e.currentTarget.src = '/images/Posts/no_image.jpg'
+                      }}
                     />
-                    <div className="absolute inset-0 bg-black/0 transition group-hover:bg-black/10" />
+                    <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
                   </button>
                 )
               })}
             </div>
           </section>
-        )} */}
+        )}
 
         {/* PDF 첨부 */}
         {pdfs.length > 0 && (
