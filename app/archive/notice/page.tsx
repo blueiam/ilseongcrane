@@ -134,12 +134,12 @@ export default function NoticeListPage() {
                 const thumb = thumbMap[post.id] || null
                 const category = post.label || '공지' // 기본값 '공지'
                 
-                // 날짜 포맷팅
-                const dateStr = new Date(post.created_at).toLocaleDateString('ko-KR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })
+                // 날짜 포맷팅: "2025. 12.05." 형식
+                const dateObj = new Date(post.created_at)
+                const year = dateObj.getFullYear()
+                const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+                const day = String(dateObj.getDate()).padStart(2, '0')
+                const dateStr = `${year}. ${month}.${day}.`
 
                 return (
                   <NoticeCard
@@ -148,6 +148,7 @@ export default function NoticeListPage() {
                     label={category}
                     date={dateStr}
                     imageUrl={thumb || undefined}
+                    href={`/archive/notice/detail?id=${post.id}`}
                   />
                 )
               })}
