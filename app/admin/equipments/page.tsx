@@ -175,11 +175,18 @@ export default function AdminEquipmentsPage() {
     if (form.max_lifting_moment.trim()) {
       basePayload.max_lifting_moment = form.max_lifting_moment.trim()
     }
+    // Dimensions와 Technical Data 이미지는 선택사항이며 삭제 가능
     if (form.dimensions_image_url.trim()) {
       basePayload.dimensions_image_url = form.dimensions_image_url.trim()
+    } else if (editingId) {
+      // 수정 모드에서 빈 값이면 null로 설정하여 삭제
+      basePayload.dimensions_image_url = null
     }
     if (form.technical_data_image_url.trim()) {
       basePayload.technical_data_image_url = form.technical_data_image_url.trim()
+    } else if (editingId) {
+      // 수정 모드에서 빈 값이면 null로 설정하여 삭제
+      basePayload.technical_data_image_url = null
     }
 
     // display_order 추가 (숫자 값이므로 trim 불필요)
@@ -514,6 +521,22 @@ export default function AdminEquipmentsPage() {
     }
   }
 
+  // Dimensions 이미지 삭제 핸들러
+  const handleDimensionsDelete = () => {
+    if (!confirm('치수 도면 이미지를 삭제하시겠습니까?')) return
+    setForm((prev) => ({ ...prev, dimensions_image_url: '' }))
+    setDimensionsFileName('')
+    alert('치수 도면 이미지가 삭제되었습니다.')
+  }
+
+  // Technical Data 이미지 삭제 핸들러
+  const handleTechnicalDelete = () => {
+    if (!confirm('기술 데이터 차트 이미지를 삭제하시겠습니까?')) return
+    setForm((prev) => ({ ...prev, technical_data_image_url: '' }))
+    setTechnicalFileName('')
+    alert('기술 데이터 차트 이미지가 삭제되었습니다.')
+  }
+
   // Gallery 이미지 로드
   const loadGalleryImages = async (equipmentId: string) => {
     try {
@@ -747,6 +770,7 @@ export default function AdminEquipmentsPage() {
                 />
               </div>
             )}
+            <hr className="my-4 border-t border-gray-600" />
           </div>
 
           {/* 상세 페이지용 메인 이미지 업로드 */}
@@ -792,6 +816,7 @@ export default function AdminEquipmentsPage() {
                 />
               </div>
             )}
+            <hr className="my-4 border-t border-gray-600" />
           </div>
 
           {/* 제원표 PDF 업로드 */}
@@ -825,6 +850,7 @@ export default function AdminEquipmentsPage() {
                 </span>
               )}
             </div>
+            <hr className="my-4 border-t border-gray-600" />
           </div>
 
           {/* PDF 브로슈어 표지 이미지 */}
@@ -870,6 +896,7 @@ export default function AdminEquipmentsPage() {
                 />
               </div>
             )}
+            <hr className="my-4 border-t border-gray-600" />
           </div>
 
           {/* 구분선 */}
@@ -957,11 +984,30 @@ export default function AdminEquipmentsPage() {
                 <span className="text-sm text-blue-400">업로드 중...</span>
               )}
               {dimensionsFileName && !uploadingDimensions && (
-                <span className="text-sm text-green-400">
-                  ✓ {dimensionsFileName}
-                </span>
+                <>
+                  <span className="text-sm text-green-400">
+                    ✓ {dimensionsFileName}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleDimensionsDelete}
+                    className="text-sm text-red-400 hover:text-red-300 hover:underline"
+                  >
+                    삭제
+                  </button>
+                </>
               )}
             </div>
+            {form.dimensions_image_url && (
+              <div className="mt-2">
+                <img
+                  src={form.dimensions_image_url}
+                  alt="치수 도면 미리보기"
+                  className="h-32 w-auto rounded border object-contain"
+                />
+              </div>
+            )}
+            <hr className="my-4 border-t border-gray-600" />
           </div>
 
           {/* Technical Data 이미지 업로드 */}
@@ -993,11 +1039,30 @@ export default function AdminEquipmentsPage() {
                 <span className="text-sm text-blue-400">업로드 중...</span>
               )}
               {technicalFileName && !uploadingTechnical && (
-                <span className="text-sm text-green-400">
-                  ✓ {technicalFileName}
-                </span>
+                <>
+                  <span className="text-sm text-green-400">
+                    ✓ {technicalFileName}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleTechnicalDelete}
+                    className="text-sm text-red-400 hover:text-red-300 hover:underline"
+                  >
+                    삭제
+                  </button>
+                </>
               )}
             </div>
+            {form.technical_data_image_url && (
+              <div className="mt-2">
+                <img
+                  src={form.technical_data_image_url}
+                  alt="기술 데이터 차트 미리보기"
+                  className="h-32 w-auto rounded border object-contain"
+                />
+              </div>
+            )}
+            <hr className="my-4 border-t border-gray-600" />
           </div>
 
           {/* Photo Gallery 이미지 업로드 */}

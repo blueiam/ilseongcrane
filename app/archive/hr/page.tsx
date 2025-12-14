@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react'
 import { ArchiveHero } from '@/app/_components/ArchiveHero'
 import { createClient } from '@supabase/supabase-js'
-import NoticeCard from '@/components/notice-card'
+import { NoticeCard } from '@/app/_components/NoticeCard'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -134,18 +134,21 @@ export default function ArchiveHrListPage() {
               {posts.map((post) => {
                 const thumb = thumbMap[post.id] || null
                 const category = post.label || '인사자료' // 기본값
+                
+                // 날짜 포맷팅
+                const dateStr = new Date(post.created_at).toLocaleDateString('ko-KR', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })
 
                 return (
                   <NoticeCard
                     key={post.id}
-                    basePath="/archive/hr"
-                    post={{
-                      id: post.id,
-                      title: post.title,
-                      category: category,
-                      created_at: post.created_at,
-                      thumbnail_url: thumb || undefined,
-                    }}
+                    title={post.title}
+                    label={category}
+                    date={dateStr}
+                    imageUrl={thumb || undefined}
                   />
                 )
               })}

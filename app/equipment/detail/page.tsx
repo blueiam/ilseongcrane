@@ -468,67 +468,63 @@ export default function EquipmentDetailPage() {
         {/* 6. Photo Gallery Section */}
         {images.length > 0 && (
           <section className="mb-16 bg-white px-8 py-8">
-            <h2 className="mb-6 text-2xl font-bold text-[#003978]">
+            <h2 className="mb-8 text-3xl font-bold text-[#003978]">
               Photo Gallery
             </h2>
-            <div className="grid gap-4 md:grid-cols-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {images.map((img, index) => {
                 const url = getImageUrl(img.file_path)
-                // 첫 번째 이미지는 왼쪽에 큰 사이즈, 나머지는 오른쪽에 작은 사이즈
-                if (index === 0) {
-                  return (
-                    <div
-                      key={img.id}
-                      onClick={() => setFullscreenImage(url)}
-                      className="group relative col-span-1 row-span-2 cursor-pointer overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:shadow-lg"
-                    >
-                      <div className="relative h-[600px] w-full">
-                        <Image
-                          src={url}
-                          alt={`${equipment.model_name || equipment.name || 'Equipment'} - 작업 사진 ${index + 1}`}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
+                return (
+                  <div
+                    key={img.id}
+                    onClick={() => setFullscreenImage(url)}
+                    className="group relative cursor-pointer overflow-hidden rounded-xl bg-gray-100 shadow-md transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 animate-fade-in-up-gallery"
+                    style={{
+                      animationDelay: `${index * 0.1}s`,
+                    }}
+                  >
+                    {/* 이미지 컨테이너 */}
+                    <div className="relative aspect-[4/3] w-full overflow-hidden">
+                      <Image
+                        src={url}
+                        alt={`${equipment.model_name || equipment.name || 'Equipment'} - 작업 사진 ${index + 1}`}
+                        fill
+                        className="object-cover transition-all duration-700 group-hover:scale-110"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      />
+                      
+                      {/* 호버 오버레이 */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                      
+                      {/* 확대 아이콘 */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-all duration-300 group-hover:opacity-100">
+                        <div className="rounded-full bg-white/20 p-4 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2.5}
+                            stroke="currentColor"
+                            className="h-8 w-8 text-white"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                      
+                      {/* 하단 그라데이션 텍스트 영역 */}
+                      <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-full transition-transform duration-300 group-hover:translate-y-0">
+                        <p className="text-white font-medium text-sm drop-shadow-lg">
+                          {equipment.model_name || equipment.name || 'Equipment'}
+                        </p>
                       </div>
                     </div>
-                  )
-                } else if (index <= 4) {
-                  // 2-5번째 이미지는 오른쪽에 2x2 그리드
-                  return (
-                    <div
-                      key={img.id}
-                      onClick={() => setFullscreenImage(url)}
-                      className="group relative col-span-1 cursor-pointer overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:shadow-lg"
-                    >
-                      <div className="relative h-[290px] w-full">
-                        <Image
-                          src={url}
-                          alt={`${equipment.model_name || equipment.name || 'Equipment'} - 작업 사진 ${index + 1}`}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                      </div>
-                    </div>
-                  )
-                } else {
-                  // 6번째 이후 이미지는 마지막에 큰 사이즈
-                  return (
-                    <div
-                      key={img.id}
-                      onClick={() => setFullscreenImage(url)}
-                      className="group relative col-span-1 row-span-2 cursor-pointer overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-300 hover:shadow-lg"
-                    >
-                      <div className="relative h-[600px] w-full">
-                        <Image
-                          src={url}
-                          alt={`${equipment.model_name || equipment.name || 'Equipment'} - 작업 사진 ${index + 1}`}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                      </div>
-                    </div>
-                  )
-                }
+                  </div>
+                )
               })}
             </div>
           </section>
