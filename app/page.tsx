@@ -4,6 +4,12 @@ import { useRef, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight, ChevronLeft, ChevronRight, Factory, Wind, Ship, Container, AlertTriangle, DraftingCompass } from 'lucide-react';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 // 교량 아이콘 (커스텀 SVG)
 const BridgeIcon = ({ className }: { className?: string }) => (
@@ -31,13 +37,16 @@ const SirenIcon = ({ className }: { className?: string }) => (
 // 데이터 정의
 // ----------------------------------------------------------------------
 
-// 1. 대표 장비 데이터
-const equipmentList = [
-  { id: '1', name: 'SCE8000A', category: 'Crawler Crane', manufacturer: 'SANY', tonnage: '800t', image: '/images/landing/sec8000a.jpg' },
-  { id: '2', name: 'SCE2500TB', category: 'Crawler Crane', manufacturer: 'SANY', tonnage: '250t', image: '/images/landing/sce2500tb_tn.jpg' },
-  { id: '3', name: 'SCE4000A-1', category: 'Crawler Crane', manufacturer: 'SANY', tonnage: '400t', image: '/images/landing/sce4000a_1.png' },
-  { id: '4', name: 'SCX2500', category: 'Crawler Crane', manufacturer: 'HITACHI SUMITOMO', tonnage: '250t', image: '/images/landing/SCX2500.png' },
+// 대표 장비 기본 데이터 (항상 표시될 4개 장비)
+const defaultEquipmentList: EquipmentItem[] = [
+  { id: 'de761616-8fcb-4cc1-acc3-e14cb31e6ac9', name: 'SCE8000A', category: 'Crawler Crane', manufacturer: 'SANY', tonnage: '800T', image: '/images/landing/sec8000a.jpg' },
+  { id: '2', name: 'CC2800-1', category: 'Crawler Crane', manufacturer: 'TEREX DEMAG', tonnage: '600T', image: '/images/equipments/Thumbnail/400x400_0015_terex-demag-cc2800-1-400px.png' },
+  { id: '3', name: 'FCC400', category: 'Crawler Crane', manufacturer: 'FUWA', tonnage: '400T', image: '/images/equipments/Thumbnail/400x400_0014_fuwa-fcc400-400px.png' },
+  { id: '4', name: 'SCE2500TB', category: 'Crawler Crane', manufacturer: 'SANY', tonnage: '250T', image: '/images/landing/sce2500tb_tn.jpg' },
 ];
+
+// 대표 장비 모델명 목록 (데이터베이스에서 ID를 가져올 장비들)
+const featuredEquipmentModels = ['SCE8000A', 'CC2800-1', 'FCC400', 'SCE2500TB'];
 
 // 2. 사업 영역 데이터
 const businessFields = [
@@ -151,16 +160,67 @@ const allCustomers = [
   'logo_0019_15-ollbank.png'
 ];
 
+type EquipmentItem = {
+  id: string;
+  name: string;
+  category: string;
+  manufacturer: string | null;
+  tonnage: string | null;
+  image: string;
+};
+
 export default function LandingPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [itemsPerSlide, setItemsPerSlide] = useState(3);
+  const [equipmentList, setEquipmentList] = useState<EquipmentItem[]>([]);
   
   // 터치 제스처 상태 관리
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
+
+  // 대표 장비 데이터 가져오기 (ID만 업데이트, 기본 정보는 항상 표시)
+  useEffect(() => {
+    const fetchFeaturedEquipments = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('equipments')
+          .select('id, model_name, category, manufacturer, tonnage')
+          .in('model_name', featuredEquipmentModels);
+
+        if (error) {
+          console.error('Error fetching equipments:', error);
+          // 에러가 발생해도 기본 목록 사용
+          setEquipmentList(defaultEquipmentList);
+          return;
+        }
+
+        // 기본 목록을 기반으로 ID만 업데이트
+        const updatedEquipments: EquipmentItem[] = defaultEquipmentList.map((defaultEq) => {
+          const dbEquipment = data?.find((eq) => eq.model_name === defaultEq.name);
+          // 데이터베이스에서 찾은 경우 ID만 업데이트, 나머지는 기본값 사용
+          return {
+            ...defaultEq,
+            id: dbEquipment?.id || defaultEq.id,
+            // 데이터베이스 정보가 있으면 업데이트 (선택적)
+            category: dbEquipment?.category || defaultEq.category,
+            manufacturer: dbEquipment?.manufacturer || defaultEq.manufacturer,
+            tonnage: dbEquipment?.tonnage || defaultEq.tonnage,
+          };
+        });
+
+        setEquipmentList(updatedEquipments);
+      } catch (err) {
+        console.error('Error fetching featured equipments:', err);
+        // 에러가 발생해도 기본 목록 사용
+        setEquipmentList(defaultEquipmentList);
+      }
+    };
+
+    fetchFeaturedEquipments();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -360,10 +420,10 @@ export default function LandingPage() {
                 더 강력해진 인양 능력과 정밀한 제어 시스템을 경험해보세요.
               </p>
               <div>
-                <button className="px-8 py-4 bg-white text-black hover:bg-gray-200 rounded-full font-bold transition-all flex items-center gap-2 group">
+                <Link href="/equipment" className="px-8 py-4 bg-white text-black hover:bg-gray-200 rounded-full font-bold transition-all flex items-center gap-2 group">
                   장비 자세히 보기
                   <span className="group-hover:translate-x-1 transition-transform">→</span>
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -393,9 +453,9 @@ export default function LandingPage() {
                 href={`/equipment/detail?id=${item.id}`}
                 className="group block overflow-hidden rounded-[30px] shadow-lg transition-all duration-300 hover:shadow-2xl hover:shadow-blue-900/20 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-offset-2 border border-gray-800"
               >
-                <div className="relative w-full aspect-[4/3] overflow-hidden bg-white">
+                <div className="relative h-[280px] overflow-hidden bg-white">
                   {item.image ? (
-                    <img src={item.image} alt={item.name} className="h-full w-full object-contain object-center transition-transform duration-300 group-hover:scale-105" />
+                    <img src={item.image} alt={item.name} className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105" />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center text-gray-300"><span className="text-sm">No Image</span></div>
                   )}
