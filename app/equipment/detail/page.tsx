@@ -170,28 +170,15 @@ export default function EquipmentDetailPage() {
       {/* 상단 여백 (헤더 높이만큼) */}
       <div className="h-20" />
 
-      <main className="container mx-auto px-4 pt-6 max-w-[1024px]">
+      <main className="container mx-auto px-4 max-w-[1024px]" style={{ paddingTop: '0px' }}>
         {/* "보유장비 목록으로" 버튼 */}
         <div className="mb-6">
           <Link
             href="/equipment"
-            className="inline-flex items-center text-gray-500 hover:text-blue-600 transition-colors"
+            className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition-all hover:border-gray-400 hover:bg-gray-50"
           >
             {/* 뒤로가기 화살표 아이콘 */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={2}
-              stroke="currentColor"
-              className="w-4 h-4 mr-1"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
-              />
-            </svg>
+            <ArrowLeft className="w-4 h-4" />
             보유장비 목록으로
           </Link>
         </div>
