@@ -1,7 +1,7 @@
 // app/equipment/detail/page.tsx
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@supabase/supabase-js'
@@ -38,7 +38,7 @@ type EquipmentImage = {
   file_path: string
 }
 
-export default function EquipmentDetailPage() {
+function EquipmentDetailContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const id = searchParams.get('id')
@@ -527,5 +527,17 @@ export default function EquipmentDetailPage() {
         )}
       </main>
     </div>
+  )
+}
+
+export default function EquipmentDetailPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <p className="text-gray-600">로딩 중...</p>
+      </div>
+    }>
+      <EquipmentDetailContent />
+    </Suspense>
   )
 }

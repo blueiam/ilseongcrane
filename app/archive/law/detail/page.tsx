@@ -1,7 +1,7 @@
 // web/app/archive/law/detail/page.tsx
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { PageShell } from '@/app/_components/PageShell'
 import { createClient } from '@supabase/supabase-js'
@@ -57,7 +57,7 @@ function toYouTubeEmbedUrl(url: string): string | null {
   }
 }
 
-export default function ArchiveLawDetailPage() {
+function ArchiveLawDetailContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const id = searchParams.get('id')
@@ -375,6 +375,20 @@ export default function ArchiveLawDetailPage() {
         </div>
       )}
     </PageShell>
+  )
+}
+
+export default function ArchiveLawDetailPage() {
+  return (
+    <Suspense fallback={
+      <PageShell title="관련법규" subtitle="로딩 중...">
+        <div className="flex items-center justify-center py-12">
+          <p className="text-gray-600">로딩 중...</p>
+        </div>
+      </PageShell>
+    }>
+      <ArchiveLawDetailContent />
+    </Suspense>
   )
 }
 

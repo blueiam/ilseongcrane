@@ -1,7 +1,7 @@
 // web/app/archive/general/detail/page.tsx
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { PageShell } from '@/app/_components/PageShell'
 import { createClient } from '@supabase/supabase-js'
@@ -46,7 +46,7 @@ function toYouTubeEmbedUrl(url: string): string | null {
   }
 }
 
-export default function ArchiveGeneralDetailPage() {
+function ArchiveGeneralDetailContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const id = searchParams.get('id')
@@ -290,5 +290,19 @@ export default function ArchiveGeneralDetailPage() {
         </button>
       </div>
     </PageShell>
+  )
+}
+
+export default function ArchiveGeneralDetailPage() {
+  return (
+    <Suspense fallback={
+      <PageShell title="일반자료실" subtitle="로딩 중...">
+        <div className="flex items-center justify-center py-12">
+          <p className="text-gray-600">로딩 중...</p>
+        </div>
+      </PageShell>
+    }>
+      <ArchiveGeneralDetailContent />
+    </Suspense>
   )
 }
