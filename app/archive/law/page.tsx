@@ -121,16 +121,27 @@ export default function ArchiveLawListPage() {
       <ArchiveHero title="관련법규" />
 
       {/* Main Content */}
-      <main className="min-h-screen bg-gray-50 px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30">
+        
+        {/* 배경 그리드 효과 */}
+        <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none" />
+        <div className="fixed inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none" />
+
+        <div className="container mx-auto px-4 md:px-6 relative z-10 py-24">
           {loading ? (
-            <p className="text-gray-600">자료를 불러오는 중입니다...</p>
+            <div className="flex h-64 items-center justify-center">
+              <p className="text-gray-400">자료를 불러오는 중입니다...</p>
+            </div>
           ) : error ? (
-            <p className="text-red-500">{error}</p>
+            <div className="flex h-64 items-center justify-center">
+              <p className="text-red-400">{error}</p>
+            </div>
           ) : posts.length === 0 ? (
-            <p className="text-gray-600">등록된 자료가 없습니다.</p>
+            <div className="flex h-64 items-center justify-center">
+              <p className="text-gray-400">등록된 자료가 없습니다.</p>
+            </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 max-w-[1400px] mx-auto">
               {posts.map((post) => {
                 const thumb = thumbMap[post.id] || null
                 const category = post.label || '관련법규' // 기본값

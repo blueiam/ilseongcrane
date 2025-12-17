@@ -60,3 +60,7 @@ WHERE tablename = 'equipments';
 
 
 
+
+
+
+

@@ -103,93 +103,98 @@ export default function EquipmentListPage() {
       <EquipmentHero />
 
       {/* Main Content */}
-      <main className="min-h-screen bg-gray-50 px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30">
+        
+        {/* 배경 그리드 효과 */}
+        <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none" />
+        <div className="fixed inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none" />
+
+        <div className="container mx-auto px-4 md:px-6 relative z-10 py-24">
           {/* 필터 영역 */}
-          <div className="mb-8 flex flex-col gap-4 rounded-xl bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-        {/* 카테고리 필터 */}
-        <div className="flex items-center gap-3">
-          <span className="hidden sm:inline text-sm font-medium text-gray-700">카테고리</span>
-          <div className="flex flex-wrap gap-2">
-            {CATEGORY_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => setCategory(opt.value)}
-                className={`rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-200 ${
-                  category === opt.value
-                    ? 'bg-black text-white shadow-sm'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        </div>
+          <div className="mb-8 flex flex-col gap-4 rounded-xl bg-[#151515] border border-white/10 p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+            {/* 카테고리 필터 */}
+            <div className="flex items-center gap-3">
+              <span className="hidden sm:inline text-sm font-medium text-gray-300">카테고리</span>
+              <div className="flex flex-wrap gap-2">
+                {CATEGORY_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setCategory(opt.value)}
+                    className={`rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-200 ${
+                      category === opt.value
+                        ? 'bg-blue-600 text-white shadow-sm border border-blue-500/30'
+                        : 'bg-[#1a1a1a] text-gray-300 hover:bg-[#222222] border border-white/10'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-        {/* 검색창 */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500">모델명 검색</span>
-          <input
-            type="text"
-            placeholder="예: SCE8000A"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            className="w-48 rounded-lg border border-gray-300 px-3 py-2 text-sm transition-all focus:border-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1"
-          />
-        </div>
-      </div>
-
-      {/* 로딩/에러/리스트 */}
-      {loading ? (
-        <div className="flex h-64 items-center justify-center">
-          <p className="text-gray-600">장비 데이터를 불러오는 중입니다...</p>
-        </div>
-      ) : error ? (
-        <div className="flex h-64 items-center justify-center">
-          <p className="text-red-500">
-            데이터를 불러오는 중 오류가 발생했습니다: {error}
-          </p>
-        </div>
-      ) : filteredEquipments.length === 0 ? (
-        <div className="flex h-64 items-center justify-center">
-          <div className="text-center">
-            <p className="text-gray-600">
-              {equipments.length === 0
-                ? '등록된 보유장비가 없습니다.'
-                : '조건에 맞는 장비가 없습니다. 필터 또는 검색어를 변경해 보세요.'}
-            </p>
-          </div>
-        </div>
-      ) : (
-        <>
-          <div className="mb-4 flex items-center justify-between">
-            <p className="text-sm text-gray-600">
-              전체 {equipments.length}대 중{' '}
-              <span className="font-semibold text-black">
-                {filteredEquipments.length}대
-              </span>{' '}
-              표시 중
-            </p>
-          </div>
-
-          {/* Equipment Grid */}
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredEquipments.map((item) => (
-              <EquipmentCard
-                key={item.id}
-                id={item.id}
-                name={item.model_name || item.name || ''}
-                category={item.category}
-                manufacturer={item.manufacturer}
-                tonnage={item.tonnage}
-                thumbnailUrl={item.thumbnail_url}
+            {/* 검색창 */}
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-400">모델명 검색</span>
+              <input
+                type="text"
+                placeholder="예: SCE8000A"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                className="w-48 rounded-lg border border-white/10 bg-[#1a1a1a] text-white px-3 py-2 text-sm transition-all focus:border-blue-500/50 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               />
-            ))}
+            </div>
           </div>
-        </>
-      )}
+
+          {/* 로딩/에러/리스트 */}
+          {loading ? (
+            <div className="flex h-64 items-center justify-center">
+              <p className="text-gray-400">장비 데이터를 불러오는 중입니다...</p>
+            </div>
+          ) : error ? (
+            <div className="flex h-64 items-center justify-center">
+              <p className="text-red-400">
+                데이터를 불러오는 중 오류가 발생했습니다: {error}
+              </p>
+            </div>
+          ) : filteredEquipments.length === 0 ? (
+            <div className="flex h-64 items-center justify-center">
+              <div className="text-center">
+                <p className="text-gray-400">
+                  {equipments.length === 0
+                    ? '등록된 보유장비가 없습니다.'
+                    : '조건에 맞는 장비가 없습니다. 필터 또는 검색어를 변경해 보세요.'}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-sm text-gray-400">
+                  전체 {equipments.length}대 중{' '}
+                  <span className="font-semibold text-white">
+                    {filteredEquipments.length}대
+                  </span>{' '}
+                  표시 중
+                </p>
+              </div>
+
+              {/* Equipment Grid */}
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-[1400px] mx-auto">
+                {filteredEquipments.map((item) => (
+                  <EquipmentCard
+                    key={item.id}
+                    id={item.id}
+                    name={item.model_name || item.name || ''}
+                    category={item.category}
+                    manufacturer={item.manufacturer}
+                    tonnage={item.tonnage}
+                    thumbnailUrl={item.thumbnail_url}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </main>
     </>

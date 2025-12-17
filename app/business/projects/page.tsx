@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import Image from 'next/image'
 import { X } from 'lucide-react'
 import BusinessCard from '@/components/business-card';
@@ -35,6 +35,27 @@ const CATEGORY_OPTIONS = [
 ] as const
 
 type CategoryValue = typeof CATEGORY_OPTIONS[number]['value']
+
+// ----------------------------------------------------------------------
+// 애니메이션 훅
+// ----------------------------------------------------------------------
+function useScrollAnimation() {
+  const [isVisible, setIsVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setIsVisible(true);
+      },
+      { threshold: 0.1 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => { if (ref.current) observer.unobserve(ref.current); };
+  }, []);
+
+  return { ref, isVisible };
+}
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
@@ -112,10 +133,15 @@ export default function ProjectsPage() {
       <ProjectsHero />
 
       {/* Main Content */}
-      <main className="min-h-screen bg-gray-50 px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl">
+      <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30">
+        
+        {/* 배경 그리드 효과 */}
+        <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none" />
+        <div className="fixed inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none" />
+
+        <div className="container mx-auto px-4 md:px-6 relative z-10 py-24">
           {/* 필터 영역 */}
-          <div className="mb-8 flex flex-col gap-4 rounded-xl bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+          <div className="mb-8 flex flex-col gap-4 rounded-xl bg-[#151515] border border-white/10 p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
             {/* 카테고리 필터 */}
             <div className="flex items-center gap-3">
               <div className="flex flex-wrap gap-2">
@@ -126,8 +152,8 @@ export default function ProjectsPage() {
                     onClick={() => setCategory(opt.value)}
                     className={`rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-200 ${
                       category === opt.value
-                        ? 'bg-black text-white shadow-sm'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-blue-600 text-white shadow-sm border border-blue-500/30'
+                        : 'bg-[#1a1a1a] text-gray-300 hover:bg-[#222222] border border-white/10'
                     }`}
                   >
                     {opt.label}
@@ -138,13 +164,13 @@ export default function ProjectsPage() {
 
             {/* 검색창 */}
             <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-500">제목 검색</span>
+              <span className="text-xs text-gray-400">제목 검색</span>
               <input
                 type="text"
                 placeholder="예: 영덕 호지마을 풍력 발전 현장"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
-                className="w-48 rounded-lg border border-gray-300 px-3 py-2 text-sm transition-all focus:border-black focus:outline-none focus:ring-2 focus:ring-black focus:ring-offset-1"
+                className="w-48 rounded-lg border border-white/10 bg-[#1a1a1a] text-white px-3 py-2 text-sm transition-all focus:border-blue-500/50 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
           </div>
@@ -152,18 +178,18 @@ export default function ProjectsPage() {
           {/* 로딩/에러/리스트 */}
           {loading ? (
             <div className="flex h-64 items-center justify-center">
-              <p className="text-gray-600">사업 실적 데이터를 불러오는 중입니다...</p>
+              <p className="text-gray-400">사업 실적 데이터를 불러오는 중입니다...</p>
             </div>
           ) : error ? (
             <div className="flex h-64 items-center justify-center">
-              <p className="text-red-500">
+              <p className="text-red-400">
                 데이터를 불러오는 중 오류가 발생했습니다: {error}
               </p>
             </div>
           ) : filteredProjects.length === 0 ? (
             <div className="flex h-64 items-center justify-center">
               <div className="text-center">
-                <p className="text-gray-600">
+                <p className="text-gray-400">
                   {projects.length === 0
                     ? '등록된 사업 실적이 없습니다.'
                     : '조건에 맞는 사업 실적이 없습니다. 필터 또는 검색어를 변경해 보세요.'}
@@ -173,27 +199,32 @@ export default function ProjectsPage() {
           ) : (
             <>
               <div className="mb-4 flex items-center justify-between">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-400">
                   전체 {projects.length}개 중{' '}
-                  <span className="font-semibold text-black">
+                  <span className="font-semibold text-white">
                     {filteredProjects.length}개
                   </span>{' '}
                   표시 중
                 </p>
               </div>
               <div className="pb-24">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-                  {filteredProjects.map((project) => (
-                    <BusinessCard
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center max-w-[1400px] mx-auto">
+                  {filteredProjects.map((project, index) => (
+                    <div
                       key={project.id}
-                      title={project.title}
-                      subtitle={project.subtitle || undefined}
-                      description={project.description}
-                      imageUrl={project.image_url || '/test1.jpg'}
-                      href={`/projects/${project.id}`}
-                      category={project.category}
-                      onImageClick={(imageUrl) => setSelectedImage(imageUrl)}
-                    />
+                      ref={index === 0 ? undefined : undefined}
+                      className="w-full"
+                    >
+                      <BusinessCard
+                        title={project.title}
+                        subtitle={project.subtitle || undefined}
+                        description={project.description}
+                        imageUrl={project.image_url || '/test1.jpg'}
+                        href={`/projects/${project.id}`}
+                        category={project.category}
+                        onImageClick={(imageUrl) => setSelectedImage(imageUrl)}
+                      />
+                    </div>
                   ))}
                 </div>
               </div>

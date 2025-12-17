@@ -120,6 +120,28 @@ export default function EquipmentDetailPage() {
     return data.publicUrl
   }
 
+  // PDF URL 처리 함수 (상대 경로를 전체 URL로 변환)
+  const getPdfUrl = (pdfUrl: string | null | undefined): string | null => {
+    if (!pdfUrl) return null
+    
+    // 이미 전체 URL인 경우 (http:// 또는 https://로 시작)
+    if (pdfUrl.startsWith('http://') || pdfUrl.startsWith('https://')) {
+      // URL 인코딩 처리 (특수문자 처리)
+      try {
+        return encodeURI(pdfUrl)
+      } catch {
+        return pdfUrl
+      }
+    }
+    
+    // 상대 경로인 경우 (파일명만 있거나 경로만 있는 경우)
+    // equipment-assets bucket에서 전체 URL 생성
+    const { data } = supabase.storage
+      .from('equipment-assets')
+      .getPublicUrl(pdfUrl)
+    return data.publicUrl
+  }
+
   // 로딩 상태
   if (loading) {
     return (
@@ -249,7 +271,7 @@ export default function EquipmentDetailPage() {
               {equipment.pdf_cover_url ? (
                 equipment.spec_pdf_url ? (
                   <a
-                    href={equipment.spec_pdf_url}
+                    href={getPdfUrl(equipment.spec_pdf_url) || '#'}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="group block"
@@ -284,29 +306,16 @@ export default function EquipmentDetailPage() {
                 </div>
               )}
 
-              {/* 다운로드 버튼 */}
-              {equipment.spec_pdf_url && (
+              {/* PDF 보기 버튼 */}
+              {equipment.spec_pdf_url && getPdfUrl(equipment.spec_pdf_url) && (
                 <a
-                  href={equipment.spec_pdf_url}
+                  href={getPdfUrl(equipment.spec_pdf_url) || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex w-full max-w-[216px] items-center justify-center gap-2 rounded-lg bg-black px-6 py-3 text-sm font-bold text-white transition-all duration-200 hover:bg-gray-900"
                 >
-                  <span>제원표 PDF 다운로드</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                    stroke="currentColor"
-                    className="w-4 h-4"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
-                    />
-                  </svg>
+                  <span>제원표 PDF 보기</span>
+                  <Download className="w-4 h-4" />
                 </a>
               )}
             </div>

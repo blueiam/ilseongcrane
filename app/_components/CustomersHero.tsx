@@ -19,22 +19,26 @@ export function CustomersHero() {
     <div className="relative h-[400px] w-full overflow-hidden">
       {/* Background Image */}
       <Image
-        src="/hero/crane_bg.jpg"
+        src="/hero/business.jpg"
         alt="Major Customers Background"
         fill
         className="object-cover object-[25%_center] md:object-center"
         priority
-        quality={80}
+        quality={95}
       />
 
+      {/* 어두운 오버레이 (텍스트 가독성 향상) */}
+      <div className="absolute inset-0 bg-black/40 z-10" />
+
       {/* Title Content with Animation */}
-      <div className="relative flex h-full items-center justify-center">
+      <div className="relative flex h-full items-center justify-center z-20">
         <h1
-          className={`text-5xl font-bold text-white transition-all duration-[2000ms] ease-out ${
+          className={`text-5xl font-bold transition-all duration-[2000ms] ease-out drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] ${
             isVisible
               ? 'scale-100 opacity-100'
               : 'scale-[2] opacity-0'
           }`}
+          style={{ color: '#FFFFFF', textShadow: '0 4px 12px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6)' }}
         >
           Major Customers
         </h1>
@@ -42,6 +46,10 @@ export function CustomersHero() {
     </div>
   )
 }
+
+
+
+
 
 
 
