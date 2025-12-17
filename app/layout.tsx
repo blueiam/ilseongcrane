@@ -14,6 +14,27 @@ const notoSansKR = Noto_Sans_KR({
 export const metadata: Metadata = {
   title: '일성크레인 - 대형 크레인 전문',
   description: '(주)일성크레인 안전을 최우선으로 생각합니다',
+  icons: {
+    icon: [
+      { url: '/images/favicon_io/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/images/favicon_io/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/images/favicon_io/favicon.ico' },
+    ],
+    apple: [
+      { url: '/images/favicon_io/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    other: [
+      {
+        rel: 'android-chrome-192x192',
+        url: '/android-chrome-192x192.png',
+      },
+      {
+        rel: 'android-chrome-512x512',
+        url: '/android-chrome-512x512.png',
+      },
+    ],
+  },
+  manifest: '/site.webmanifest',
   openGraph: {
     title: '일성크레인 - 대형 크레인 전문',
     description: '(주)일성크레인 안전을 최우선으로 생각합니다',
