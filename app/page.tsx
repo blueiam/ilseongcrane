@@ -316,22 +316,7 @@ export default function LandingPage() {
     setIsDragging(false);
   };
 
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    let timeoutId: NodeJS.Timeout;
-    const handleEnded = () => {
-      timeoutId = setTimeout(() => {
-        video.currentTime = 0; 
-        video.play().catch((e) => console.log("Playback failed", e)); 
-      }, 5000);
-    };
-    video.addEventListener('ended', handleEnded);
-    return () => {
-      video.removeEventListener('ended', handleEnded);
-      clearTimeout(timeoutId);
-    };
-  }, []);
+  // 비디오 무한반복 설정 (loop 속성으로 자동 처리되므로 별도 이벤트 핸들러 불필요)
 
   // Landing page에서 body 배경색을 투명하게 설정하여 헤더 뒤에 비디오만 보이도록
   // 목적: 이전에 발생했던 "헤더 뒤 흰색 띠" 문제를 해결하기 위한 코드입니다.
@@ -375,6 +360,7 @@ export default function LandingPage() {
           ref={videoRef}
           className="absolute top-0 left-0 w-full h-full object-cover"
           autoPlay
+          loop
           muted
           playsInline
         >

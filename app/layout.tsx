@@ -40,10 +40,10 @@ export const metadata: Metadata = {
     description: '안전을 최우선으로 생각합니다',
     images: [
       {
-        url: '/images/ilseong_logo.svg',
-        width: 488,
-        height: 252,
-        alt: '일성크레인 로고',
+        url: '/images/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: '일성크레인',
       },
     ],
     type: 'website',
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: '일성크레인 - 대형 크레인 전문',
     description: '(주)일성크레인 안전을 최우선으로 생각합니다',
-    images: ['/images/ilseong_logo.svg'],
+    images: ['/images/og-image.png'],
   },
 }
 
