@@ -103,9 +103,13 @@ export default function QSHEPage() {
           {/* 스크롤 유도 아이콘 */}
           <FadeInUp delay={600}>
             <div className="flex justify-center animate-bounce">
-              <svg className="w-6 h-6 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
+              <Image
+                src="/images/sustainability/mouse.svg"
+                alt="스크롤 유도"
+                width={31}
+                height={50}
+                className="opacity-50 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+              />
             </div>
           </FadeInUp>
         </div>

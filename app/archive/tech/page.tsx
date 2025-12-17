@@ -111,11 +111,11 @@ export default function ArchiveTechListPage() {
       <ArchiveHero title="기술자료실" />
 
       {/* Main Content */}
-      <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30">
+      <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30 relative z-10">
         
-        {/* 배경 그리드 효과 */}
-        <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none" />
-        <div className="fixed inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none" />
+        {/* 배경 그리드 효과 - main 컨텐츠 영역에만 적용 */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none" />
 
         <div className="container mx-auto px-4 md:px-6 relative z-10 py-24">
           {loading ? (

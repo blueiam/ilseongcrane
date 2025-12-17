@@ -16,7 +16,7 @@ export function ProjectsHero() {
   }, [])
 
   return (
-    <div className="relative h-[400px] w-full overflow-hidden">
+    <div className="relative h-[400px] w-full overflow-hidden z-30">
       {/* Background Image */}
       <Image
         src="/hero/business.jpg"
@@ -26,9 +26,6 @@ export function ProjectsHero() {
         priority
         quality={95}
       />
-
-      {/* 어두운 오버레이 (텍스트 가독성 향상) */}
-      <div className="absolute inset-0 bg-black/40 z-10" />
 
       {/* Title Content with Animation */}
       <div className="relative flex h-full items-center justify-center z-20">

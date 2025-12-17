@@ -165,7 +165,7 @@ export default function OrganizationPage() {
                     {/* Family Company (장비사업 아래) */}
                     <div>
                       <p className="text-xs text-gray-500 mb-3 uppercase tracking-wider font-bold">Family Company</p>
-                      <div className="flex flex-col gap-3">
+                      <div className="grid grid-cols-2 gap-3">
                         <OrgNode title="승원씨앤에스(주)" className="py-2 text-sm" type="family" />
                         <OrgNode title="범한건설중기(주)" className="py-2 text-sm" type="family" />
                       </div>

@@ -59,10 +59,10 @@ export default function NetworkPage() {
           </p>
         </div>
 
-        {/* 지도 영역 - 모바일에서 숨김 */}
-        <div className="hidden md:block w-full max-w-6xl mx-auto bg-[#222] rounded-3xl border border-gray-800 shadow-2xl overflow-hidden mb-16 py-12 md:py-20">
+        {/* 지도 영역 */}
+        <div className="w-full max-w-6xl mx-auto bg-[#222] rounded-3xl border border-gray-800 shadow-2xl overflow-hidden mb-16 py-6 md:py-12 lg:py-20">
           
-          <div className="relative w-full max-w-[700px] h-[700px] md:h-[900px] mx-auto">
+          <div className="relative w-full max-w-[700px] h-[400px] md:h-[600px] lg:h-[900px] mx-auto">
             
             <Image
               src="/images/about/map_dot.svg"
@@ -76,7 +76,7 @@ export default function NetworkPage() {
             {networks.map((site, index) => (
               <div 
                 key={site.id}
-                className="absolute w-8 h-8 flex items-center justify-center group z-10 hover:z-30 cursor-pointer"
+                className="absolute w-6 h-6 md:w-8 md:h-8 flex items-center justify-center group z-10 hover:z-30 cursor-pointer"
                 style={{ 
                   top: site.top, 
                   left: site.left,
@@ -91,7 +91,7 @@ export default function NetworkPage() {
                 />
                 
                 {/* Solid Dot */}
-                <div className={`relative w-4 h-4 rounded-full shadow-lg border-[2px] border-[#1a1a1a] transition-transform duration-300 group-hover:scale-125
+                <div className={`relative w-3 h-3 md:w-4 md:h-4 rounded-full shadow-lg border-[2px] border-[#1a1a1a] transition-transform duration-300 group-hover:scale-125
                   ${site.isMain 
                     ? 'bg-red-500 shadow-[0_0_15px_rgba(220,38,38,0.6)]' 
                     : 'bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]' 
@@ -100,7 +100,7 @@ export default function NetworkPage() {
 
                 {/* Tooltip */}
                 <div className={getTooltipClass(site.tooltipPos)}>
-                  <span className={`font-bold text-base tracking-wide
+                  <span className={`font-bold text-sm md:text-base tracking-wide
                     ${site.isMain ? 'text-red-400' : 'text-blue-400'}`}>
                     {site.name}
                   </span>
