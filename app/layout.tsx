@@ -36,8 +36,8 @@ export const metadata: Metadata = {
   },
   manifest: '/site.webmanifest',
   openGraph: {
-    title: '일성크레인 - 대형 크레인 전문',
-    description: '(주)일성크레인 안전을 최우선으로 생각합니다',
+    title: '(주)일성크레인',
+    description: '안전을 최우선으로 생각합니다',
     images: [
       {
         url: '/images/ilseong_logo.svg',
