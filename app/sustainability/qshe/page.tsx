@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { ShieldCheck, Award, Leaf, Quote, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, Award, Leaf, Quote, CheckCircle2, Download } from 'lucide-react';
 
 // ----------------------------------------------------------------------
 // 1. 애니메이션 훅
@@ -263,10 +263,24 @@ function ClosingSection() {
         </p>
       </div>
 
-      <p className="text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto break-keep">
+      <p className="text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto break-keep mb-12">
         일성크레인은 사람 중심의 안전, 고객 중심의 품질, 그리고 미래 중심의 환경경영으로
         지속가능한 산업 발전에 기여하는 리프팅 전문기업이 되겠습니다.
       </p>
+
+      {/* PDF 다운로드 버튼 */}
+      <div className="flex justify-center">
+        <a
+          href="/images/sustainability/pdf/QHSE.pdf"
+          target="_blank"
+          rel="noreferrer"
+          download="QHSE 통합 경영방침.pdf"
+          className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 text-base font-semibold text-white hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
+        >
+          <Download className="w-5 h-5" />
+          QHSE 통합 경영방침 다운로드
+        </a>
+      </div>
     </section>
   );
 }
