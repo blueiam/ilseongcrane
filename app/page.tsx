@@ -61,6 +61,7 @@ const businessFields = [
       '중·대형 구조물 설치/해체 작업 수행'
     ],
     icon: <BridgeIcon className="w-[90px] h-[90px]" />,
+    image: '/images/business/soc.jpeg',
   },
   {
     id: 2,
@@ -73,6 +74,7 @@ const businessFields = [
       '정비(Shut Down) 기간 리프팅 작업 지원'
     ],
     icon: <Factory className="w-[90px] h-[90px]" />,
+    image: '/images/business/01-plant.jpg',
   },
   {
     id: 3,
@@ -85,6 +87,7 @@ const businessFields = [
       '해상 풍력의 T&I 컨소시엄 운용 및 프로젝트 수행'
     ],
     icon: <Wind className="w-[90px] h-[90px]" />,
+    image: '/images/business/wind_energy.jpeg',
   },
   {
     id: 4,
@@ -97,6 +100,7 @@ const businessFields = [
       '도크 투입 및 진수 지원 리프팅'
     ],
     icon: <Ship className="w-[90px] h-[90px]" />,
+    image: '/images/business/Shipbuilding.jpg',
   },
   {
     id: 5,
@@ -109,6 +113,7 @@ const businessFields = [
       'SPMT 연계한 Heavy Cargo Handling 및 국내외 이동'
     ],
     icon: <Container className="w-[90px] h-[90px]" />,
+    image: '/images/business/port_logistics.jpg',
   },
   {
     id: 6,
@@ -121,6 +126,7 @@ const businessFields = [
       '긴급 복구 및 재난 대응 리프팅 긴급 지원'
     ],
     icon: <SirenIcon className="w-[90px] h-[90px]" />,
+    image: '/images/business/special.jpg',
   },
   {
     id: 7,
@@ -133,6 +139,7 @@ const businessFields = [
       '풍력 T&I 기술 컨설팅 및 PM/안전관리 체계 구축'
     ],
     icon: <DraftingCompass className="w-[90px] h-[90px]" />,
+    image: '/images/business/engineering.jpg',
   },
 ];
 
@@ -528,8 +535,23 @@ export default function LandingPage() {
                   >
                     <Link href="/business/areas">
                       <div className="group relative w-full h-[450px] rounded-2xl overflow-hidden border border-gray-800 hover:border-blue-500 transition-all duration-300 bg-[#161616] cursor-pointer">
-                      {/* 배경 */}
-                      <div className="absolute inset-0 bg-[#161616]">
+                      {/* 배경 이미지 (호버 시 표시) */}
+                      {field.image && (
+                        <>
+                          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0">
+                            <Image
+                              src={field.image}
+                              alt={field.title}
+                              fill
+                              className="object-cover group-hover:scale-110 transition-transform duration-700"
+                            />
+                          </div>
+                          {/* 이미지 오버레이 (호버 시 어두워짐) */}
+                          <div className="absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-all duration-500 z-0" />
+                        </>
+                      )}
+                      {/* 기본 배경 (호버 전) */}
+                      <div className="absolute inset-0 bg-[#161616] group-hover:opacity-0 transition-opacity duration-500 z-0">
                         <div className="w-full h-full bg-gradient-to-br from-[#2a2a2a] to-[#121212] opacity-50" />
                       </div>
                       <div className="absolute top-8 left-8 right-8 z-10">
@@ -537,7 +559,7 @@ export default function LandingPage() {
                           {field.eng}
                         </p>
                       </div>
-                      <div className="absolute top-[calc(25%+20px)] md:top-[calc(50%-60px)] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none text-blue-400">
+                      <div className="absolute top-[calc(25%+20px)] md:top-[calc(50%-60px)] left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none text-blue-400 group-hover:text-white/25 transition-colors duration-300">
                         {field.icon ? (
                           <div className="opacity-100 scale-100 group-hover:scale-110 transition-transform duration-300 ease-out drop-shadow-2xl">
                             {field.icon}

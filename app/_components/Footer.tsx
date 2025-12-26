@@ -76,16 +76,17 @@ export function Footer() {
           {/* PDF 다운로드 및 SNS */}
           <div className="flex items-center gap-3 text-xs">
             <a
-              href="/images/sustainability/pdf/Business_Registration_Certificate.pdf"
+              href="/images/sustainability/pdf/01-Business_Registration_Certificate.pdf"
               target="_blank"
               rel="noreferrer"
-              download="Business_Registration_Certificate.pdf"
+              download="01-Business_Registration_Certificate.pdf"
               className="flex items-center gap-1.5 rounded-full bg-gray-600 px-2 py-1 text-[11px] font-semibold text-white hover:bg-gray-700 transition-colors"
             >
               <Download className="w-3 h-3" />
               회사소개서
             </a>
-            <a
+            {/* 추후 다시 공개 */}
+            {/* <a
               href="/documents/certificate.pdf"
               target="_blank"
               rel="noreferrer"
@@ -101,7 +102,7 @@ export function Footer() {
               className="rounded-full bg-gray-600 px-2 py-1 text-[11px] font-semibold text-white hover:bg-gray-700 transition-colors"
             >
               YouTube
-            </a>
+            </a> */}
           </div>
         </div>
       </div>
