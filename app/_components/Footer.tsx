@@ -33,7 +33,7 @@ export function Footer() {
           </div>
 
           {/* 패밀리 사이트 */}
-          <form
+          {/* <form
             className="flex items-center gap-2 text-xs"
             onSubmit={(e) => {
               e.preventDefault()
@@ -68,14 +68,18 @@ export function Footer() {
             >
               이동
             </button>
-          </form>
+          </form> */}
+          <div className="text-xs text-gray-200">
+            패밀리회사 : 승원씨엔에스(주), 범한건설중기(주)
+          </div>
 
           {/* PDF 다운로드 및 SNS */}
           <div className="flex items-center gap-3 text-xs">
             <a
-              href="/documents/company_introduction.pdf"
+              href="/images/sustainability/pdf/Business_Registration_Certificate.pdf"
               target="_blank"
               rel="noreferrer"
+              download="Business_Registration_Certificate.pdf"
               className="flex items-center gap-1.5 rounded-full bg-gray-600 px-2 py-1 text-[11px] font-semibold text-white hover:bg-gray-700 transition-colors"
             >
               <Download className="w-3 h-3" />
