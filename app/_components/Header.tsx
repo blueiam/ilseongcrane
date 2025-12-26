@@ -40,10 +40,12 @@ const navItems: NavItem[] = [
     href: '/equipment',
     children: [
       { label: '보유장비', href: '/equipment' },
-      { label: '운영장비', href: '/equipment/operation' },
-      { label: '기타 도구/부자재', href: '/equipment/tools' },
+      // 추 후 다시 공개
+      // { label: '운영장비', href: '/equipment/operation' },
+      // { label: '기타 도구/부자재', href: '/equipment/tools' },
       { label: '운송/조립해체', href: '/equipment/transport-assembly' },
-      { label: '검사/유지관리', href: '/equipment/maintenance' },
+      // 추 후 다시 공개
+      // { label: '검사/유지관리', href: '/equipment/maintenance' },
     ],
   },
   {
@@ -53,7 +55,8 @@ const navItems: NavItem[] = [
       { label: 'QHSE 경영', href: '/sustainability/qshe' },
       { label: '윤리경영', href: '/sustainability/ethics' },
       { label: 'SGC경영', href: '/sustainability/hr' },
-      { label: '비상경영', href: '/sustainability/emergency' },
+      // 추 후 다시 공개
+      // { label: '비상경영', href: '/sustainability/emergency' },
       { label: '등록/면허/인증', href: '/sustainability/certifications' },
     ],
   },
