@@ -73,7 +73,7 @@ const certItems = [
   {
     id: 5,
     category: '등록증',
-    title: '원씨엔에스(주) 건설기계 등록증',
+    title: '승원씨엔에스(주) 건설기계 등록증',
     image: '/images/sustainability/9001_0004_Seungwon.jpg',
     pdf: '/images/sustainability/pdf/05-Seungwon-CNS.pdf',
   },
@@ -164,15 +164,19 @@ export default function CertificationsPage() {
 
           <FadeInUp delay={400}>
             <p className="text-xl md:text-2xl text-white max-w-2xl mx-auto font-light leading-relaxed mb-12 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
-              일성크레인의 투명한 경영과 검증된 기술력을 증명하는 각종 인증 현황입니다.
+              일성크레인의 투명한 경영과 검증된 기술력을 증명하는<br className="hidden md:block" /> 각종 인증 현황입니다.
             </p>
           </FadeInUp>
 
           <FadeInUp delay={600}>
             <div className="flex justify-center animate-bounce">
-              <svg className="w-6 h-6 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
+              <Image
+                src="/images/sustainability/mouse.svg"
+                alt="스크롤 유도"
+                width={31}
+                height={50}
+                className="opacity-50 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+              />
             </div>
           </FadeInUp>
         </div>
