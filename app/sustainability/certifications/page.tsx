@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { X, ZoomIn, Download } from 'lucide-react';
 
 // ----------------------------------------------------------------------
-// 1. 애니메이션 훅
+// 1. 애니메이션 훅 & 컴포넌트
 // ----------------------------------------------------------------------
 function useScrollAnimation() {
   const [isVisible, setIsVisible] = useState(false);
@@ -25,7 +25,6 @@ function useScrollAnimation() {
   return { ref, isVisible };
 }
 
-// 애니메이션 래퍼 컴포넌트
 function FadeInUp({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) {
   const { ref, isVisible } = useScrollAnimation();
   return (
@@ -40,26 +39,78 @@ function FadeInUp({ children, delay = 0 }: { children: React.ReactNode, delay?: 
 }
 
 // ----------------------------------------------------------------------
-// 2. 데이터 정의
+// 2. 데이터 정의 (PDF 경로 매핑)
 // ----------------------------------------------------------------------
 const certItems = [
   {
     id: 1,
     category: '등록증',
     title: '사업자등록증',
-    image: '/images/sustainability/reg.jpg',
+    image: '/images/sustainability/bus.jpg',
+    pdf: '/images/sustainability/pdf/01-Business_Registration_Certificate.pdf',
   },
   {
     id: 2,
-    category: '인증서',
-    title: 'ISO 14001 환경경영시스템',
-    image: '/images/sustainability/1400.jpg',
+    category: '등록증',
+    title: '주기장시설보유확인서(대여업)',
+    image: '/images/sustainability/9001_0008_Yard_Facility_Ownership.jpg',
+    pdf: '/images/sustainability/pdf/02-Yard_Facility_Ownership_Certificate_Rental.pdf',
   },
   {
     id: 3,
+    category: '등록증',
+    title: '주기장시설보유확인서(매매업)',
+    image: '/images/sustainability/9001_0007_Yard_Facility_Trading.jpg',
+    pdf: '/images/sustainability/pdf/03-Yard_Facility_Ownership_Certificate_Trading.pdf.pdf', 
+  },
+  {
+    id: 4,
+    category: '등록증',
+    title: '일성크레인 대여업 등록증',
+    image: '/images/sustainability/9001_0006_Rental_Business_Registration.jpg',
+    pdf: '/images/sustainability/pdf/04-Rental_Business_Registration_Certificate.pdf',
+  },
+  {
+    id: 5,
+    category: '등록증',
+    title: '원씨엔에스(주) 건설기계 등록증',
+    image: '/images/sustainability/9001_0004_Seungwon.jpg',
+    pdf: '/images/sustainability/pdf/05-Seungwon-CNS.pdf',
+  },
+  {
+    id: 6,
+    category: '등록증',
+    title: '범한건설중기(주)건설기계 등록증',
+    image: '/images/sustainability/9001_0005_Beomhan.jpg',
+    pdf: '/images/sustainability/pdf/06-Beomhan.pdf',
+  },
+  {
+    id: 7,
+    category: '등록증',
+    title: '일성크레인 매매업 등록증',
+    image: '/images/sustainability/9001_0003_Trading.jpg',
+    pdf: '/images/sustainability/pdf/07-Trading_Business_Registration_Certificate.pdf',
+  },
+  {
+    id: 8,
+    category: '확인서',
+    title: '중소기업확인서',
+    image: '/images/sustainability/9001_0002_SME_Confirmation.jpg',
+    pdf: '/images/sustainability/pdf/08-SME_Confirmation_Certificate.pdf',
+  },
+  {
+    id: 9,
     category: '인증서',
     title: 'ISO 9001 품질경영시스템',
-    image: '/images/sustainability/9001.jpg',
+    image: '/images/sustainability/9001_0001_ISO.jpg',
+    pdf: '/images/sustainability/pdf/09-ISO9001_Integrated_Certification.pdf',
+  },
+  {
+    id: 10,
+    category: '인증서',
+    title: 'ISO 14001 환경경영시스템',
+    image: '/images/sustainability/9001_0000_1so1400.jpg',
+    pdf: '/images/sustainability/pdf/10-ISO1400_Integrated_Certification.pdf',
   },
 ];
 
@@ -67,10 +118,10 @@ const certItems = [
 // 3. 메인 컴포넌트
 // ----------------------------------------------------------------------
 export default function CertificationsPage() {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  // 선택된 항목(이미지+PDF)의 전체 데이터를 저장
+  const [selectedItem, setSelectedItem] = useState<typeof certItems[0] | null>(null);
   const [scrollY, setScrollY] = useState(0);
 
-  // 패럴랙스 효과를 위한 스크롤 위치 추적
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener('scroll', handleScroll);
@@ -83,12 +134,8 @@ export default function CertificationsPage() {
       {/* 배경 그리드 효과 */}
       <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none z-0" />
 
-      {/* ==================================================================
-          HERO SECTION: 인터랙티브 배경 및 타이틀
-      ================================================================== */}
+      {/* HERO SECTION */}
       <section className="relative h-[90vh] md:h-screen overflow-hidden flex items-center justify-center">
-        
-        {/* 배경 이미지 (Parallax Effect) */}
         <div 
           className="absolute inset-0 z-0"
           style={{ transform: `translateY(${scrollY * 0.5}px)` }}
@@ -102,7 +149,6 @@ export default function CertificationsPage() {
           />
         </div>
 
-        {/* 히어로 콘텐츠 */}
         <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
           <FadeInUp>
             <span className="inline-block py-1 px-4 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-300 text-sm font-bold tracking-widest mb-6 uppercase animate-pulse drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
@@ -122,7 +168,6 @@ export default function CertificationsPage() {
             </p>
           </FadeInUp>
 
-          {/* 스크롤 유도 아이콘 */}
           <FadeInUp delay={600}>
             <div className="flex justify-center animate-bounce">
               <svg className="w-6 h-6 text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -133,62 +178,58 @@ export default function CertificationsPage() {
         </div>
       </section>
 
+      {/* 리스트 영역 */}
       <div className="container mx-auto px-4 md:px-6 relative z-10 pt-24 pb-32">
-
-        {/* =================================================================
-            인증서 그리드 리스트
-           ================================================================= */}
         <div className="flex flex-wrap justify-center gap-8">
           {certItems.map((item, index) => (
             <CertCard 
               key={item.id} 
               item={item}
               index={index}
-              onClick={() => setSelectedImage(item.image)}
+              onClick={() => setSelectedItem(item)}
             />
           ))}
         </div>
-
       </div>
 
-      {/* 이미지 확대 모달 (Lightbox) */}
-      {selectedImage && (
+      {/* 모달 (Lightbox) */}
+      {selectedItem && (
         <div 
           className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200"
-          onClick={() => setSelectedImage(null)}
+          onClick={() => setSelectedItem(null)}
         >
-          {/* 닫기 버튼 */}
           <button 
             className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors z-10"
-            onClick={() => setSelectedImage(null)}
+            onClick={() => setSelectedItem(null)}
           >
             <X className="w-10 h-10" />
           </button>
 
-          {/* 모달 이미지 컨테이너 */}
           <div 
-            className="relative w-full h-full max-w-4xl max-h-[90vh] flex items-center justify-center"
+            className="relative w-full h-full max-w-4xl max-h-[85vh] flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative w-full h-full">
               <Image
-                src={selectedImage}
-                alt="Certificate Detail"
+                src={selectedItem.image}
+                alt={selectedItem.title}
                 fill
                 className="object-contain"
                 quality={95}
               />
             </div>
             
-            {/* 하단 다운로드 버튼 */}
+            {/* PDF 다운로드 버튼 */}
             <a 
-              href={selectedImage} 
+              href={selectedItem.pdf} 
               download
-              className="absolute bottom-6 flex items-center gap-2 px-6 py-2 bg-white text-black rounded-full font-bold hover:bg-gray-200 transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute -bottom-16 md:bottom-6 flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-500 transition-all hover:scale-105 shadow-lg shadow-blue-500/20"
               onClick={(e) => e.stopPropagation()}
             >
-              <Download className="w-4 h-4" />
-              이미지 다운로드
+              <Download className="w-5 h-5" />
+              PDF 다운로드
             </a>
           </div>
         </div>
@@ -198,7 +239,7 @@ export default function CertificationsPage() {
 }
 
 // ----------------------------------------------------------------------
-// 서브 컴포넌트: 인증서 카드
+// 서브 컴포넌트: 카드
 // ----------------------------------------------------------------------
 function CertCard({ item, index, onClick }: { item: typeof certItems[0], index: number, onClick: () => void }) {
   const { ref, isVisible } = useScrollAnimation();
@@ -210,25 +251,19 @@ function CertCard({ item, index, onClick }: { item: typeof certItems[0], index: 
       style={{ transitionDelay: `${index * 100}ms` }}
       onClick={onClick}
     >
-      {/* 이미지 썸네일 영역 */}
       <div className="relative w-full aspect-[1/1.414] bg-[#121212] border border-white/10 overflow-hidden shadow-sm transition-all duration-300 group-hover:shadow-2xl group-hover:border-blue-500/50 group-hover:-translate-y-2 rounded-2xl">
-        {/* 실제 이미지 */}
         <Image
           src={item.image}
           alt={item.title}
           fill
           className="object-contain p-2 transition-transform duration-500 group-hover:scale-105"
         />
-        
-        {/* 호버 오버레이 (돋보기 아이콘) */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
           <div className="opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 bg-white/90 p-3 rounded-full shadow-lg">
             <ZoomIn className="w-6 h-6 text-blue-600" />
           </div>
         </div>
       </div>
-
-      {/* 텍스트 정보 */}
       <div className="mt-4 text-center">
         <span className="inline-block px-2 py-1 bg-white/5 border border-white/10 text-gray-400 text-xs font-bold mb-2 rounded">
           {item.category}
