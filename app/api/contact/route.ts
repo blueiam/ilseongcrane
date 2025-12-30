@@ -14,8 +14,8 @@ const FROM_EMAIL = 'no-reply@ilseongcrane.com' // Resend에서 인증한 발신 
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY
 
 const TO_EMAIL_BY_CATEGORY: Record<'equipment' | 'wind', string> = {
-  equipment: 'hongyohn@gmail.com',
-  wind: 'hongyohn@naver.com',
+  equipment: 'ilseongcrane@ilseongcrane.com',
+  wind: 'windpower@ilseongcrane.com',
 }
 
 export async function POST(req: Request) {
