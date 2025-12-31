@@ -88,10 +88,10 @@ export function Footer() {
           {/* PDF 다운로드 및 SNS */}
           <div className="flex items-center gap-3 text-xs">
             <a
-              href="/images/sustainability/pdf/01-Business_Registration_Certificate.pdf"
+              href="/images/footer/about-ilseongcrane.pdf"
               target="_blank"
               rel="noreferrer"
-              download="01-Business_Registration_Certificate.pdf"
+              download="about-ilseongcrane.pdf"
               className="flex items-center gap-1.5 rounded-full bg-gray-600 px-2 py-1 text-[11px] font-semibold text-white hover:bg-gray-700 transition-colors"
             >
               <Download className="w-3 h-3" />
