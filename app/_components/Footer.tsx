@@ -15,7 +15,19 @@ export function Footer() {
           </div>
           <div>주소: 경기도 평택시 고덕갈평6길 25, 813호</div>
           <div>사업자등록번호: 762-87-01656</div>
-          <div>대표번호: 031-683-4235 · 이메일: info@ilseongcrane.com</div>
+          <div>
+            대표번호: 031-683-4235 · 이메일:{' '}
+            <a
+              href="mailto:info@ilseongcrane.com"
+              className="text-gray-300 hover:text-white hover:underline transition-colors cursor-pointer inline-block"
+              onClick={(e) => {
+                e.stopPropagation()
+                window.location.href = 'mailto:info@ilseongcrane.com'
+              }}
+            >
+              info@ilseongcrane.com
+            </a>
+          </div>
           <div className="text-[11px] text-gray-400">
             © {new Date().getFullYear()} ILSEONG CRANE. All rights reserved.
           </div>
