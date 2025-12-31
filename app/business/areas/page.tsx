@@ -40,8 +40,8 @@ const SirenIcon = ({ className }: { className?: string }) => (
 const businessAreas = [
   {
     id: 1,
-    enTitle: 'SOC Infra',
-    koTitle: '사회간접자본 인프라',
+    enTitle: 'SOC',
+    // koTitle: '사회간접자본 인프라',
     desc: '국가 기간산업의 핵심이 되는 대규모 건설 현장에 최적화된 리프팅 솔루션을 제공합니다.',
     details: [
       '도로/철도/교량/터널/댐 등 국가 기간산업 건설 현장 지원',
@@ -53,8 +53,8 @@ const businessAreas = [
   },
   {
     id: 2,
-    enTitle: 'Factory / Plants',
-    koTitle: '공장 및 플랜트 산업',
+    enTitle: '플랜트',
+    koTitle: 'Plants',
     desc: '반도체, 화학, 정유 등 첨단 산업 시설의 정밀한 중장비 설치와 유지보수를 책임집니다.',
     details: [
       '반도체·화학·정유·발전 플랜트의 중장비 설치',
@@ -66,8 +66,8 @@ const businessAreas = [
   },
   {
     id: 3,
-    enTitle: 'Wind Energy',
-    koTitle: '풍력 에너지 (육상/해상 T&I)',
+    enTitle: '에너지',
+    koTitle: 'Energy',
     desc: '신재생 에너지의 핵심인 풍력 발전 단지 조성을 위한 운송부터 설치까지 Total Solution을 제공합니다.',
     details: [
       '풍력 기자재 운송(Transport) 및 현장 반입',
@@ -79,8 +79,8 @@ const businessAreas = [
   },
   {
     id: 4,
-    enTitle: 'Shipbuilding / Offshore',
-    koTitle: '조선·해양 산업',
+    enTitle: '조선해양',
+    koTitle: 'Shipbuilding',
     desc: '초대형 선박 및 해양 플랜트 구조물의 탑재와 이동을 위한 고난이도 리프팅을 수행합니다.',
     details: [
       '대형 모듈 블록 리프팅 및 탑재',
@@ -92,8 +92,8 @@ const businessAreas = [
   },
   {
     id: 5,
-    enTitle: 'Port Logistics',
-    koTitle: '물류·항만',
+    enTitle: '물류항만 ',
+    koTitle: 'Port Logistics',
     desc: '항만 크레인 설치부터 특수 화물 하역까지, 물류 흐름의 핵심 거점에서 활약합니다.',
     details: [
       '항만 크레인(GC, QC 등) 설치 및 해체',
@@ -105,8 +105,8 @@ const businessAreas = [
   },
   {
     id: 6,
-    enTitle: 'Special Projects',
-    koTitle: '특수부문 / 중량물 프로젝트',
+    enTitle: '특수부문',
+    koTitle: 'Special Projects',
     desc: '극한의 조건과 정밀함이 요구되는 특수 프로젝트에서 독보적인 기술력을 발휘합니다.',
     details: [
       '초중량 구조물 이동 및 설치',
@@ -118,8 +118,8 @@ const businessAreas = [
   },
   {
     id: 7,
-    enTitle: 'Engineering & Consulting',
-    koTitle: '엔지니어링 / 컨설팅',
+    enTitle: '엔지니어링',
+    koTitle: 'Engineering',
     desc: '단순 장비 임대를 넘어, 설계부터 안전 관리까지 프로젝트의 성공을 위한 기술적 토대를 마련합니다.',
     details: [
       'Rigging Plan / Lifting Plan 전문 설계 및 시뮬레이션',
@@ -304,7 +304,7 @@ export default function BusinessAreasPage() {
           <div className="flex justify-center mb-16">
             <div className="relative w-full max-w-4xl mx-auto">
               <Image
-                src="/images/business/total_lifting_diagram.svg"
+                src="/images/business/diagrame.svg"
                 alt="Total Lifting Solution Provider - 사업영역 다이어그램"
                 width={800}
                 height={800}

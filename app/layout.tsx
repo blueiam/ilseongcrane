@@ -4,6 +4,7 @@ import { Noto_Sans_KR } from 'next/font/google'
 import { Header } from './_components/Header'
 import { Footer } from './_components/Footer'
 import { AdminLayoutWrapper } from './_components/AdminLayoutWrapper'
+import { VisitorTracker } from '@/components/common/VisitorTracker'
 
 const notoSansKR = Noto_Sans_KR({
   subsets: ['latin'],
@@ -66,6 +67,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={notoSansKR.className} suppressHydrationWarning>
+        <VisitorTracker />
         <AdminLayoutWrapper>
           {children}
         </AdminLayoutWrapper>

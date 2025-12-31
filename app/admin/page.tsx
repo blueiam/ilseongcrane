@@ -11,6 +11,7 @@ import {
   ArrowRightIcon,
   EnvelopeIcon
 } from '@heroicons/react/24/outline';
+import { Users } from 'lucide-react';
 
 export default function AdminDashboard() {
   const [counts, setCounts] = useState({
@@ -22,6 +23,10 @@ export default function AdminDashboard() {
       in_progress: 0,
       done: 0,
       total: 0
+    },
+    visitors: {
+      total: 0,
+      today: 0
     }
   });
   const [loading, setLoading] = useState(true);
@@ -65,11 +70,33 @@ export default function AdminDashboard() {
           });
         }
 
+        // 5. 방문자 통계
+        // 전체 방문자 수
+        const { count: totalVisitors } = await supabase
+          .from('visitor_logs')
+          .select('*', { count: 'exact', head: true });
+
+        // 오늘 방문자 수 (00:00 ~ 23:59)
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        const todayEnd = new Date();
+        todayEnd.setHours(23, 59, 59, 999);
+
+        const { count: todayVisitors } = await supabase
+          .from('visitor_logs')
+          .select('*', { count: 'exact', head: true })
+          .gte('visited_at', todayStart.toISOString())
+          .lte('visited_at', todayEnd.toISOString());
+
         setCounts({
           equipment: equipmentCount || 0,
           projects: projectCount || 0,
           posts: postCount || 0,
-          contacts: contactsStats
+          contacts: contactsStats,
+          visitors: {
+            total: totalVisitors || 0,
+            today: todayVisitors || 0
+          }
         });
       } catch (error) {
         console.error('데이터를 불러오는 중 오류 발생:', error);
@@ -93,7 +120,24 @@ export default function AdminDashboard() {
 
         {/* 1. 요약 통계 (Stats Cards) */}
         <h2 className="text-xl font-bold text-white mb-4">사이트 현황</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
+          
+          {/* 방문자 현황 카드 */}
+          <div className="bg-[#222] p-6 rounded-2xl shadow-sm border border-gray-700 flex items-center justify-between">
+            <div>
+              <p className="text-gray-400 text-sm font-medium mb-1">방문자 현황</p>
+              <p className="text-4xl font-bold text-cyan-400">
+                {loading ? '-' : counts.visitors.total}
+                <span className="text-lg text-gray-500 font-normal ml-1">명</span>
+              </p>
+              <p className="text-sm text-gray-500 mt-2">
+                오늘 <span className="text-cyan-300 font-semibold">+{loading ? '-' : counts.visitors.today}</span>
+              </p>
+            </div>
+            <div className="w-14 h-14 bg-cyan-900/30 rounded-full flex items-center justify-center text-cyan-400">
+              <Users className="w-8 h-8" />
+            </div>
+          </div>
           
           {/* 장비 현황 카드 */}
           <div className="bg-[#222] p-6 rounded-2xl shadow-sm border border-gray-700 flex items-center justify-between">
