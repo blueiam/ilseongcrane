@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 // [수정 완료] 평택/음성 위치 재조정
 const networks = [
@@ -23,8 +24,19 @@ const networks = [
 ];
 
 export default function NetworkPage() {
+  const [isVisible, setIsVisible] = useState(false);
+  const [imageZoomed, setImageZoomed] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+      setImageZoomed(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   const getTooltipClass = (pos: string) => {
-    const baseClass = "absolute bg-black/90 backdrop-blur-md px-3 py-2 rounded-lg border border-gray-700 whitespace-nowrap opacity-100 z-20 pointer-events-none shadow-xl flex flex-col items-center justify-center hidden lg:flex";
+    const baseClass = "absolute bg-white backdrop-blur-md px-3 py-2 rounded-lg border border-slate-200 whitespace-nowrap opacity-100 z-20 pointer-events-none shadow-xl flex flex-col items-center justify-center hidden lg:flex";
     
     switch (pos) {
       case 'left': return `${baseClass} right-9 top-1/2 -translate-y-1/2`;
@@ -36,31 +48,54 @@ export default function NetworkPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30">
+    <>
+      {/* Hero Section */}
+      <div className="relative h-[400px] md:h-[450px] lg:h-[500px] w-full overflow-hidden z-30">
+        {/* Background Image */}
+        <Image
+          src="/hero/network.jpg"
+          alt="네트워크"
+          fill
+          className={`object-cover object-center transition-transform duration-[10000ms] ease-out ${
+            imageZoomed ? 'scale-100' : 'scale-125'
+          }`}
+          priority
+          quality={100}
+        />
+
+        {/* Title Content */}
+        <div className="relative flex h-full items-center justify-center z-20">
+          <h1
+            className="text-7xl font-bold text-center drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]"
+            style={{ color: '#FFFFFF', textShadow: '0 4px 12px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6)' }}
+          >
+            네트워크
+          </h1>
+        </div>
+      </div>
+
+    <main className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900">
       
-      {/* 배경 그리드 효과 */}
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none" />
-      <div className="fixed inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none" />
+      {/* 배경 패턴 (은은한 그리드) */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
 
       <div className="container mx-auto px-4 md:px-6 relative z-10 py-24 max-w-7xl">
         
         {/* 헤더 영역 */}
         <div className="text-center mb-20">
-          <span className="inline-block py-1 px-3 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest mb-4 uppercase">
+          <span className="inline-block py-1 px-4 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-bold tracking-widest mb-4 uppercase">
             Local Network
           </span>
-          <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-500">
-              네트워크
-            </span>
+          <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tight text-slate-900">
+            네트워크
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto font-light">
-            전국 주요 거점을 연결하여 <span className="text-white font-medium">신속하고 효율적인</span> 서비스를 제공합니다.
+          <p className="text-slate-600 text-lg max-w-2xl mx-auto font-light">
+            전국 주요 거점을 연결하여 <span className="text-slate-900 font-medium">신속하고 효율적인</span> 서비스를 제공합니다.
           </p>
         </div>
 
         {/* 지도 영역 */}
-        <div className="w-full max-w-6xl mx-auto bg-[#222] rounded-3xl border border-gray-800 shadow-2xl overflow-hidden mb-16 py-6 md:py-12 lg:py-20">
+        <div className="w-full max-w-6xl mx-auto bg-slate-50 rounded-3xl border border-slate-200 shadow-lg overflow-hidden mb-16 py-6 md:py-12 lg:py-20">
           
           <div className="relative w-full max-w-[700px] h-[400px] md:h-[600px] lg:h-[900px] mx-auto">
             
@@ -73,64 +108,90 @@ export default function NetworkPage() {
             />
 
             {/* 네트워크 점 (Dots) */}
-            {networks.map((site, index) => (
-              <div 
-                key={site.id}
-                className="absolute w-6 h-6 md:w-8 md:h-8 flex items-center justify-center group z-10 hover:z-30 cursor-pointer"
-                style={{ 
-                  top: site.top, 
-                  left: site.left,
-                  transform: 'translate(-50%, -50%)',
-                  animation: `dropIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
-                  animationDelay: `${index * 0.15}s`
-                }}
-              >
-                {/* Glow Effect */}
-                <div className={`absolute w-full h-full rounded-full animate-ping opacity-60
-                  ${site.isMain ? 'bg-red-500 animation-duration-2s' : 'bg-blue-400 animation-duration-3s'}`} 
-                />
-                
-                {/* Solid Dot */}
-                <div className={`relative w-3 h-3 md:w-4 md:h-4 rounded-full shadow-lg border-[2px] border-[#1a1a1a] transition-transform duration-300 group-hover:scale-125
-                  ${site.isMain 
-                    ? 'bg-red-500 shadow-[0_0_15px_rgba(220,38,38,0.6)]' 
-                    : 'bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]' 
-                  }`}
-                />
+            {networks.map((site, index) => {
+              const isEumseong = site.id === 3; // 음성 주기장
+              return (
+                <div 
+                  key={site.id}
+                  className="absolute w-6 h-6 md:w-8 md:h-8 flex items-center justify-center group z-10 hover:z-30 cursor-pointer"
+                  style={{ 
+                    top: site.top, 
+                    left: site.left,
+                    transform: 'translate(-50%, -50%)',
+                    animation: `dropIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
+                    animationDelay: `${index * 0.15}s`
+                  }}
+                >
+                  {/* Glow Effect */}
+                  <div className={`absolute w-full h-full rounded-full animate-ping opacity-60
+                    ${isEumseong 
+                      ? 'bg-purple-500 animation-duration-2s' 
+                      : site.isMain 
+                        ? 'bg-red-500 animation-duration-2s' 
+                        : 'bg-blue-400 animation-duration-3s'}`} 
+                  />
+                  
+                  {/* Solid Dot */}
+                  <div className={`relative w-3 h-3 md:w-4 md:h-4 rounded-full shadow-lg border-[2px] border-[#1a1a1a] transition-transform duration-300 group-hover:scale-125
+                    ${isEumseong
+                      ? 'bg-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.6)]'
+                      : site.isMain 
+                        ? 'bg-red-500 shadow-[0_0_15px_rgba(220,38,38,0.6)]' 
+                        : 'bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]' 
+                    }`}
+                  />
 
-                {/* Tooltip */}
-                <div className={getTooltipClass(site.tooltipPos)}>
-                  <span className={`font-bold text-sm md:text-base tracking-wide
-                    ${site.isMain ? 'text-red-400' : 'text-blue-400'}`}>
-                    {site.name}
-                  </span>
+                  {/* Tooltip */}
+                  <div className={getTooltipClass(site.tooltipPos)}>
+                    <span className={`font-bold text-sm md:text-base tracking-wide
+                      ${isEumseong 
+                        ? 'text-purple-400' 
+                        : site.isMain 
+                          ? 'text-red-400' 
+                          : 'text-blue-400'}`}>
+                      {site.name}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
-        {/* 하단 리스트 영역 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {networks.map((site) => (
-            <div 
-              key={site.id} 
-              className={`p-6 rounded-2xl border backdrop-blur-sm transition-all duration-300 flex items-center gap-4 group hover:-translate-y-1 hover:shadow-lg
-                ${site.isMain 
-                  ? 'bg-white/5 border-red-500/30 hover:border-red-500/50 hover:bg-white/8' 
-                  : 'bg-white/5 border-white/10 hover:border-blue-500/50 hover:bg-white/8'}`}
-            >
-              <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-lg font-bold shadow-lg transition-all duration-300 group-hover:scale-110
-                ${site.isMain ? 'bg-red-500/20 text-red-400 border border-red-500/30 group-hover:bg-red-500/30 group-hover:border-red-500/50' : 'bg-blue-500/20 text-blue-400 border border-blue-500/30 group-hover:bg-blue-500/30 group-hover:border-blue-500/50'}`}>
-                {site.id}
+        {/* 하단 리스트 영역 - 모바일 전용 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:hidden">
+          {networks.map((site) => {
+            const isEumseong = site.id === 3; // 음성 주기장
+            return (
+              <div 
+                key={site.id} 
+                className={`p-6 rounded-2xl border transition-all duration-300 flex items-center gap-4 group hover:-translate-y-1 hover:shadow-lg
+                  ${isEumseong
+                    ? 'bg-white border-purple-200 hover:border-purple-400 hover:bg-purple-50'
+                    : site.isMain 
+                      ? 'bg-white border-red-200 hover:border-red-400 hover:bg-red-50' 
+                      : 'bg-white border-slate-200 hover:border-blue-400 hover:bg-blue-50'}`}
+              >
+                <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-lg font-bold shadow-lg transition-all duration-300 group-hover:scale-110
+                  ${isEumseong
+                    ? 'bg-purple-100 text-purple-600 border border-purple-300 group-hover:bg-purple-200 group-hover:border-purple-400'
+                    : site.isMain 
+                      ? 'bg-red-100 text-red-600 border border-red-300 group-hover:bg-red-200 group-hover:border-red-400' 
+                      : 'bg-blue-100 text-blue-600 border border-blue-300 group-hover:bg-blue-200 group-hover:border-blue-400'}`}>
+                  {site.id}
+                </div>
+                <div>
+                  <h3 className={`text-lg font-bold mb-0.5 ${
+                    isEumseong 
+                      ? 'text-purple-600' 
+                      : 'text-slate-900'
+                  }`}>
+                    {site.name}
+                  </h3>
+                </div>
               </div>
-              <div>
-                <h3 className={`text-lg font-bold mb-0.5 ${site.isMain ? 'text-red-300' : 'text-white'}`}>
-                  {site.name}
-                </h3>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
       </div>
@@ -150,5 +211,6 @@ export default function NetworkPage() {
         .animation-duration-3s { animation-duration: 3s; }
       `}</style>
     </main>
+    </>
   );
 }

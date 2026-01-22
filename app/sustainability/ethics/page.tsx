@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { Scale, HeartHandshake, Gavel, Users, Lock, Globe, CheckCircle2, ShieldCheck } from 'lucide-react';
 
 // ----------------------------------------------------------------------
@@ -28,12 +29,46 @@ function useScrollAnimation() {
 // 2. 메인 컴포넌트
 // ----------------------------------------------------------------------
 export default function EthicsPage() {
+  const [imageZoomed, setImageZoomed] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setImageZoomed(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-yellow-500/30">
+    <>
+      {/* Hero Section */}
+      <div className="relative h-[400px] md:h-[450px] lg:h-[500px] w-full overflow-hidden z-30">
+        {/* Background Image */}
+        <Image
+          src="/images/sustainability/ethics.jpg"
+          alt="윤리경영"
+          fill
+          className={`object-cover object-center transition-transform duration-[10000ms] ease-out ${
+            imageZoomed ? 'scale-100' : 'scale-125'
+          }`}
+          priority
+          quality={100}
+        />
+
+        {/* Title Content */}
+        <div className="relative flex h-full items-center justify-center z-20">
+          <h1
+            className="text-5xl md:text-6xl font-bold text-center drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]"
+            style={{ color: '#FFFFFF', textShadow: '0 4px 12px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6)' }}
+          >
+            윤리경영
+          </h1>
+        </div>
+      </div>
+
+    <main className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900">
       
-      {/* 배경 효과 */}
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none" />
-      <div className="fixed inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none" />
+      {/* 배경 패턴 (은은한 그리드) */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
 
       <div className="container mx-auto px-4 md:px-6 relative z-10 py-24">
 
@@ -41,23 +76,23 @@ export default function EthicsPage() {
             1. 헤더 및 개요 (Intro)
            ================================================================= */}
         <section className="mb-32 text-center max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-bold text-gray-300 mb-8 animate-fade-in">
-            <span className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-sm font-bold text-blue-600 mb-8">
+            <span className="w-2 h-2 rounded-full bg-blue-600"></span>
             Sustainability
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-black mb-8 leading-tight tracking-tight animate-fade-in-up">
-            <span className="text-white">윤리경영</span>
+          <h1 className="text-4xl md:text-5xl font-black mb-8 leading-tight tracking-tight text-slate-900">
+            윤리경영
           </h1>
 
-          <div className="space-y-6 text-lg md:text-xl font-light text-gray-300 leading-relaxed animate-fade-in-up delay-100 break-keep">
-            <p className="font-bold text-white text-2xl">
+          <div className="space-y-6 text-lg md:text-xl font-light text-slate-600 leading-relaxed break-keep">
+            <p className="font-bold text-slate-900 text-2xl">
               정직과 신뢰를 바탕으로, 투명한 기업문화를 만들어갑니다.
             </p>
             <p>
               일성크레인은 모든 경영활동에서 법과 윤리를 준수하고,<br className="hidden md:block"/>
               공정하고 투명한 기업 운영을 통해 고객, 협력사, 임직원 모두가<br className="hidden md:block"/>
-              함께 성장할 수 있는 <strong className="text-white border-b-2 border-yellow-500/50">건강한 기업문화</strong>를 지향합니다.
+              함께 성장할 수 있는 <strong className="text-slate-900 border-b-2 border-blue-600">건강한 기업문화</strong>를 지향합니다.
             </p>
           </div>
         </section>
@@ -147,6 +182,7 @@ export default function EthicsPage() {
 
       </div>
     </main>
+    </>
   );
 }
 
@@ -158,8 +194,8 @@ function SectionTitle({ title, subtitle }: { title: string, subtitle: string }) 
   
   return (
     <div ref={ref} className={`mb-12 text-center transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-      <h2 className="text-3xl md:text-4xl font-bold mb-3">{title}</h2>
-      <p className="text-yellow-500/80 font-medium tracking-widest uppercase text-sm">{subtitle}</p>
+      <h2 className="text-3xl md:text-4xl font-bold mb-3 text-slate-900">{title}</h2>
+      <p className="text-blue-600 font-medium tracking-widest uppercase text-sm">{subtitle}</p>
     </div>
   );
 }
@@ -174,15 +210,15 @@ function CharterCard({ icon, title, desc, delay }: any) {
     <div 
       ref={ref}
       style={{ transitionDelay: `${delay}ms` }}
-      className={`group p-8 rounded-3xl bg-[#121212] border border-white/10 hover:border-yellow-500/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_10px_40px_-10px_rgba(234,179,8,0.15)] flex flex-col h-full ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+      className={`group p-8 rounded-3xl bg-white border border-slate-200 hover:border-blue-500 transition-all duration-500 hover:-translate-y-1 hover:shadow-lg flex flex-col h-full ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
     >
-      <div className="mb-6 p-3 bg-yellow-500/10 rounded-2xl w-fit group-hover:scale-110 transition-transform duration-300">
+      <div className="mb-6 p-3 bg-blue-50 rounded-2xl w-fit group-hover:scale-110 transition-transform duration-300">
         {icon}
       </div>
-      <h3 className="text-xl font-bold mb-4 text-white group-hover:text-yellow-400 transition-colors break-keep">
+      <h3 className="text-xl font-bold mb-4 text-slate-900 group-hover:text-blue-600 transition-colors break-keep">
         {title}
       </h3>
-      <p className="text-gray-400 text-sm leading-relaxed break-keep">
+      <p className="text-slate-600 text-sm leading-relaxed break-keep">
         {desc}
       </p>
     </div>
@@ -199,14 +235,14 @@ function CodeItem({ title, desc, delay }: any) {
     <div 
       ref={ref}
       style={{ transitionDelay: `${delay}ms` }}
-      className={`flex flex-col md:flex-row md:items-center gap-4 md:gap-8 p-6 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-all duration-500 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}
+      className={`flex flex-col md:flex-row md:items-center gap-4 md:gap-8 p-6 rounded-2xl bg-blue-50 border border-blue-100 hover:bg-blue-100 transition-all duration-500 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}
     >
       <div className="flex items-center gap-4 md:w-1/3 shrink-0">
-        <CheckCircle2 className="w-6 h-6 text-yellow-500 shrink-0" />
-        <h4 className="text-lg font-bold text-white">{title}</h4>
+        <CheckCircle2 className="w-6 h-6 text-blue-600 shrink-0" />
+        <h4 className="text-lg font-bold text-slate-900">{title}</h4>
       </div>
-      <div className="md:w-2/3 border-l border-white/10 pl-0 md:pl-8 pt-2 md:pt-0">
-        <p className="text-gray-400 text-sm md:text-base">{desc}</p>
+      <div className="md:w-2/3 border-l border-blue-200 pl-0 md:pl-8 pt-2 md:pt-0">
+        <p className="text-slate-600 text-sm md:text-base">{desc}</p>
       </div>
     </div>
   );

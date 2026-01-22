@@ -49,7 +49,7 @@ const businessAreas = [
       '중·대형 구조물 설치/해체 작업 수행'
     ],
     icon: <BridgeIcon className="w-8 h-8" />,
-    bgImage: '/images/business/soc.jpeg',
+    bgImage: '/images/business/01-SOC.jpg',
   },
   {
     id: 2,
@@ -62,7 +62,7 @@ const businessAreas = [
       '정비(Shut Down) 기간 리프팅 작업 지원'
     ],
     icon: <Factory className="w-8 h-8" />,
-    bgImage: '/images/business/01-plant.jpg',
+    bgImage: '/images/business/02-plant.jpg',
   },
   {
     id: 3,
@@ -75,7 +75,7 @@ const businessAreas = [
       '해상 풍력의 T&I 컨소시엄 운용 및 프로젝트 수행'
     ],
     icon: <Wind className="w-8 h-8" />,
-    bgImage: '/images/business/04-energy..png',
+    bgImage: '/images/business/03-energy.jpg',
   },
   {
     id: 4,
@@ -88,7 +88,7 @@ const businessAreas = [
       '도크 투입 및 진수 지원 리프팅'
     ],
     icon: <Ship className="w-8 h-8" />,
-    bgImage: '/images/business/Shipbuilding.jpg',
+    bgImage: '/images/business/04-shipping.jpg',
   },
   {
     id: 5,
@@ -101,7 +101,7 @@ const businessAreas = [
       'SPMT 연계한 Heavy Cargo Handling 및 국내외 이동'
     ],
     icon: <Container className="w-8 h-8" />,
-    bgImage: '/images/business/Shipbuilding.png',
+    bgImage: '/images/business/05-logistic.jpg',
   },
   {
     id: 6,
@@ -114,7 +114,7 @@ const businessAreas = [
       '긴급 복구 및 재난 대응 리프팅 긴급 지원'
     ],
     icon: <SirenIcon className="w-8 h-8" />,
-    bgImage: '/images/business/special.jpg',
+    bgImage: '/images/business/06-special.jpg',
   },
   {
     id: 7,
@@ -127,7 +127,7 @@ const businessAreas = [
       '풍력 T&I 기술 컨설팅 및 PM/안전관리 체계 구축'
     ],
     icon: <DraftingCompass className="w-8 h-8" />,
-    bgImage: '/images/business/engineering.jpg',
+    bgImage: '/images/business/07-engin.jpg',
   },
 ];
 
@@ -159,116 +159,53 @@ function useScrollAnimation() {
 // ----------------------------------------------------------------------
 function BusinessAreaCard({ area, index }: { area: typeof businessAreas[0], index: number }) {
   const { ref, isVisible } = useScrollAnimation();
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const handleCardClick = () => {
-    // 모바일에서만 회전 효과 적용
-    if (isMobile) {
-      setIsFlipped(!isFlipped);
-    }
-  };
 
   return (
     <div
       ref={ref}
-      className={`group relative bg-[#121212] border border-white/10 rounded-3xl overflow-hidden transition-all duration-700 ease-in-out hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] lg:cursor-default cursor-pointer
+      className={`group relative bg-white border border-slate-200 rounded-3xl overflow-hidden transition-all duration-700 ease-in-out hover:border-blue-500 hover:shadow-lg
         ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}
       `}
       style={{ 
-        transitionDelay: `${index * 100}ms`,
-        transformStyle: 'preserve-3d',
-        perspective: '1000px',
-        transform: isFlipped ? 'rotateY(360deg)' : 'rotateY(0deg)'
+        transitionDelay: `${index * 100}ms`
       }}
-      onClick={handleCardClick}
     >
-      {/* 배경 이미지 */}
+      {/* 이미지 영역 */}
       {area.bgImage && (
-        <>
-          <div className="absolute inset-0 z-0" style={{ imageRendering: 'auto', willChange: 'transform' }}>
-            <Image
-              src={area.bgImage}
-              alt={`${area.koTitle} 배경 이미지`}
-              fill
-              quality={95}
-              priority={index < 3}
-              className={`object-cover transition-all duration-700 group-hover:scale-110 lg:group-hover:brightness-100 ${
-                isFlipped ? 'brightness-100 scale-105' : ''
-              }`}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-            />
-          </div>
-          {/* 모바일: 전체 overlay, 데스크톱: 그라데이션 overlay (좌측 50% 어두운 overlay, 우측 50% 투명) - 호버 시 투명 */}
-          <div 
-            className={`absolute inset-0 z-0 transition-all duration-700 ${
-              isFlipped 
-                ? 'bg-transparent opacity-0' 
-                : 'lg:group-hover:opacity-0'
-            }`}
-            style={!isFlipped ? {
-              background: isMobile 
-                ? 'rgba(18, 18, 18, 0.8)' 
-                : 'linear-gradient(to right, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.7) 50%, transparent 50%)'
-            } : {}}
-          ></div>
-        </>
+        <div className="relative w-full h-[300px] md:h-[400px] overflow-hidden">
+          <Image
+            src={area.bgImage}
+            alt={`${area.koTitle || area.enTitle} 배경 이미지`}
+            fill
+            quality={95}
+            priority={index < 3}
+            className="object-cover transition-all duration-700 group-hover:scale-110"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+          />
+        </div>
       )}
       
-      {/* 배경 호버 효과 (Glow) */}
-      <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-600/20 rounded-full blur-[80px] group-hover:bg-blue-600/30 transition-all duration-500 z-0"></div>
-      
-      <div className="relative z-10 flex flex-col h-full p-8">
-        
-        {/* 상단: 아이콘 */}
-        <div className="mb-6">
-          <div className="p-3 bg-white/5 rounded-2xl border border-white/10 text-blue-400 group-hover:scale-110 group-hover:bg-blue-500/10 group-hover:border-blue-500/30 transition-all duration-300 inline-block">
-            {area.icon}
-          </div>
-        </div>
-
-        {/* 타이틀 */}
-        <div className="mb-4">
-          <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 lg:group-hover:text-blue-100 transition-colors drop-shadow-lg">
-            {area.enTitle}
-          </h3>
-          <p className={`text-lg text-blue-500 font-medium transition-opacity duration-700 lg:group-hover:opacity-0 drop-shadow-lg ${
-            isFlipped ? 'opacity-0' : ''
-          }`}>
-            {area.koTitle}
-          </p>
-        </div>
+      {/* 텍스트 영역 (이미지 아래 별도 공간) */}
+      <div className="p-8">
+        {/* 제목 */}
+        <h3 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
+          {area.enTitle}
+        </h3>
 
         {/* 설명 */}
-        <p className={`text-gray-400 text-sm leading-relaxed mb-8 break-keep transition-opacity duration-700 lg:group-hover:opacity-0 drop-shadow-md ${
-          isFlipped ? 'opacity-0' : ''
-        }`}>
+        <p className="text-slate-600 text-sm leading-relaxed mb-6 break-keep">
           {area.desc}
         </p>
 
-        {/* 상세 리스트 (구분선 위) */}
-        <div className={`mt-auto pt-6 border-t border-white/10 transition-opacity duration-700 lg:group-hover:opacity-0 ${
-          isFlipped ? 'opacity-0' : ''
-        }`}>
-          <ul className="space-y-3">
-            {area.details.map((detail, i) => (
-              <li key={i} className="flex items-start gap-3 text-sm text-gray-300 group-hover:text-gray-200 transition-colors drop-shadow-md">
-                <CheckCircle2 className="w-4 h-4 text-blue-500/70 mt-0.5 shrink-0" />
-                <span className="break-keep">{detail}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
+        {/* 상세 리스트 */}
+        <ul className="space-y-3">
+          {area.details.map((detail, i) => (
+            <li key={i} className="flex items-start gap-3 text-sm text-slate-700">
+              <CheckCircle2 className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
+              <span className="break-keep">{detail}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
@@ -278,33 +215,67 @@ function BusinessAreaCard({ area, index }: { area: typeof businessAreas[0], inde
 // 4. 메인 컴포넌트
 // ----------------------------------------------------------------------
 export default function BusinessAreasPage() {
+  const [imageZoomed, setImageZoomed] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setImageZoomed(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30">
+    <>
+      {/* Hero Section */}
+      <div className="relative h-[400px] md:h-[450px] lg:h-[500px] w-full overflow-hidden z-30">
+        {/* Background Image */}
+        <Image
+          src="/hero/business-area.jpg"
+          alt="사업영역"
+          fill
+          className={`object-cover object-center transition-transform duration-[10000ms] ease-out ${
+            imageZoomed ? 'scale-100' : 'scale-125'
+          }`}
+          priority
+          quality={100}
+        />
+
+        {/* Title Content */}
+        <div className="relative flex h-full items-center justify-center z-20">
+          <h1
+            className="text-5xl md:text-6xl font-bold text-center drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]"
+            style={{ color: '#FFFFFF', textShadow: '0 4px 12px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6)' }}
+          >
+            사업영역
+          </h1>
+        </div>
+      </div>
+
+    <main className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900">
       
-      {/* 배경 그리드 효과 */}
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none" />
-      <div className="fixed inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none" />
+      {/* 배경 패턴 (은은한 그리드) */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
 
       <div className="container mx-auto px-4 md:px-6 relative z-10 py-24">
         
         {/* 헤더 섹션 */}
         <section className="mb-24 text-center">
-          <span className="inline-block py-1 px-3 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest mb-4 uppercase animate-fade-in">
+          <span className="inline-block py-1 px-4 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-bold tracking-widest mb-4 uppercase">
             Business Areas
           </span>
-          <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight text-white">
+          <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tight text-slate-900">
             사업영역
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto font-light break-keep mb-12">
+          <p className="text-slate-600 text-lg max-w-2xl mx-auto font-light break-keep mb-12">
             일성크레인은 다양한 산업 현장에서 축적된 노하우와 최첨단 장비를 바탕으로<br />
-            <span className="text-blue-400 font-medium">최적의 리프팅 솔루션</span>을 제공합니다.
+            <span className="text-blue-600 font-medium">최적의 리프팅 솔루션</span>을 제공합니다.
           </p>
           
           {/* Total Lifting Solution Provider 다이어그램 이미지 */}
           <div className="flex justify-center mb-16">
             <div className="relative w-full max-w-4xl mx-auto">
               <Image
-                src="/images/business/diagrame.svg"
+                src="/images/business/heavy.png"
                 alt="Total Lifting Solution Provider - 사업영역 다이어그램"
                 width={800}
                 height={800}
@@ -324,5 +295,6 @@ export default function BusinessAreasPage() {
 
       </div>
     </main>
+    </>
   );
 }

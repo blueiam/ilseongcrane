@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { EquipmentHero } from '@/app/_components/EquipmentHero'
+import Image from 'next/image'
 import { EquipmentCard } from '@/app/_components/EquipmentCard'
 import { createClient } from '@supabase/supabase-js'
 
@@ -38,6 +38,15 @@ export default function EquipmentListPage() {
   const [error, setError] = useState<string | null>(null)
   const [category, setCategory] = useState<CategoryValue>('all')
   const [keyword, setKeyword] = useState('')
+  const [imageZoomed, setImageZoomed] = useState(false)
+
+  // Hero 이미지 줌 애니메이션
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setImageZoomed(true)
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [])
 
   // 전체 장비 데이터 가져오기 (display_order 순서로 정렬)
   useEffect(() => {
@@ -100,21 +109,42 @@ export default function EquipmentListPage() {
   return (
     <>
       {/* Hero Section */}
-      <EquipmentHero />
+      <div className="relative h-[400px] md:h-[450px] lg:h-[500px] w-full overflow-hidden z-30">
+        {/* Background Image */}
+        <Image
+          src="/hero/crane_bg.jpg"
+          alt="보유장비"
+          fill
+          className={`object-cover object-center transition-transform duration-[10000ms] ease-out ${
+            imageZoomed ? 'scale-100' : 'scale-125'
+          }`}
+          priority
+          quality={100}
+        />
+
+        {/* Title Content */}
+        <div className="relative flex h-full items-center justify-center z-20">
+          <h1
+            className="text-5xl md:text-6xl font-bold text-center drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]"
+            style={{ color: '#FFFFFF', textShadow: '0 4px 12px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6)' }}
+          >
+            보유장비
+          </h1>
+        </div>
+      </div>
 
       {/* Main Content */}
-      <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30 relative z-10">
+      <main className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900 relative z-10">
         
-        {/* 배경 그리드 효과 - main 컨텐츠 영역에만 적용 */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none" />
+        {/* 배경 패턴 (은은한 그리드) */}
+        <div className="fixed inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
 
         <div className="container mx-auto px-4 md:px-6 relative z-10 py-24">
           {/* 필터 영역 */}
-          <div className="mb-8 flex flex-col gap-4 rounded-xl bg-[#151515] border border-white/10 p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+          <div className="mb-8 flex flex-col gap-4 rounded-xl bg-white border border-slate-200 p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
             {/* 카테고리 필터 */}
             <div className="flex items-center gap-3">
-              <span className="hidden sm:inline text-sm font-medium text-gray-300">카테고리</span>
+              <span className="hidden sm:inline text-sm font-medium text-slate-700">카테고리</span>
               <div className="flex flex-wrap gap-2">
                 {CATEGORY_OPTIONS.map((opt) => (
                   <button
@@ -124,7 +154,7 @@ export default function EquipmentListPage() {
                     className={`rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-200 ${
                       category === opt.value
                         ? 'bg-blue-600 text-white shadow-sm border border-blue-500/30'
-                        : 'bg-[#1a1a1a] text-gray-300 hover:bg-[#222222] border border-white/10'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300'
                     }`}
                   >
                     {opt.label}
@@ -135,13 +165,13 @@ export default function EquipmentListPage() {
 
             {/* 검색창 */}
             <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400">모델명 검색</span>
+              <span className="text-xs text-slate-600">모델명 검색</span>
               <input
                 type="text"
                 placeholder="예: SCE8000A"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
-                className="w-48 rounded-lg border border-white/10 bg-[#1a1a1a] text-white px-3 py-2 text-sm transition-all focus:border-blue-500/50 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="w-48 rounded-lg border border-slate-300 bg-white text-slate-900 px-3 py-2 text-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
               />
             </div>
           </div>
@@ -149,18 +179,18 @@ export default function EquipmentListPage() {
           {/* 로딩/에러/리스트 */}
           {loading ? (
             <div className="flex h-64 items-center justify-center">
-              <p className="text-gray-400">장비 데이터를 불러오는 중입니다...</p>
+              <p className="text-slate-600">장비 데이터를 불러오는 중입니다...</p>
             </div>
           ) : error ? (
             <div className="flex h-64 items-center justify-center">
-              <p className="text-red-400">
+              <p className="text-red-600">
                 데이터를 불러오는 중 오류가 발생했습니다: {error}
               </p>
             </div>
           ) : filteredEquipments.length === 0 ? (
             <div className="flex h-64 items-center justify-center">
               <div className="text-center">
-                <p className="text-gray-400">
+                <p className="text-slate-600">
                   {equipments.length === 0
                     ? '등록된 보유장비가 없습니다.'
                     : '조건에 맞는 장비가 없습니다. 필터 또는 검색어를 변경해 보세요.'}
@@ -170,9 +200,9 @@ export default function EquipmentListPage() {
           ) : (
             <>
               <div className="mb-4 flex items-center justify-between">
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-slate-600">
                   전체 {equipments.length}대 중{' '}
-                  <span className="font-semibold text-white">
+                  <span className="font-semibold text-slate-900">
                     {filteredEquipments.length}대
                   </span>{' '}
                   표시 중

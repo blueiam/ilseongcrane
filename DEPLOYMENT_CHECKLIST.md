@@ -86,3 +86,28 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 - `VERCEL_DEPLOYMENT.md` - 상세 배포 가이드
 - `SUPABASE_DEPLOYMENT.md` - Supabase 설정 가이드
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

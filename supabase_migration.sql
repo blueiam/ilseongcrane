@@ -156,3 +156,28 @@ FROM pg_policies
 WHERE tablename IN ('equipments', 'equipment_images')
 ORDER BY tablename, policyname;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

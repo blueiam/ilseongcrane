@@ -202,19 +202,25 @@ export default function AdminPostsPage() {
             boards 테이블에 게시판이 아직 없습니다.
           </span>
         ) : (
-          boards.map((b) => (
-            <Link
-              key={b.id}
-              href={`/admin/posts?board=${b.id}`}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition ${
-                currentBoardId === b.id
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-900 hover:bg-gray-100'
-              }`}
-            >
-              {b.name}
-            </Link>
-          ))
+          boards
+            .filter((b) => {
+              // 임시 비활성화: 기술자료실, 문서자료실, 인사자료실 숨김
+              const hiddenCodes = ['archive_tech', 'archive_docs', 'archive_hr']
+              return !hiddenCodes.includes(b.code)
+            })
+            .map((b) => (
+              <Link
+                key={b.id}
+                href={`/admin/posts?board=${b.id}`}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                  currentBoardId === b.id
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-gray-900 hover:bg-gray-100'
+                }`}
+              >
+                {b.name}
+              </Link>
+            ))
         )}
       </div>
 

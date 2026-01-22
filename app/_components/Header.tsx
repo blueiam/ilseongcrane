@@ -66,9 +66,10 @@ const navItems: NavItem[] = [
     children: [
       { label: '공지/소식', href: '/archive/notice' },
       { label: '일반자료실', href: '/archive/data' },
-      { label: '기술자료실', href: '/archive/tech' },
-      { label: '문서자료실', href: '/archive/docs' },
-      { label: '인사자료실', href: '/archive/hr' },
+      // 임시 비활성화
+      // { label: '기술자료실', href: '/archive/tech' },
+      // { label: '문서자료실', href: '/archive/docs' },
+      // { label: '인사자료실', href: '/archive/hr' },
       { label: '관련법규', href: '/archive/law' },
     ],
   },
@@ -84,7 +85,16 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [logoPath, setLogoPath] = useState('/images/logo/isc_logo.svg')
   const isLandingPage = pathname === '/'
+  const isAdminPage = pathname?.startsWith('/admin')
+  
+  // 클라이언트에서만 타임스탬프 추가하여 캐시 무효화 (개발 환경)
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      setLogoPath(`/images/logo/isc_logo.svg?t=${Date.now()}`)
+    }
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -112,16 +122,18 @@ export function Header() {
   const GRID_CLASS = "grid grid-cols-6 gap-2 w-[840px]"
 
   // [수정] 클래스 로직을 변수로 분리하여 가독성 확보
-  // 모바일 스크롤 전: 투명, 스크롤 시: 반투명 (비디오가 보임)
-  // 데스크톱(lg 이상): 스크롤 전 투명, 스크롤 시 반투명 glass 효과
-  // 랜딩 페이지가 아닌 경우: 다크모드 적용
-  const headerClass = isLandingPage
-    ? isScrolled
-      ? 'bg-white/40 backdrop-blur-md lg:bg-white/40 lg:backdrop-blur-xl shadow-md lg:shadow-2xl border-b border-white/30 lg:border-white/40' // 스크롤 시: 모바일/데스크톱 모두 반투명 glass 효과
-      : 'bg-transparent lg:bg-transparent border-b-0 lg:border-b-0 shadow-none lg:shadow-none' // 스크롤 전: 모바일/데스크톱 모두 투명
-    : isScrolled
-      ? 'bg-[#0a0a0a]/95 backdrop-blur-xl shadow-2xl border-b border-white/10'
-      : 'bg-[#0a0a0a]/80 backdrop-blur-lg border-b border-white/5'
+  // 전체 사이트 라이트 테마 적용 (어드민 페이지 제외)
+  // 랜딩 페이지: 스크롤 전 투명, 스크롤 시 반투명 glass 효과
+  // 일반 페이지: 항상 라이트 테마
+  const headerClass = isAdminPage
+    ? 'bg-[#0a0a0a]/95 backdrop-blur-xl shadow-2xl border-b border-white/10' // 어드민은 다크 모드 유지
+    : isLandingPage
+      ? isScrolled
+        ? 'bg-white/80 backdrop-blur-md lg:bg-white/80 lg:backdrop-blur-xl shadow-md lg:shadow-2xl border-b border-slate-200 lg:border-slate-200' // 스크롤 시: 모바일/데스크톱 모두 반투명 glass 효과
+        : 'bg-transparent lg:bg-transparent border-b-0 lg:border-b-0 shadow-none lg:shadow-none' // 스크롤 전: 모바일/데스크톱 모두 투명
+      : isScrolled
+        ? 'bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-lg'
+        : 'bg-white/80 backdrop-blur-md border-b border-slate-200'
 
   // 스크롤 전 landing page에서 완전히 투명하게 처리 (데스크톱만)
   const isAtTop = isLandingPage && !isScrolled
@@ -133,8 +145,8 @@ export function Header() {
       }`}
       onMouseLeave={() => setIsMenuOpen(false)}
     >
-      {/* 다크모드 배경 그리드 효과 (랜딩 페이지가 아닐 때) */}
-      {!isLandingPage && (
+      {/* 배경 그리드 효과 (어드민 페이지만 다크 그리드) */}
+      {isAdminPage && (
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-30"></div>
       )}
       {/* GNB Main Bar */}
@@ -145,26 +157,40 @@ export function Header() {
         {/* 로고 */}
         <Link href="/" className="flex items-center gap-3 shrink-0 group">
           <img
-            src="/Header/logo.svg"
+            src={logoPath}
             alt="일성크레인 주식회사"
+            width={85}
+            height={44}
+            onError={(e) => {
+              // 폴백: 로고 로드 실패 시 기존 로고로 대체
+              const target = e.target as HTMLImageElement;
+              if (!target.src.includes('/Header/logo.svg')) {
+                target.src = '/Header/logo.svg';
+              }
+            }}
             className={`h-11 w-auto transition-all duration-300 ${
-              isLandingPage 
-                ? isScrolled
-                  ? 'brightness-0 invert lg:brightness-0 lg:invert' // 스크롤 시: 모바일/데스크톱 모두 흰색
-                  : 'brightness-0 invert lg:brightness-0 lg:invert' // 스크롤 전: 모바일/데스크톱 모두 흰색
-                : 'brightness-0 invert group-hover:scale-105'
+              isAdminPage
+                ? 'brightness-0 invert group-hover:scale-105' // 어드민: 다크 모드 로고 (흰색)
+                : isLandingPage 
+                  ? isScrolled
+                    ? 'group-hover:scale-105' // 스크롤 시: 원본 색상 (파란 그라데이션)
+                    : 'brightness-0 invert lg:brightness-0 lg:invert group-hover:scale-105' // 스크롤 전: 흰색 로고
+                  : 'group-hover:scale-105' // 일반 페이지: 원본 색상 (파란 그라데이션)
             }`}
+            style={{ imageRendering: 'auto' }}
           />
         </Link>
 
         {/* PC GNB (Grid Layout 적용) */}
         {/* ml-auto를 주어 로고와 떨어뜨리고 우측에 붙입니다 */}
         <nav className={`hidden lg:grid ${GRID_CLASS} ml-auto text-base font-bold ${
-          isLandingPage 
-            ? isScrolled
-              ? 'text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)]' // 스크롤 시 가독성 향상을 위한 텍스트 그림자
-              : 'text-white'
-            : 'text-white'
+          isAdminPage
+            ? 'text-white'
+            : isLandingPage 
+              ? isScrolled
+                ? 'text-slate-900' // 스크롤 시 라이트 텍스트
+                : 'text-white'
+              : 'text-slate-700'
         }`}>
           {navItems.map((item) => {
             const active = isLinkActive(item.href)
@@ -173,17 +199,21 @@ export function Header() {
                 <Link
                   href={item.href || '#'}
                   className={`relative inline-block border-b-2 pb-1 transition-all duration-300 ${
-                    isLandingPage
+                    isAdminPage
                       ? active
-                        ? isScrolled
-                          ? 'border-b-white text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)]'
-                          : 'border-b-white text-white'
-                        : isScrolled
-                          ? 'border-transparent hover:border-b-white/80 hover:text-white/90 [text-shadow:0_1px_2px_rgba(0,0,0,0.3)]'
-                          : 'border-transparent hover:border-b-white/80 hover:text-white/90'
-                      : active
                         ? 'border-b-blue-500 text-blue-400 font-bold hover:text-blue-300'
                         : 'border-transparent text-gray-300 hover:border-b-blue-500/50 hover:text-white hover:scale-105'
+                      : isLandingPage
+                        ? active
+                          ? isScrolled
+                            ? 'border-b-blue-600 text-slate-900 font-bold hover:text-blue-600'
+                            : 'border-b-white text-white'
+                          : isScrolled
+                            ? 'border-transparent hover:border-b-blue-600/50 hover:text-slate-900'
+                            : 'border-transparent hover:border-b-white/80 hover:text-white/90'
+                        : active
+                          ? 'border-b-blue-600 text-blue-600 font-bold hover:text-blue-700'
+                          : 'border-transparent text-slate-700 hover:border-b-blue-600/50 hover:text-blue-600 hover:scale-105'
                   }`}
                 >
                   {item.label}
@@ -197,11 +227,13 @@ export function Header() {
 {/* 모바일 메뉴 버튼 (텍스트 -> 아이콘 변경) */}
         <button
           className={`inline-flex items-center justify-center rounded-md p-2 focus:outline-none lg:hidden transition-all duration-300 ${
-            isLandingPage 
-              ? isScrolled
-                ? 'text-white hover:bg-white/20 [text-shadow:0_1px_2px_rgba(0,0,0,0.3)]' // 스크롤 시: 반투명 배경이므로 흰색 텍스트 + 그림자
-                : 'text-white hover:bg-white/10' // 스크롤 전: 투명 배경이므로 흰색 텍스트
-              : 'text-white hover:bg-white/10 hover:scale-110 active:scale-95'
+            isAdminPage
+              ? 'text-white hover:bg-white/10 hover:scale-110 active:scale-95'
+              : isLandingPage 
+                ? isScrolled
+                  ? 'text-slate-900 hover:bg-slate-100' // 스크롤 시: 라이트 텍스트
+                  : 'text-white hover:bg-white/10' // 스크롤 전: 투명 배경이므로 흰색 텍스트
+                : 'text-slate-900 hover:bg-slate-100 hover:scale-110 active:scale-95'
           }`}
           onClick={() => setMobileOpen((prev) => !prev)}
           aria-label="메뉴 열기"
@@ -220,19 +252,24 @@ export function Header() {
         className={`hidden lg:block absolute left-0 w-full border-t overflow-hidden transition-all duration-500 ease-in-out ${
           isMenuOpen ? 'max-h-[500px] opacity-100 visible translate-y-0' : 'max-h-0 opacity-0 invisible -translate-y-2'
         } ${
-          // 랜딩페이지이면서 메뉴가 열렸을 때만 배경색 적용 (데스크톱 전용)
-          isLandingPage
-             ? isMenuOpen
-               ? isScrolled
-                 ? 'bg-black/80 backdrop-blur-xl border-white/30 text-white shadow-2xl' // 스크롤 시: 검정색 계열
-                 : 'bg-white/70 backdrop-blur-xl border-white/50 text-white shadow-2xl' // 스크롤 전: 흰색 계열
-               : 'bg-transparent border-transparent'
-             : 'bg-[#0a0a0a]/95 backdrop-blur-xl border-white/10 text-white shadow-2xl'
+          // 어드민 페이지일 때
+          isAdminPage
+            ? isMenuOpen
+              ? 'bg-[#0a0a0a]/95 backdrop-blur-xl border-white/10 text-white shadow-2xl'
+              : 'bg-transparent border-transparent'
+            : // 랜딩페이지이면서 메뉴가 열렸을 때만 배경색 적용 (데스크톱 전용)
+              isLandingPage
+                ? isMenuOpen
+                  ? isScrolled
+                    ? 'bg-white/95 backdrop-blur-xl border-slate-200 text-slate-900 shadow-2xl' // 스크롤 시: 라이트 배경
+                    : 'bg-white/70 backdrop-blur-xl border-white/50 text-white shadow-2xl' // 스크롤 전: 흰색 계열
+                  : 'bg-transparent border-transparent'
+                : 'bg-white/95 backdrop-blur-xl border-slate-200 text-slate-900 shadow-2xl'
         }`}
         onMouseEnter={() => setIsMenuOpen(true)}
       >
-        {/* 다크모드 배경 효과 (랜딩 페이지가 아닐 때) */}
-        {!isLandingPage && (
+        {/* 다크모드 배경 효과 (어드민 페이지만) */}
+        {isAdminPage && (
           <>
             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none opacity-50"></div>
             <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 via-transparent to-transparent pointer-events-none"></div>
@@ -251,11 +288,13 @@ export function Header() {
                         {/* 서브메뉴 리스트 */}
                         {item.children && (
                         <ul className={`space-y-3 text-sm ${
-                          isLandingPage 
-                            ? isScrolled 
-                              ? 'text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)]' // 스크롤 시: 흰색
-                              : 'text-white/80' // 스크롤 전: 흰색
-                            : 'text-gray-400'
+                          isAdminPage
+                            ? 'text-gray-400'
+                            : isLandingPage 
+                              ? isScrolled 
+                                ? 'text-slate-600' // 스크롤 시: 라이트 텍스트
+                                : 'text-white/80' // 스크롤 전: 흰색
+                              : 'text-slate-600'
                         }`}>
                             {item.children.map((child) => {
                               const isChildActive = pathname === child.href;
@@ -264,13 +303,19 @@ export function Header() {
                                   <Link
                                     href={child.href}
                                     className={`block transition-all duration-300 hover:translate-x-1 ${
-                                      isLandingPage
-                                        ? isScrolled
-                                          ? 'hover:text-white [text-shadow:0_1px_2px_rgba(0,0,0,0.3)]'
-                                          : 'hover:text-white'
-                                        : isChildActive
+                                      isAdminPage
+                                        ? isChildActive
                                           ? 'text-blue-400 font-semibold hover:text-blue-300'
                                           : 'hover:text-white hover:font-medium'
+                                        : isLandingPage
+                                          ? isScrolled
+                                            ? isChildActive
+                                              ? 'text-blue-600 font-semibold hover:text-blue-700'
+                                              : 'hover:text-slate-900 hover:font-medium'
+                                            : 'hover:text-white'
+                                          : isChildActive
+                                            ? 'text-blue-600 font-semibold hover:text-blue-700'
+                                            : 'hover:text-slate-900 hover:font-medium'
                                     }`}
                                   >
                                     {child.label}
@@ -288,31 +333,41 @@ export function Header() {
         </div>
       </div>
 
-      {/* 모바일 메뉴 영역 (다크모드 적용) */}
+      {/* 모바일 메뉴 영역 */}
       {mobileOpen && (
         <div className={`border-t lg:hidden h-[calc(100vh-5rem)] overflow-y-auto transition-all duration-500 ${
-          isLandingPage 
-            ? 'border-gray-200 bg-white'
-            : 'border-white/10 bg-[#0a0a0a] backdrop-blur-xl'
+          isAdminPage
+            ? 'border-white/10 bg-[#0a0a0a] backdrop-blur-xl'
+            : isLandingPage 
+              ? 'border-gray-200 bg-white'
+              : 'border-slate-200 bg-white backdrop-blur-xl'
         }`}>
           <nav className={`mx-auto max-w-6xl pl-[80px] pr-4 py-3 text-sm font-noto ${
-            isLandingPage ? '' : 'text-white'
+            isAdminPage
+              ? 'text-white'
+              : isLandingPage ? 'text-slate-900' : 'text-slate-900'
           }`}>
             <div className="flex flex-col gap-6 pt-4">
               {navItems.map((item, index) => {
                 const isItemActive = isLinkActive(item.href);
                 return (
                   <div key={item.label} className={`transition-all duration-300 ${
-                    index === navItems.length - 1 ? 'pb-[60px]' : ''
+                    index === navItems.length - 1 ? 'pb-[120px]' : ''
                   }`}>
                     <Link
                       href={item.href || '#'}
-                      className={`block text-lg font-bold mb-2 transition-all duration-300 hover:translate-x-2 ${
-                        isLandingPage
-                          ? 'text-black'
-                          : isItemActive
+                      className={`block text-xl font-bold mb-2 transition-all duration-300 hover:translate-x-2 ${
+                        isAdminPage
+                          ? isItemActive
                             ? 'text-blue-400'
                             : 'text-white hover:text-blue-300'
+                          : isLandingPage
+                            ? isItemActive
+                              ? 'text-blue-600'
+                              : 'text-slate-900 hover:text-blue-600'
+                            : isItemActive
+                              ? 'text-blue-600'
+                              : 'text-slate-700 hover:text-blue-600'
                       }`}
                       onClick={() => setMobileOpen(false)}
                     >
@@ -320,7 +375,9 @@ export function Header() {
                     </Link>
                     {item.children && (
                       <div className={`flex flex-col gap-2 pl-2 transition-all duration-300 ${
-                        isLandingPage ? 'text-gray-600' : 'text-gray-400'
+                        isAdminPage
+                          ? 'text-gray-400'
+                          : isLandingPage ? 'text-gray-600' : 'text-slate-600'
                       }`}>
                         {item.children.map((child) => {
                           const isChildActive = pathname === child.href;
@@ -328,14 +385,18 @@ export function Header() {
                             <Link
                               key={child.href}
                               href={child.href}
-                              className={`py-1 transition-all duration-300 hover:translate-x-2 ${
-                                isLandingPage
+                              className={`py-1 text-base transition-all duration-300 hover:translate-x-2 ${
+                                isAdminPage
                                   ? isChildActive
-                                    ? 'text-[#003978] font-medium'
-                                    : 'hover:text-[#003978]'
-                                  : isChildActive
                                     ? 'text-blue-400 font-semibold'
                                     : 'hover:text-white hover:font-medium'
+                                  : isLandingPage
+                                    ? isChildActive
+                                      ? 'text-blue-600 font-medium'
+                                      : 'hover:text-blue-600'
+                                    : isChildActive
+                                      ? 'text-blue-600 font-semibold'
+                                      : 'hover:text-blue-600 hover:font-medium'
                               }`}
                               onClick={() => setMobileOpen(false)}
                             >

@@ -1,5 +1,24 @@
 'use client'
 
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+
+// 임시 비활성화: 페이지 접근 시 홈으로 리다이렉트
+export default function ArchiveTechListPage() {
+  const router = useRouter()
+  
+  useEffect(() => {
+    router.replace('/')
+  }, [router])
+  
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <p className="text-slate-600">페이지 준비 중입니다...</p>
+    </div>
+  )
+}
+
+/* 임시 비활성화 - 원본 코드
 import { useEffect, useState } from 'react'
 import { ArchiveHero } from '@/app/_components/ArchiveHero'
 import { createClient } from '@supabase/supabase-js'
@@ -111,24 +130,23 @@ export default function ArchiveTechListPage() {
       <ArchiveHero title="기술자료실" />
 
       {/* Main Content */}
-      <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30 relative z-10">
+      <main className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900 relative z-10">
         
-        {/* 배경 그리드 효과 - main 컨텐츠 영역에만 적용 */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none" />
+        {/* 배경 패턴 (은은한 그리드) */}
+        <div className="fixed inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
 
         <div className="container mx-auto px-4 md:px-6 relative z-10 py-24">
           {loading ? (
             <div className="flex h-64 items-center justify-center">
-              <p className="text-gray-400">자료를 불러오는 중입니다...</p>
+              <p className="text-slate-600">자료를 불러오는 중입니다...</p>
             </div>
           ) : error ? (
             <div className="flex h-64 items-center justify-center">
-              <p className="text-red-400">{error}</p>
+              <p className="text-red-600">{error}</p>
             </div>
           ) : posts.length === 0 ? (
             <div className="flex h-64 items-center justify-center">
-              <p className="text-gray-400">등록된 자료가 없습니다.</p>
+              <p className="text-slate-600">등록된 자료가 없습니다.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 max-w-[1400px] mx-auto">
@@ -161,3 +179,4 @@ export default function ArchiveTechListPage() {
     </>
   )
 }
+임시 비활성화 종료 */

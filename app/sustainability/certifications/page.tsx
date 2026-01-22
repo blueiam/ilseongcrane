@@ -92,6 +92,13 @@ const certItems = [
     pdf: '/images/sustainability/pdf/07-Trading_Business_Registration_Certificate.pdf',
   },
   {
+    id: 7-1,
+    category: '등록증',
+    title: '(주)정상풍력 건설업등록중',
+    image: '/images/sustainability/Construction-Business-Registration-Certificate.png',
+    pdf: '/images/sustainability/pdf/Construction-Business-Registration-Certificate.pdf',
+  },
+  {
     id: 8,
     category: '확인서',
     title: '중소기업확인서',
@@ -127,70 +134,70 @@ const certItems = [
 export default function CertificationsPage() {
   // 선택된 항목(이미지+PDF)의 전체 데이터를 저장
   const [selectedItem, setSelectedItem] = useState<typeof certItems[0] | null>(null);
-  const [scrollY, setScrollY] = useState(0);
+  const [imageZoomed, setImageZoomed] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const timer = setTimeout(() => {
+      setImageZoomed(true);
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30">
-      
-      {/* 배경 그리드 효과 */}
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none z-0" />
+    <>
+      {/* Hero Section */}
+      <div className="relative h-[400px] md:h-[450px] lg:h-[500px] w-full overflow-hidden z-30">
+        {/* Background Image */}
+        <Image
+          src="/images/sustainability/section4.png"
+          alt="등록/면허/인증"
+          fill
+          className={`object-cover object-center transition-transform duration-[10000ms] ease-out ${
+            imageZoomed ? 'scale-100' : 'scale-125'
+          }`}
+          priority
+          quality={100}
+        />
 
-      {/* HERO SECTION */}
-      <section className="relative h-[90vh] md:h-screen overflow-hidden flex items-center justify-center">
-        <div 
-          className="absolute inset-0 z-0"
-          style={{ transform: `translateY(${scrollY * 0.5}px)` }}
-        >
-          <Image
-            src="/images/sustainability/section4.png"
-            alt="등록/면허/인증 배경"
-            fill
-            className="object-cover scale-110 brightness-100"
-            priority
-          />
+        {/* Title Content */}
+        <div className="relative flex h-full items-center justify-center z-20">
+          <h1
+            className="text-5xl md:text-6xl font-bold text-center drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]"
+            style={{ color: '#FFFFFF', textShadow: '0 4px 12px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6)' }}
+          >
+            등록/면허/인증
+          </h1>
         </div>
+      </div>
 
-        <div className="container mx-auto px-4 md:px-6 relative z-10 text-center">
+    <main className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+      
+      {/* 배경 패턴 (은은한 그리드) */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none z-0" />
+
+      {/* 리스트 영역 */}
+      <div className="container mx-auto px-4 md:px-6 relative z-10 pt-24 pb-32">
+
+        {/* 문구 섹션 (Hero 아래로 이동) */}
+        <section className="mb-32 text-center max-w-4xl mx-auto">
           <FadeInUp>
-            <span className="inline-block py-1 px-4 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-300 text-sm font-bold tracking-widest mb-6 uppercase animate-pulse drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+            <span className="inline-block py-1 px-4 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-bold tracking-widest mb-4 uppercase">
               Certifications
             </span>
           </FadeInUp>
           
           <FadeInUp delay={200}>
-            <h1 className="text-4xl md:text-7xl font-black mb-6 tracking-tight leading-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4 leading-normal">
               등록/면허/인증
-            </h1>
+            </h2>
           </FadeInUp>
 
           <FadeInUp delay={400}>
-            <p className="text-xl md:text-2xl text-white max-w-2xl mx-auto font-light leading-relaxed mb-12 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+            <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto font-light leading-relaxed">
               일성크레인의 투명한 경영과 검증된 기술력을 증명하는<br className="hidden md:block" /> 각종 인증 현황입니다.
             </p>
           </FadeInUp>
-
-          <FadeInUp delay={600}>
-            <div className="flex justify-center animate-bounce">
-              <Image
-                src="/images/sustainability/mouse.svg"
-                alt="스크롤 유도"
-                width={31}
-                height={50}
-                className="opacity-50 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
-              />
-            </div>
-          </FadeInUp>
-        </div>
-      </section>
-
-      {/* 리스트 영역 */}
-      <div className="container mx-auto px-4 md:px-6 relative z-10 pt-24 pb-32">
+        </section>
         <div className="flex flex-wrap justify-center gap-8">
           {certItems.map((item, index) => (
             <CertCard 
@@ -246,6 +253,7 @@ export default function CertificationsPage() {
         </div>
       )}
     </main>
+    </>
   );
 }
 
@@ -262,24 +270,24 @@ function CertCard({ item, index, onClick }: { item: typeof certItems[0], index: 
       style={{ transitionDelay: `${index * 100}ms` }}
       onClick={onClick}
     >
-      <div className="relative w-full aspect-[1/1.414] bg-[#121212] border border-white/10 overflow-hidden shadow-sm transition-all duration-300 group-hover:shadow-2xl group-hover:border-blue-500/50 group-hover:-translate-y-2 rounded-2xl">
+      <div className="relative w-full aspect-[1/1.414] bg-white border border-slate-200 overflow-hidden shadow-sm transition-all duration-300 group-hover:shadow-lg group-hover:border-blue-500 group-hover:-translate-y-1 rounded-2xl">
         <Image
           src={item.image}
           alt={item.title}
           fill
           className="object-contain p-2 transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
-          <div className="opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 bg-white/90 p-3 rounded-full shadow-lg">
+        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/60 transition-colors duration-300 flex items-center justify-center">
+          <div className="opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300 bg-blue-50 p-3 rounded-full shadow-lg border border-blue-200">
             <ZoomIn className="w-6 h-6 text-blue-600" />
           </div>
         </div>
       </div>
       <div className="mt-4 text-center">
-        <span className="inline-block px-2 py-1 bg-white/5 border border-white/10 text-gray-400 text-xs font-bold mb-2 rounded">
+        <span className="inline-block px-2 py-1 bg-blue-50 border border-blue-100 text-blue-600 text-xs font-bold mb-2 rounded">
           {item.category}
         </span>
-        <h3 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors">
+        <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
           {item.title}
         </h3>
       </div>

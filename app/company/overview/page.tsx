@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 // =============================================================================
@@ -151,7 +151,8 @@ const philosophies = [
       </svg>
     ),
     color: 'text-blue-400',
-    borderColor: 'border-blue-500/30'
+    borderColor: 'border-blue-500/30',
+    image: '/images/about/trust01.jpg'
   },
   {
     title: '안전',
@@ -163,7 +164,8 @@ const philosophies = [
       </svg>
     ),
     color: 'text-yellow-400',
-    borderColor: 'border-yellow-500/30'
+    borderColor: 'border-yellow-500/30',
+    image: '/images/about/safe.jpg'
   },
   {
     title: '혁신',
@@ -175,7 +177,8 @@ const philosophies = [
       </svg>
     ),
     color: 'text-green-400',
-    borderColor: 'border-green-500/30'
+    borderColor: 'border-green-500/30',
+    image: '/images/about/innovation01.jpg'
   },
   {
     title: '상생',
@@ -187,23 +190,59 @@ const philosophies = [
       </svg>
     ),
     color: 'text-purple-400',
-    borderColor: 'border-purple-500/30'
+    borderColor: 'border-purple-500/30',
+    image: '/images/about/sustainability.jpg'
   }
 ];
 
 export default function OverviewPage() {
   const [activeStep, setActiveStep] = useState<number | null>(1);
+  const [isVisible, setIsVisible] = useState(false);
+  const [imageZoomed, setImageZoomed] = useState(false);
 
   const toggleStep = (id: number) => {
     setActiveStep(activeStep === id ? null : id);
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+      setImageZoomed(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30">
+    <>
+      {/* Hero Section */}
+      <div className="relative h-[400px] md:h-[450px] lg:h-[500px] w-full overflow-hidden z-30">
+        {/* Background Image */}
+        <Image
+          src="/hero/vision.png"
+          alt="2030 VISION"
+          fill
+          className={`object-cover object-center transition-transform duration-[10000ms] ease-out ${
+            imageZoomed ? 'scale-100' : 'scale-125'
+          }`}
+          priority
+          quality={100}
+        />
+
+        {/* Title Content */}
+        <div className="relative flex h-full items-center justify-center z-20">
+          <h1
+            className="text-5xl md:text-6xl font-bold text-center drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]"
+            style={{ color: '#FFFFFF', textShadow: '0 4px 12px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6)' }}
+          >
+            비전/ 기업이념 / CI
+          </h1>
+        </div>
+      </div>
+
+    <main className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900">
       
-      {/* 배경 그리드 효과 */}
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none" />
-      <div className="fixed inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none" />
+      {/* 배경 패턴 (은은한 그리드) */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
 
       <div className="container mx-auto px-4 md:px-6 relative z-10 py-24 max-w-5xl">
         
@@ -212,16 +251,14 @@ export default function OverviewPage() {
            ======================================================================== */}
         <section className="mb-40">
           <div className="text-center mb-20">
-            <span className="inline-block py-1 px-3 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest mb-4 uppercase">
+            <span className="inline-block py-1 px-4 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-bold tracking-widest mb-4 uppercase">
               Future Roadmap
             </span>
-            <h1 className="text-5xl md:text-6xl font-black mb-6 tracking-tight">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-500">
-                2030 VISION
-              </span>
+            <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tight text-slate-900">
+              2030 VISION
             </h1>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto font-light">
-              일성크레인의 <span className="text-white font-medium">단계별 성장 전략</span>과 <span className="text-white font-medium">미래 비전</span>입니다.
+            <p className="text-slate-600 text-lg max-w-2xl mx-auto font-light">
+              일성크레인의 <span className="text-slate-900 font-medium">단계별 성장 전략</span>과 <span className="text-slate-900 font-medium">미래 비전</span>입니다.
             </p>
           </div>
 
@@ -229,10 +266,10 @@ export default function OverviewPage() {
             {visionSteps.map((item) => (
               <div 
                 key={item.id} 
-                className={`rounded-2xl border transition-all duration-300 overflow-hidden backdrop-blur-md
+                className={`rounded-2xl border transition-all duration-300 overflow-hidden
                   ${activeStep === item.id 
-                    ? 'bg-white/10 border-blue-500/50 shadow-[0_0_30px_rgba(59,130,246,0.2)]' 
-                    : 'bg-white/5 border-white/10 hover:border-blue-500/30 hover:bg-white/8'
+                    ? 'bg-blue-50 border-blue-500 shadow-lg' 
+                    : 'bg-white border-slate-200 hover:border-blue-300 hover:shadow-md'
                   }`}
               >
                 {/* Header */}
@@ -242,15 +279,15 @@ export default function OverviewPage() {
                 >
                   <div className="flex items-start gap-6">
                     <div className={`shrink-0 px-4 py-2 rounded-lg font-bold text-lg transition-all duration-300
-                      ${activeStep === item.id ? 'bg-blue-600 text-white shadow-[0_0_20px_rgba(59,130,246,0.4)]' : 'bg-white/10 text-gray-300 border border-white/20'}`}>
+                      ${activeStep === item.id ? 'bg-blue-600 text-white shadow-md' : 'bg-slate-100 text-slate-700 border border-slate-300'}`}>
                       {item.step}
                     </div>
                     <div>
                       <h3 className={`text-2xl md:text-3xl font-bold mb-2 transition-colors
-                        ${activeStep === item.id ? 'text-white' : 'text-gray-300'}`}>
+                        ${activeStep === item.id ? 'text-slate-900' : 'text-slate-700'}`}>
                         {item.title}
                       </h3>
-                      <p className="text-blue-400 font-medium">{item.period}</p>
+                      <p className="text-blue-600 font-medium">{item.period}</p>
                     </div>
                   </div>
                   <div className={`transform transition-transform duration-300 ${activeStep === item.id ? 'rotate-180' : ''}`}>
@@ -264,16 +301,16 @@ export default function OverviewPage() {
                 <div className={`transition-all duration-500 ease-in-out px-6 md:px-8
                     ${activeStep === item.id ? 'max-h-[2000px] opacity-100 pb-8' : 'max-h-0 opacity-0 overflow-hidden'}`}
                 >
-                  <hr className="border-white/10 mb-8" />
+                  <hr className="border-slate-200 mb-8" />
                   <div className="grid grid-cols-1 gap-10">
                     
                     {/* 핵심 목표 */}
-                    <div className="bg-white/5 border border-white/10 p-6 rounded-xl backdrop-blur-sm hover:border-blue-500/30 transition-all duration-300">
-                      <h4 className="text-blue-400 font-bold mb-4 text-sm uppercase tracking-wider">핵심 목표 (Core Goals)</h4>
+                    <div className="bg-white border border-slate-200 p-6 rounded-xl hover:border-blue-300 transition-all duration-300">
+                      <h4 className="text-blue-600 font-bold mb-4 text-sm uppercase tracking-wider">핵심 목표 (Core Goals)</h4>
                       <ul className="space-y-3">
                         {item.goals.map((goal, idx) => (
-                          <li key={idx} className="flex items-start text-gray-200 text-lg font-medium">
-                            <span className="mr-3 text-blue-500 mt-1">✓</span> {goal}
+                          <li key={idx} className="flex items-start text-slate-700 text-lg font-medium">
+                            <span className="mr-3 text-blue-600 mt-1">✓</span> {goal}
                           </li>
                         ))}
                       </ul>
@@ -282,19 +319,19 @@ export default function OverviewPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                       {/* 주요 전략 */}
                       <div>
-                        <h4 className="text-white font-bold text-xl mb-6 flex items-center">
+                        <h4 className="text-slate-900 font-bold text-xl mb-6 flex items-center">
                           <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
                           주요 전략
                         </h4>
                         <div className="space-y-6">
                           {item.strategies.map((strategy, idx) => (
-                            <div key={idx} className="pl-4 border-l-2 border-white/20 hover:border-blue-500/50 transition-colors duration-300">
-                              <h5 className="text-gray-200 font-bold mb-2">{strategy.category}</h5>
+                            <div key={idx} className="pl-4 border-l-2 border-slate-300 hover:border-blue-500 transition-colors duration-300">
+                              <h5 className="text-slate-700 font-bold mb-2">{strategy.category}</h5>
                               {strategy.items.length > 0 && (
                                 <ul className="space-y-1">
                                   {strategy.items.map((subItem, sIdx) => (
-                                    <li key={sIdx} className="text-gray-300 text-sm pl-2 relative">
-                                      <span className="absolute left-0 top-2 w-1 h-1 bg-blue-500 rounded-full"></span>
+                                    <li key={sIdx} className="text-slate-600 text-sm pl-2 relative">
+                                      <span className="absolute left-0 top-2 w-1 h-1 bg-blue-600 rounded-full"></span>
                                       {subItem}
                                     </li>
                                   ))}
@@ -307,14 +344,14 @@ export default function OverviewPage() {
 
                       {/* 주요 사업 */}
                       <div>
-                        <h4 className="text-white font-bold text-xl mb-6 flex items-center">
+                        <h4 className="text-slate-900 font-bold text-xl mb-6 flex items-center">
                           <span className="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
                           주요 사업
                         </h4>
-                        <div className="bg-white/5 border border-white/10 p-5 rounded-lg backdrop-blur-sm hover:border-blue-500/30 transition-all duration-300">
+                        <div className="bg-white border border-slate-200 p-5 rounded-lg hover:border-blue-300 transition-all duration-300">
                           <ul className="space-y-3">
                             {item.majorBusiness.map((biz, idx) => (
-                              <li key={idx} className="text-gray-200">
+                              <li key={idx} className="text-slate-700">
                                 {biz}
                               </li>
                             ))}
@@ -328,64 +365,87 @@ export default function OverviewPage() {
               </div>
             ))}
           </div>
-
-          {/* 공통 고객산업 */}
-          <div className="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm text-center hover:border-blue-500/30 transition-all duration-300">
-            <h4 className="text-lg font-bold text-white mb-4 uppercase tracking-wider text-blue-400">
-              주요 고객 산업 (Client Industries)
-            </h4>
-            <p className="text-gray-300 text-lg leading-relaxed max-w-3xl mx-auto">
-              토목·건설 등 인프라산업, 석유화학·공장·제철·시멘트 등 중후장대 플랜트산업,<br className="hidden md:block"/>
-              조선업, 에너지산업, 해운·항만·물류산업
-            </p>
-          </div>
         </section>
 
 
         {/* ========================================================================
             SECTION 2: Corporate Philosophy
            ======================================================================== */}
-        <section className="mb-40 pt-20 border-t border-white/10">
+        <section className="mb-40 pt-20 border-t border-slate-200">
           <div className="text-center mb-20">
-            <span className="inline-block py-1 px-3 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest mb-4 uppercase">
+            <span className="inline-block py-1 px-4 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-bold tracking-widest mb-4 uppercase">
               Core Values
             </span>
-            <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-500">
-                Corporate Philosophy
-              </span>
+            <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight text-slate-900">
+              Corporate Philosophy
             </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto font-light">
-              일성크레인이 지키고자 하는 <span className="text-white font-medium">4가지 핵심 가치</span>입니다.<br/>
+            <p className="text-slate-600 text-lg max-w-2xl mx-auto font-light">
+              일성크레인이 지키고자 하는 <span className="text-slate-900 font-medium">4가지 핵심 가치</span>입니다.<br/>
               투명하고 안전한 경영을 통해 지속 가능한 미래를 만듭니다.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {philosophies.map((item, index) => (
-              <div 
-                key={index}
-                className={`bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm hover:border-blue-500/30 hover:bg-white/8 transition-all duration-300 group`}
-              >
-                <div className="flex items-start gap-6">
-                  <div className={`shrink-0 w-16 h-16 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center ${item.color} group-hover:scale-110 group-hover:border-blue-500/50 transition-all duration-300 shadow-lg`}>
-                    {item.icon}
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-white mb-1 flex items-center gap-2">
-                      {item.title}
-                      <span className="text-sm font-medium text-gray-400 uppercase tracking-wider opacity-60">
-                        {item.eng}
-                      </span>
-                    </h3>
-                    <div className="w-10 h-1 bg-white/20 rounded-full mb-4 mt-2 group-hover:bg-blue-500 transition-colors"></div>
-                    <p className="text-gray-300 leading-relaxed whitespace-pre-line text-sm md:text-base">
-                      {item.desc}
-                    </p>
-                  </div>
+            {philosophies.map((item, index) => {
+              const hasImage = item.image;
+              return (
+                <div 
+                  key={index}
+                  className={`relative overflow-hidden border border-slate-200 rounded-2xl hover:border-blue-300 hover:shadow-md transition-all duration-300 group ${
+                    hasImage ? 'min-h-[400px] md:min-h-[450px] flex flex-col' : 'bg-white p-8'
+                  }`}
+                >
+                  {hasImage ? (
+                    <>
+                      {/* Image Section - Top */}
+                      <div className="relative w-full flex-shrink-0 bg-slate-100">
+                        <Image
+                          src={item.image}
+                          alt={item.title}
+                          width={800}
+                          height={600}
+                          className="w-full h-auto object-contain"
+                          priority={index < 2}
+                        />
+                      </div>
+                      
+                      {/* Text Section - Bottom */}
+                      <div className="relative z-10 p-8 flex-1 flex flex-col justify-end bg-white">
+                        <h3 className="text-2xl font-bold mb-1 flex items-center gap-2 text-slate-900">
+                          {item.title}
+                          <span className="text-sm font-medium uppercase tracking-wider opacity-60 text-slate-500">
+                            {item.eng}
+                          </span>
+                        </h3>
+                        <div className="w-10 h-1 rounded-full mb-4 mt-2 bg-slate-200 group-hover:bg-blue-500 transition-colors"></div>
+                        <p className="leading-relaxed whitespace-pre-line text-sm md:text-base text-slate-600">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex items-start gap-6">
+                      {/* Icon */}
+                      <div className={`shrink-0 w-16 h-16 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center ${item.color} group-hover:scale-110 group-hover:border-blue-500/50 transition-all duration-300 shadow-lg`}>
+                        {item.icon}
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-bold mb-1 flex items-center gap-2 text-slate-900">
+                          {item.title}
+                          <span className="text-sm font-medium uppercase tracking-wider opacity-60 text-slate-500">
+                            {item.eng}
+                          </span>
+                        </h3>
+                        <div className="w-10 h-1 rounded-full mb-4 mt-2 bg-slate-200 group-hover:bg-blue-500 transition-colors"></div>
+                        <p className="leading-relaxed whitespace-pre-line text-sm md:text-base text-slate-600">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 
@@ -393,23 +453,21 @@ export default function OverviewPage() {
         {/* ========================================================================
             SECTION 3: Corporate Identity (CI) - [신규 통합]
            ======================================================================== */}
-        <section className="pt-20 border-t border-white/10">
+        <section className="pt-20 border-t border-slate-200">
           <div className="text-center mb-20">
-            <span className="inline-block py-1 px-3 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest mb-4 uppercase">
+            <span className="inline-block py-1 px-4 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-bold tracking-widest mb-4 uppercase">
               Corporate Identity
             </span>
-            <h2 className="text-4xl md:text-5xl font-black mb-8 tracking-tight">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-gray-500">
-                CI 소개
-              </span>
+            <h2 className="text-4xl md:text-5xl font-black mb-8 tracking-tight text-slate-900">
+              CI 소개
             </h2>
             
-            <div className="text-gray-300 leading-relaxed text-lg max-w-3xl mx-auto space-y-2 font-light">
+            <div className="text-slate-600 leading-relaxed text-lg max-w-3xl mx-auto space-y-2 font-light">
               <p>
-                일성크레인의 CI는 <span className="text-white font-bold">'신뢰(Trust)'</span>와 <span className="text-white font-bold">'연결(Connection)'</span>을 모티브로 하여,<br className="hidden md:block"/>
+                일성크레인의 CI는 <span className="text-slate-900 font-bold">'신뢰(Trust)'</span>와 <span className="text-slate-900 font-bold">'연결(Connection)'</span>을 모티브로 하여,<br className="hidden md:block"/>
                 고객과 함께 성장하고자 하는 굳건한 의지를 형상화했습니다.
               </p>
-              <p className="text-gray-400 text-base mt-4">
+              <p className="text-slate-600 text-base mt-4">
                 굵고 단단한 서체는 중장비 산업의 핵심 가치인 <strong>안전성</strong>을 상징하며,<br className="hidden md:block"/>
                 진취적인 <strong>블루(Blue)</strong> 컬러는 대한민국을 넘어 글로벌 리딩 기업으로 도약하는<br className="hidden md:block"/>
                 일성크레인의 혁신적인 미래 비전을 담고 있습니다.
@@ -418,7 +476,7 @@ export default function OverviewPage() {
           </div>
 
           {/* 로고 비주얼 영역 (Grid Background) */}
-          <div className="bg-[#eeeeee] border border-white/20 rounded-2xl p-8 md:p-16 mb-12 shadow-2xl relative overflow-hidden backdrop-blur-sm">
+          <div className="bg-[#eeeeee] border border-slate-200 rounded-2xl p-8 md:p-16 mb-12 shadow-2xl relative overflow-hidden">
             {/* 모눈종이 배경 효과 */}
             <div className="absolute inset-0 opacity-20 pointer-events-none" 
                  style={{ backgroundImage: 'linear-gradient(#999 1px, transparent 1px), linear-gradient(90deg, #999 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
@@ -440,22 +498,22 @@ export default function OverviewPage() {
 
           {/* 컬러 시스템 */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            <div className="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm flex items-center gap-6 hover:border-blue-500/30 transition-all duration-300">
-              <div className="w-20 h-20 rounded-full bg-[#00427A] shadow-lg shrink-0 border-4 border-white/10"></div>
+            <div className="bg-white border border-slate-200 p-8 rounded-2xl flex items-center gap-6 hover:border-blue-300 hover:shadow-md transition-all duration-300">
+              <div className="w-20 h-20 rounded-full bg-[#00427A] shadow-lg shrink-0 border-4 border-slate-200"></div>
               <div>
-                <h4 className="text-xl font-bold text-white mb-1">Ilseong Blue</h4>
-                <p className="text-gray-400 text-sm mb-2">Main Color</p>
-                <p className="text-blue-400 font-mono text-sm">#00427A</p>
-                <p className="text-gray-500 text-xs mt-1">C100 M80 Y10 K0</p>
+                <h4 className="text-xl font-bold text-slate-900 mb-1">Ilseong Blue</h4>
+                <p className="text-slate-600 text-sm mb-2">Main Color</p>
+                <p className="text-blue-600 font-mono text-sm">#00427A</p>
+                <p className="text-slate-500 text-xs mt-1">C100 M80 Y10 K0</p>
               </div>
             </div>
-            <div className="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm flex items-center gap-6 hover:border-blue-500/30 transition-all duration-300">
-              <div className="w-20 h-20 rounded-full bg-[#002845] shadow-lg shrink-0 border-4 border-white/10"></div>
+            <div className="bg-white border border-slate-200 p-8 rounded-2xl flex items-center gap-6 hover:border-blue-300 hover:shadow-md transition-all duration-300">
+              <div className="w-20 h-20 rounded-full bg-[#002845] shadow-lg shrink-0 border-4 border-slate-200"></div>
               <div>
-                <h4 className="text-xl font-bold text-white mb-1">Deep Navy</h4>
-                <p className="text-gray-400 text-sm mb-2">Sub Color</p>
-                <p className="text-blue-400 font-mono text-sm">#002845</p>
-                <p className="text-gray-500 text-xs mt-1">C100 M80 Y40 K40</p>
+                <h4 className="text-xl font-bold text-slate-900 mb-1">Deep Navy</h4>
+                <p className="text-slate-600 text-sm mb-2">Sub Color</p>
+                <p className="text-blue-600 font-mono text-sm">#002845</p>
+                <p className="text-slate-500 text-xs mt-1">C100 M80 Y40 K40</p>
               </div>
             </div>
           </div>
@@ -475,7 +533,7 @@ export default function OverviewPage() {
             <a 
               href="/images/about/ci_logos.png" 
               download="ci_logos.png"
-              className="flex items-center justify-center px-8 py-4 bg-white/10 border border-white/20 hover:bg-white/15 hover:border-blue-500/50 text-white rounded-lg transition-all duration-300 shadow-lg group"
+              className="flex items-center justify-center px-8 py-4 bg-white border border-slate-200 hover:border-blue-300 hover:shadow-md text-slate-900 rounded-lg transition-all duration-300 shadow-lg group"
             >
               <span className="font-bold mr-3">PNG 다운로드</span>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 group-hover:translate-y-1 transition-transform">
@@ -487,5 +545,6 @@ export default function OverviewPage() {
 
       </div>
     </main>
+    </>
   );
 }

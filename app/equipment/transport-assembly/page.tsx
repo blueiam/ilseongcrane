@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { Wrench, ArrowRight, RotateCcw } from 'lucide-react';
 
 // ----------------------------------------------------------------------
@@ -89,37 +90,71 @@ function useScrollAnimation() {
 // 3. 메인 컴포넌트
 // ----------------------------------------------------------------------
 export default function TransportAssemblyPage() {
+  const [imageZoomed, setImageZoomed] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setImageZoomed(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30">
+    <>
+      {/* Hero Section */}
+      <div className="relative h-[400px] md:h-[450px] lg:h-[500px] w-full overflow-hidden z-30">
+        {/* Background Image */}
+        <Image
+          src="/hero/crane_bg.jpg"
+          alt="Transport & Assembly"
+          fill
+          className={`object-cover object-center transition-transform duration-[10000ms] ease-out ${
+            imageZoomed ? 'scale-100' : 'scale-125'
+          }`}
+          priority
+          quality={100}
+        />
+
+        {/* Title Content */}
+        <div className="relative flex h-full items-center justify-center z-20">
+          <h1
+            className="text-5xl md:text-6xl font-bold text-center drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]"
+            style={{ color: '#FFFFFF', textShadow: '0 4px 12px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6)' }}
+          >
+            운송 / 조립해체
+          </h1>
+        </div>
+      </div>
+
+    <main className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900">
       
-      {/* 배경 그리드 효과 */}
-      <div className="fixed inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none" />
-      <div className="fixed inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none" />
+      {/* 배경 패턴 (은은한 그리드) */}
+      <div className="fixed inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
 
       <div className="container mx-auto px-4 md:px-6 relative z-10 py-24">
         
         {/* 헤더 섹션 */}
         <section className="mb-20 text-center">
-          <span className="inline-block py-1 px-3 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest mb-4 uppercase animate-fade-in">
+          <span className="inline-block py-1 px-4 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-bold tracking-widest mb-4 uppercase">
             Process
           </span>
-          <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight text-white animate-fade-in-up">
+          <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tight text-slate-900">
             Transport & Assembly
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto font-light animate-fade-in-up delay-100">
-            일성크레인의 대형 장비는 <span className="text-white font-medium">Self-Assembly System</span>을 통해
+          <p className="text-slate-600 text-lg max-w-2xl mx-auto font-light">
+            일성크레인의 대형 장비는 <span className="text-slate-900 font-medium">Self-Assembly System</span>을 통해
             별도의 보조 장비 없이 신속하고 효율적으로 설치 및 해체가 가능합니다.
           </p>
         </section>
 
         {/* 프로세스 흐름 표시 (조립 -> 해체) */}
-        <div className="flex justify-center items-center gap-4 mb-16 animate-fade-in-up delay-200">
-          <div className="flex items-center gap-2 px-6 py-3 bg-blue-600/20 border border-blue-500/30 rounded-full text-blue-300 font-bold">
+        <div className="flex justify-center items-center gap-4 mb-16">
+          <div className="flex items-center gap-2 px-6 py-3 bg-blue-50 border border-blue-200 rounded-full text-blue-700 font-bold">
             <Wrench className="w-5 h-5" />
             <span>조립 (Assembly)</span>
-            <ArrowRight className="w-5 h-5 ml-2 animate-pulse" />
+            <ArrowRight className="w-5 h-5 ml-2" />
           </div>
-          <div className="flex items-center gap-2 px-6 py-3 bg-orange-600/20 border border-orange-500/30 rounded-full text-orange-300 font-bold">
+          <div className="flex items-center gap-2 px-6 py-3 bg-orange-50 border border-orange-200 rounded-full text-orange-700 font-bold">
             <RotateCcw className="w-5 h-5" />
             <span>해체 (Disassembly)</span>
           </div>
@@ -129,10 +164,10 @@ export default function TransportAssemblyPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[1400px] mx-auto">
           
           {/* Start Card (Intro) */}
-          <div className="group relative bg-gradient-to-br from-blue-900/40 to-blue-900/10 border border-blue-500/30 rounded-2xl p-8 flex flex-col justify-center items-center text-center aspect-[4/3] hover:border-blue-400 transition-all duration-300 shadow-[0_0_30px_rgba(37,99,235,0.1)]">
-            <ArrowRight className="w-16 h-16 text-blue-400 mb-6 group-hover:scale-110 transition-transform duration-300" />
-            <h3 className="text-2xl font-black text-white mb-2">START</h3>
-            <p className="text-blue-200 text-sm">현장 도착 및<br/>작업 개시</p>
+          <div className="group relative bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-300 rounded-2xl p-8 flex flex-col justify-center items-center text-center aspect-[4/3] hover:border-blue-500 transition-all duration-300 shadow-sm hover:shadow-md">
+            <ArrowRight className="w-16 h-16 text-blue-600 mb-6 group-hover:scale-110 transition-transform duration-300" />
+            <h3 className="text-2xl font-black text-slate-900 mb-2">START</h3>
+            <p className="text-blue-700 text-sm">현장 도착 및<br/>작업 개시</p>
           </div>
 
           {/* Process Cards */}
@@ -141,16 +176,17 @@ export default function TransportAssemblyPage() {
           ))}
 
           {/* End Card (Outro) */}
-          <div className="group relative bg-gradient-to-br from-orange-900/40 to-orange-900/10 border border-orange-500/30 rounded-2xl p-8 flex flex-col justify-center items-center text-center aspect-[4/3] hover:border-orange-400 transition-all duration-300 shadow-[0_0_30px_rgba(234,88,12,0.1)]">
-            <RotateCcw className="w-16 h-16 text-orange-400 mb-6 group-hover:-rotate-90 transition-transform duration-500" />
-            <h3 className="text-2xl font-black text-white mb-2">END</h3>
-            <p className="text-orange-200 text-sm">작업 완료 후<br/>역순 해체</p>
+          <div className="group relative bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-300 rounded-2xl p-8 flex flex-col justify-center items-center text-center aspect-[4/3] hover:border-orange-500 transition-all duration-300 shadow-sm hover:shadow-md">
+            <RotateCcw className="w-16 h-16 text-orange-600 mb-6 group-hover:-rotate-90 transition-transform duration-500" />
+            <h3 className="text-2xl font-black text-slate-900 mb-2">END</h3>
+            <p className="text-orange-700 text-sm">작업 완료 후<br/>역순 해체</p>
           </div>
 
         </div>
 
       </div>
     </main>
+    </>
   );
 }
 
@@ -163,11 +199,11 @@ function ProcessCard({ item, index }: { item: any, index: number }) {
   return (
     <div
       ref={ref}
-      className={`group relative bg-[#151515] border border-white/10 rounded-2xl overflow-hidden hover:border-blue-500/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+      className={`group relative bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-blue-500 transition-all duration-500 hover:-translate-y-1 hover:shadow-lg ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
       style={{ transitionDelay: `${index * 100}ms` }}
     >
       {/* Step Number Badge */}
-      <div className="absolute top-4 left-4 z-20 bg-black/70 backdrop-blur-md border border-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">
+      <div className="absolute top-4 left-4 z-20 bg-white backdrop-blur-md border border-slate-300 text-slate-900 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
         STEP {item.step}
       </div>
 
@@ -181,15 +217,15 @@ function ProcessCard({ item, index }: { item: any, index: number }) {
           />
         </div>
         {/* Overlay gradient for readability */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#151515] to-transparent opacity-80 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent opacity-80 pointer-events-none"></div>
       </div>
 
       {/* Text Area */}
-      <div className="w-full bg-[#151515] p-5 border-t border-white/5 flex flex-col justify-center">
-        <h3 className="text-lg font-bold text-white mb-1 truncate group-hover:text-blue-400 transition-colors">
+      <div className="w-full bg-white p-5 border-t border-slate-200 flex flex-col justify-center">
+        <h3 className="text-lg font-bold text-slate-900 mb-1 truncate group-hover:text-blue-600 transition-colors">
           {item.title}
         </h3>
-        <p className="text-gray-400 text-xs line-clamp-2">
+        <p className="text-slate-600 text-xs line-clamp-2">
           {item.desc}
         </p>
       </div>

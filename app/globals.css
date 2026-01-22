@@ -3,18 +3,11 @@
 /* 1) 항상 맨 위에 Tailwind import */
 @import "tailwindcss";
 
-/* 2) 라이트/다크 공통 색상 변수 */
+/* 2) 라이트 테마 색상 변수 (전체 사이트 라이트 모드 적용) */
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0f172a; /* slate-900 */
   --ilseong-blue: #003978;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 /* 3) Tailwind v4 테마 토큰 설정 */
@@ -52,9 +45,9 @@ body:has(main > section:first-child[class*="h-screen"]) > div > div.pt-16 {
     background-color: transparent !important;
   }
 
-  /* 스크롤 시 데스크톱에서만 투명 glass 효과 적용 */
-  body:has(main > section:first-child[class*="h-screen"]) header.lg\:bg-white\/40 {
-    background-color: rgba(255, 255, 255, 0.4) !important;
+  /* 스크롤 시 데스크톱에서만 투명 glass 효과 적용 (라이트 모드) */
+  body:has(main > section:first-child[class*="h-screen"]) header.lg\:bg-white\/80 {
+    background-color: rgba(255, 255, 255, 0.8) !important;
     backdrop-filter: blur(20px) saturate(180%) !important;
     -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   }

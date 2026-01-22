@@ -64,3 +64,28 @@ WHERE tablename = 'equipments';
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

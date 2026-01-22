@@ -56,20 +56,19 @@ export default function CustomersPage() {
       <CustomersHero />
 
       {/* Main Content */}
-      <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30 relative z-10">
+      <main className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900 relative z-10">
         
-        {/* 배경 그리드 효과 - main 컨텐츠 영역에만 적용 */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none" />
+        {/* 배경 패턴 (은은한 그리드) */}
+        <div className="fixed inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
 
         <div className="container mx-auto px-4 md:px-6 relative z-10 py-24">
           
           {/* 설명 섹션 */}
           <section className="mb-20 text-center">
-            <span className="inline-block py-1 px-3 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-widest mb-4 uppercase animate-fade-in">
-              Partners
+            <span className="inline-block py-1 px-4 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-xs font-bold tracking-widest mb-4 uppercase">
+              Major Custommers
             </span>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto font-light animate-fade-in-up">
+            <p className="text-slate-600 text-lg max-w-2xl mx-auto font-light">
               국내 유수의 기업들과 함께 성장해왔습니다.<br/>
               신뢰받는 파트너로서 최고의 서비스를 제공합니다.
             </p>
@@ -98,7 +97,7 @@ function CustomerCard({ customer, index }: { customer: any, index: number }) {
   return (
     <div
       ref={ref}
-      className={`group relative bg-[#eeeeee] border border-white/10 rounded-2xl overflow-hidden hover:border-blue-500/50 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+      className={`group relative bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-blue-500 hover:shadow-lg transition-all duration-500 hover:-translate-y-1 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
       style={{ transitionDelay: `${index * 50}ms` }}
     >
       {/* 이미지 영역 */}
@@ -108,7 +107,7 @@ function CustomerCard({ customer, index }: { customer: any, index: number }) {
             src={customer.src}
             alt={customer.name}
             fill
-            className="object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300 group-hover:scale-110"
+            className="object-contain transition-all duration-300 group-hover:scale-110"
           />
         </div>
       </div>

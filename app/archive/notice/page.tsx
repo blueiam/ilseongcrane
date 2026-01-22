@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { NoticeHero } from '@/app/_components/NoticeHero'
+import Image from 'next/image'
 import { createClient } from '@supabase/supabase-js'
 import { NoticeCard } from '@/app/_components/NoticeCard'
 
@@ -38,8 +38,17 @@ export default function NoticeListPage() {
   const [thumbMap, setThumbMap] = useState<Record<string, string | null>>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [imageZoomed, setImageZoomed] = useState(false)
 
   useEffect(() => {
+    // 페이지 로드 시 스크롤을 맨 위로 이동
+    window.scrollTo(0, 0);
+    
+    // 이미지 줌인 애니메이션
+    const timer = setTimeout(() => {
+      setImageZoomed(true);
+    }, 100);
+    
     const load = async () => {
       setLoading(true)
 
@@ -112,32 +121,55 @@ export default function NoticeListPage() {
     }
 
     load()
+    
+    return () => clearTimeout(timer);
   }, [])
 
   return (
     <>
       {/* Hero Section */}
-      <NoticeHero />
+      <div className="relative h-[400px] md:h-[450px] lg:h-[500px] w-full overflow-hidden z-30">
+        {/* Background Image */}
+        <Image
+          src="/hero/news_bg.jpg"
+          alt="공지/소식"
+          fill
+          className={`object-cover object-center transition-transform duration-[10000ms] ease-out ${
+            imageZoomed ? 'scale-100' : 'scale-125'
+          }`}
+          priority
+          quality={100}
+        />
+
+        {/* Title Content */}
+        <div className="relative flex h-full items-center justify-center z-20">
+          <h1
+            className="text-5xl md:text-6xl font-bold text-center drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]"
+            style={{ color: '#FFFFFF', textShadow: '0 4px 12px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6)' }}
+          >
+            공지/소식
+          </h1>
+        </div>
+      </div>
 
       {/* Main Content */}
-      <main className="min-h-screen bg-[#0a0a0a] text-white selection:bg-blue-500/30 relative z-10">
+      <main className="min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900 relative z-10">
         
-        {/* 배경 그리드 효과 - main 컨텐츠 영역에만 적용 */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none" />
+        {/* 배경 패턴 (은은한 그리드) */}
+        <div className="fixed inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none" />
 
         <div className="container mx-auto px-4 md:px-6 relative z-10 py-24">
           {loading ? (
             <div className="flex h-64 items-center justify-center">
-              <p className="text-gray-400">게시글을 불러오는 중입니다...</p>
+              <p className="text-slate-600">게시글을 불러오는 중입니다...</p>
             </div>
           ) : error ? (
             <div className="flex h-64 items-center justify-center">
-              <p className="text-red-400">{error}</p>
+              <p className="text-red-600">{error}</p>
             </div>
           ) : posts.length === 0 ? (
             <div className="flex h-64 items-center justify-center">
-              <p className="text-gray-400">등록된 공지/뉴스가 없습니다.</p>
+              <p className="text-slate-600">등록된 공지/뉴스가 없습니다.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 max-w-[1400px] mx-auto">
