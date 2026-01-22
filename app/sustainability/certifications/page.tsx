@@ -112,6 +112,13 @@ const certItems = [
     image: '/images/sustainability/9001_0000_1so1400.jpg',
     pdf: '/images/sustainability/pdf/10-ISO1400_Integrated_Certification.pdf',
   },
+  {
+    id: 11,
+    category: '인증서',
+    title: 'ISO 45001 안전경영시스템',
+    image: '/images/sustainability/ISO45001.jpg',
+    pdf: '/images/sustainability/pdf/11-iso45001.pdf',
+  },
 ];
 
 // ----------------------------------------------------------------------

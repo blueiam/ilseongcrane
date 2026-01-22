@@ -480,7 +480,13 @@ export default function AdminProjectsPage() {
               이미지
             </label>
             <p className="text-xs text-gray-500">
-              권장 사이즈: 1920x1080px (가로형)
+              이미지 파일첨부는 최대 4개까지 가능하며,
+            </p>
+            <p className="text-xs text-gray-500">
+              3MB이하의 JPG, JPEG, PNG 형태로 업로드해주세요.
+            </p>
+            <p className="text-xs text-gray-500">
+              권장 사이즈: 1920x1080px (가로형) 이하
             </p>
             <div className="flex items-center gap-3">
               <label className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">

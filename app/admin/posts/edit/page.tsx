@@ -266,16 +266,25 @@ export default function AdminPostsEditPage() {
       return
     }
 
-    const maxSize = 5 * 1024 * 1024
+    // File size validation based on file type
     const invalidFiles: string[] = []
     Array.from(files).forEach((file) => {
-      if (file.size > maxSize) {
+      let maxSize: number
+      if (file.type.startsWith('image/')) {
+        maxSize = 3 * 1024 * 1024 // 3MB for images
+      } else if (file.type === 'application/pdf') {
+        maxSize = 15 * 1024 * 1024 // 15MB for PDFs
+      } else {
+        maxSize = 0 // Other types not allowed
+      }
+
+      if (maxSize > 0 && file.size > maxSize) {
         invalidFiles.push(file.name)
       }
     })
 
     if (invalidFiles.length > 0) {
-      alert(`다음 파일들이 5MB를 초과합니다:\n${invalidFiles.join('\n')}`)
+      alert('File is too large. (Max: 3MB for images, 15MB for PDF)')
       e.target.value = ''
       setFilesToUpload(null)
       return
@@ -320,16 +329,25 @@ export default function AdminPostsEditPage() {
       return
     }
 
-    const maxSize = 5 * 1024 * 1024
+    // File size validation based on file type
     const invalidFiles: string[] = []
     filesArray.forEach((file) => {
-      if (file.size > maxSize) {
+      let maxSize: number
+      if (file.type.startsWith('image/')) {
+        maxSize = 3 * 1024 * 1024 // 3MB for images
+      } else if (file.type === 'application/pdf') {
+        maxSize = 15 * 1024 * 1024 // 15MB for PDFs
+      } else {
+        maxSize = 0 // Other types not allowed
+      }
+
+      if (maxSize > 0 && file.size > maxSize) {
         invalidFiles.push(file.name)
       }
     })
 
     if (invalidFiles.length > 0) {
-      alert(`다음 파일들이 5MB를 초과합니다:\n${invalidFiles.join('\n')}`)
+      alert('File is too large. (Max: 3MB for images, 15MB for PDF)')
       return
     }
 
@@ -637,7 +655,7 @@ export default function AdminPostsEditPage() {
                   파일첨부는 최대 4장까지 가능하며,
                 </p>
                 <p className="mb-3 text-xs text-gray-700">
-                  5MB이하의 GIF, JPG, JPEG, PNG, PDF 형태로 업로드해주세요.
+                  3MB이하의 GIF, JPG, JPEG, PNG 형태로 업로드해주세요.
                 </p>
                 {filesToUpload && filesToUpload.length > 0 && (
                   <div className="mb-3">

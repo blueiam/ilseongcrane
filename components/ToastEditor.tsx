@@ -67,6 +67,22 @@ export default function ToastEditor({ content, onChange }: ToastEditorProps) {
     try {
       const file = blob as File;
 
+      // 파일 크기 검증 (3MB 제한)
+      const maxSize = 3 * 1024 * 1024; // 3MB
+      if (file.size > maxSize) {
+        alert('이미지 파일 크기는 3MB 이하여야 합니다.');
+        callback('', 'image');
+        return;
+      }
+
+      // 파일 타입 검증 (JPG, JPEG, PNG만 허용)
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+      if (!allowedTypes.includes(file.type)) {
+        alert('이미지는 JPG, JPEG, PNG 형태만 업로드 가능합니다.');
+        callback('', 'image');
+        return;
+      }
+
       // 한글 깨짐 방지용 파일명 생성
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;

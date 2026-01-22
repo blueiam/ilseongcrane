@@ -642,6 +642,9 @@ export default function AdminEquipmentsPage() {
       title="관리자 - 장비 관리"
       subtitle="보유장비 정보를 등록/수정/삭제할 수 있습니다."
     >
+      <p className="mb-6 text-sm text-gray-400">
+        모든 이미지는 3MB이하의 JPG, JPEG, PNG 형태로 업로드해주세요.
+      </p>
       {/* 장비 등록/수정 폼 */}
       <section className="mx-auto mb-10 max-w-[1800px] rounded-xl bg-[#222] border border-gray-700 p-4 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-white">
@@ -778,6 +781,9 @@ export default function AdminEquipmentsPage() {
             <label className="block text-sm font-medium text-gray-300">
               상세 페이지용 메인 이미지 (고화질)
             </label>
+            <p className="text-xs text-gray-400">
+              모든 이미지는 3MB이하의 JPG, JPEG, PNG 형태로 업로드해주세요.
+            </p>
             <p className="text-xs text-gray-400">
               권장 사이즈: 1920x1080px (가로형)
             </p>
