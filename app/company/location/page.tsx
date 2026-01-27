@@ -51,8 +51,8 @@ const locations = [
   {
     id: 'eumseong',
     name: '주기장 (Depot)', // 요청에 따라 '주기장'으로 명칭 변경됨 (이전 코드 반영)
-    address: '충청북도 음성군 맹동면 초금로 288', 
-    mapQuery: '충청북도 음성군 맹동면 초금로 288',
+    address: '충청북도 음성군 맹동면 초금로 285', 
+    mapQuery: '충청북도 음성군 맹동면 초금로 285',
     tel: '031-683-4235',
     fax: '031-683-4236',
     email: 'info@ilseongcrane.com',
