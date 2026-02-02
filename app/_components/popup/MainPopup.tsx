@@ -68,8 +68,11 @@ export default function MainPopup() {
           {/* Copy Overlay */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/10 to-black/60" />
           <div className="absolute inset-0 flex items-end p-6">
-            <p className="text-white font-extrabold leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] whitespace-pre-line">
-              {`NEW ARRIVAL\nCRAWLER CRANE CC 8800-1\n최고 사양 크롤러 크레인 도입 완료`}
+            <p className="text-white text-lg md:text-xl font-extrabold leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] whitespace-pre-line">
+              <span className="block text-xl md:text-2xl font-black tracking-wider text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                NEW ARRIVAL
+              </span>
+              {`CRAWLER CRANE CC-8800-1 (1600Ton C/C)\n해상풍력 15Mw급 설치 가능 크레인 도입`}
             </p>
           </div>
         </Link>
