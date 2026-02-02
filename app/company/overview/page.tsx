@@ -35,7 +35,7 @@ const visionSteps = [
         ]
       },
       {
-        category: 'QSHE 통합경영체계 정착',
+        category: 'QHSE 통합경영체계 정착',
         items: [
           'ISO 9001/14001/45001 통합인증',
           '안전관리시스템 구축',
@@ -54,7 +54,7 @@ const visionSteps = [
     period: '2027 ~ 2028',
     title: '고부가가치 사업다각화',
     goals: [
-      '중량물 설치 및 해체사업 진출',
+      '중량물 설치 및 구조물 해체사업 진출',
       '종합 검사·정비·엔지니어링 플랫폼 사업진출',
       '풍력 O&M 사업진출'
     ],
@@ -130,7 +130,7 @@ const visionSteps = [
     ],
     majorBusiness: [
       '7. 기술용역 및 엔지니어링',
-      '8. ISO, SHE, QSHE시스템 용역',
+      '8. ISO, ESG, QHSE시스템 용역',
       '9. 장비 매매, 리스 및 중개 플랫폼',
       '10. 장비 교육, 인력육성 및 컨설팅'
     ]
@@ -219,7 +219,7 @@ export default function OverviewPage() {
         {/* Background Image */}
         <Image
           src="/hero/vision.png"
-          alt="2030 VISION"
+          alt="2030 Vision"
           fill
           className={`object-cover object-center transition-transform duration-[10000ms] ease-out ${
             imageZoomed ? 'scale-100' : 'scale-125'
@@ -255,7 +255,7 @@ export default function OverviewPage() {
               Future Roadmap
             </span>
             <h1 className="text-4xl md:text-5xl font-black mb-6 tracking-tight text-slate-900">
-              2030 VISION
+              2030 Vision
             </h1>
             <p className="text-slate-600 text-lg max-w-2xl mx-auto font-light">
               일성크레인의 <span className="text-slate-900 font-medium">단계별 성장 전략</span>과 <span className="text-slate-900 font-medium">미래 비전</span>입니다.
