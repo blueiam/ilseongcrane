@@ -264,17 +264,19 @@ export default function LandingPage() {
         ))}
 
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 md:px-8 lg:px-16">
-          <div className="max-w-4xl mx-auto space-y-8 animate-fade-in-up">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight mb-6 drop-shadow-2xl leading-tight">
-              <span className="block bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80">
-                Heavy Lift
+          <div className="max-w-4xl mx-auto space-y-8 animate-fade-in-up w-full flex flex-col items-center text-center">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight mb-6 drop-shadow-2xl leading-tight text-center">
+              <span className="block bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80 text-center">
+                Total Heavy Lifting
               </span>
-              <span className="block bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80">
-                T&I
+              <span className="block bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80 text-center">
+                Windpower T&I
               </span>
-              <span className="block bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80">Specialist</span>
+              <span className="block bg-clip-text text-transparent bg-gradient-to-r from-white to-white/80 text-center">
+                Specialist
+              </span>
             </h1>
-            <p className="text-base md:text-lg lg:text-xl text-gray-100 drop-shadow-lg font-light max-w-2xl mx-auto leading-relaxed whitespace-nowrap">
+            <p className="text-base md:text-lg lg:text-xl text-gray-100 drop-shadow-lg font-light max-w-2xl mx-auto leading-relaxed whitespace-nowrap text-center">
               최고의 장비와 기술력으로 안전한 건설 현장을 책임집니다.
             </p>
           </div>

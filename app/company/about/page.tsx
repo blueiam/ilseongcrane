@@ -38,7 +38,7 @@ export default function CompanyAboutPage() {
             className="text-5xl md:text-6xl font-bold text-center drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]"
             style={{ color: '#FFFFFF', textShadow: '0 4px 12px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6)' }}
           >
-            인사말 / 회사개요
+            인사말
           </h1>
         </div>
       </div>
@@ -91,24 +91,12 @@ export default function CompanyAboutPage() {
             {/* 나머지 텍스트 */}
             <div className="space-y-6 text-slate-700 leading-relaxed text-base md:text-lg font-light tracking-wide break-keep">
               <p>
-              1992년 창사 이래 일성크레인은 30여년 동안 대한민국 산업의 성장과 함께 호흡하며 고객 여러분의 신뢰를 가장 값진 자산으로 삼아 오늘에 이르렀습니다.
+              일성크레인은 1992년 창사 이래 축적된 장비 운영 경험과 고도화된 리프팅 기술을 바탕으로, 복합·대형 프로젝트를 수행하는 종합 리프팅 전문기업입니다. 자동화 리프팅 시스템, 시뮬레이션 기반 엔지니어링, 정밀한 프로젝트 관리 역량을 통해 SOC, 플랜트, 조선해양, 물류항만 등 다양한 산업 분야에서 안정적인 수행 능력을 확보해 왔습니다.
               </p>
               <p>
-                이제 우리는 또 한 번의 과감한 도전과 도약을 시작합니다.<br className="hidden md:block"/>
-                급변하는 산업 환경 속에서 SOC, 플랜트, 풍력설치 등 기존 장비 임대 사업을 넘어 조선해양, 물류항만, 특수부문 및 엔지니어링과 컨설팅부문까지 강화해 나갈 예정이며,
-장비운영의 경험과 전문성을 기반으로 육·해상 풍력 T&I 영역까지 사업을 확장하여 대한민국 리프팅 산업의 새로운 이정표를 세우고자 합니다.
+              특히 육·해상 풍력 T&I(Transportation & Installation) 분야에서 전문 기술과 전략적 협업을 바탕으로 사업 경쟁력을 강화하고 있으며, 전국적 장비 네트워크와 현장 중심 기술력을 통해 안전성과 효율성을 동시에 구현하고 있습니다. 일성크레인은 기술을 기반으로 한 지속적인 혁신을 통해 글로벌 수준의 Total Heavy Lifting & Windpower T&I Specialist로 도약하고 있습니다.
               </p>
-              <p>
-                특히 에너지 전환 시대에 맞춰 추진 중인 육·해상 풍력T&I 부문의 전략적 제휴는<br className="hidden md:block"/>
-                일성크레인의 미래를 여는 또 하나의 중요한 발걸음입니다. 고객의 수요에 적극이고 신속하게 대응하기 위하여 전국적 장비 네트워크를 구축하고 최첨단 자동화 리프팅 기술과 시뮬레이션 역량을 바탕으로 고객이 기대하는 수준을 넘어서는 Total Heavy Lift T&I Specialist 전문기업으로 성장하겠습니다.
-              </p>
-              <p>
-                이 모든 여정의 중심에는 언제나 고객과의 신뢰, 그리고 더 나은 미래를 향한 우리의 의지가 있습니다. 앞으로도 일성크레인은 대한민국을 넘어 글로벌 시장에서도 인정받는<br className="hidden md:block"/>
-                기술력과 책임감을 갖춘 기업으로 정직하게, 묵묵히, 그러나 흔들림 없이 앞으로 나아가겠습니다.
-              </p>
-              <p className="font-medium text-slate-900">
-                여러분의 변함없는 성원에 깊이 감사드리며, 늘 함께 성장하는 든든한 파트너가 될 것을 약속드립니다.
-              </p>
+           
               <p>
                 감사합니다.
               </p>
@@ -148,7 +136,7 @@ export default function CompanyAboutPage() {
               <div className="sticky top-32">
                 <h3 className="text-3xl font-bold text-slate-900 mb-8 border-l-4 border-blue-600 pl-6 leading-tight">
                   국내 대표적인<br />
-                  <span className="text-blue-600">중장비 임대 전문 기업</span>
+                  <span className="text-blue-600">중장비 전문 기업</span>
                 </h3>
                 
                 <div className="space-y-6 text-slate-600 leading-relaxed text-lg font-light tracking-wide break-keep">
@@ -204,7 +192,7 @@ export default function CompanyAboutPage() {
                   </div>
                   <div>
                     <p className="text-xs text-slate-400 font-bold uppercase mb-2">Factory & Office</p>
-                    <p className="text-base text-slate-700">충청북도 음성군 맹동면 초금로 288</p>
+                    <p className="text-base text-slate-700">충청북도 음성군 맹동면 초금로 285</p>
                   </div>
                 </div>
               </div>

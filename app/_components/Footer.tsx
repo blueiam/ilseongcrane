@@ -82,7 +82,7 @@ export function Footer() {
             </button>
           </form> */}
           <div className="text-xs text-gray-200">
-            패밀리회사 : 승원씨엔에스(주), 범한건설중기(주)
+            패밀리회사 : 승원씨엔에스(주), 범한건설중기(주), 시온(주)
           </div>
 
           {/* PDF 다운로드 및 SNS */}
