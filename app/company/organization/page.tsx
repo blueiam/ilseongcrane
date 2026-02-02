@@ -150,7 +150,7 @@ export default function OrganizationPage() {
           {/* 조직도 이미지 */}
           <div className="flex justify-center items-center w-full">
             <Image
-              src="/images/about/04-org.svg"
+              src="/images/about/05-org.svg"
               alt="조직도"
               width={1200}
               height={1018}
