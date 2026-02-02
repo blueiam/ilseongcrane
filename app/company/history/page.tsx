@@ -7,11 +7,14 @@ import { useEffect, useRef, useState } from 'react';
 // 1. 연혁 데이터 (기존 데이터 유지)
 // ----------------------------------------------------------------------
 const historyData = [
-  { type: 'section', title: 'Vision 2030 : Heavy Lift T&I Specialist' },
+  { type: 'section', title: 'Vision 2030 : Total Heavy Lifting  Windpower T&I(Transportation & Installation)  Specialist' },
   {
     type: 'year',
     year: '2026',
     events: [
+      { month: '01', desc: 'CC-8800-1(1600Ton C/C 크레인) 도입' },
+      { month: '01', desc: 'Vision 2030 선포 ' },
+      { month: '01', desc: '시온 주식회사 설립' },
       { month: '01', desc: '종합 리프팅 풍력T&I 솔루션 대표기업' },
     ]
   },
@@ -19,11 +22,10 @@ const historyData = [
     type: 'year',
     year: '2025',
     events: [
-      { month: '12', desc: '풍력T&I 전략적 제휴(ENLsolution, WindPower korea)' },
+      { month: '12', desc: '풍력T&I 전략적 제휴(EnL Solution, WindPower korea)' },
       { month: '12', desc: 'ISO 45001 안전보건시스템 및 QHSE 통합플랫폼 도입' },
-      { month: '12', desc: '스마트 안전관리시스템(QHSE 통합 플랫폼) 본격 도입' },
       { month: '07', desc: '사옥 준공(충북 음성)' },
-      { month: '07', desc: '기술팀을 ［ISC Lifting/Logistics 연구소］ 확대 개편' },
+      { month: '07', desc: '기술팀을 ISC 기업부설 연구소 확대 개편' },
       { month: '03', desc: '국내 민간 최대 해상풍력단지, 영광낙월해상풍력 마샬링작업 착수' },
     ]
   },
@@ -80,6 +82,14 @@ const historyData = [
       { month: '', desc: '중대형 크롤러크레인 250톤급 도입 → 중량물 설치 전문화' },
     ]
   },
+  {
+    type: 'year',
+    year: '2010',
+    events: [
+      { month: '', desc: '크롤러크레인 시장 신규 본격 진출' },
+    ]
+  },
+
   { type: 'section', title: '2000년 회사 기반 확립 & 장비 확대' },
   {
     type: 'year',
@@ -94,6 +104,14 @@ const historyData = [
     events: [
       { month: '', desc: '장비 확충: 35톤 ~ 100톤급 하이드로 크레인 도입' },
       { month: '', desc: '경기 남부 지역 정비센터 및 장비 기지(주기장) 확보' },
+    ]
+  },
+  {
+    type: 'year',
+    year: '2000',
+    events: [
+      { month: '', desc: '회사 기반 확립 & 장비 확대' },
+
     ]
   },
   { type: 'section', title: '1992년 “오로지 성공” 일념으로 [一成] 창업' },
