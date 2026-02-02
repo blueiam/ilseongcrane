@@ -70,8 +70,8 @@ const businessAreas = [
     koTitle: 'Energy',
     desc: '신재생 에너지의 핵심인 풍력 발전 단지 조성을 위한 운송부터 설치까지 Total Solution을 제공합니다.',
     details: [
-      '풍력 기자재 운송(Transport) 및 현장 반입',
-      '타워·나셀·블레이드 등 고중량물 설치(Installation)',
+      '원자력 발전소, 화력 발전소, 수력 발전소 등 기자재 운송 및 설치',
+      '풍력 기자재 운송(Transport) 및 현장 반입 및 타워·나셀·블레이드 등 고중량물 설치(Installation)',
       '해상 풍력의 T&I 컨소시엄 운용 및 프로젝트 수행'
     ],
     icon: <Wind className="w-8 h-8" />,
@@ -109,9 +109,10 @@ const businessAreas = [
     koTitle: 'Special Projects',
     desc: '극한의 조건과 정밀함이 요구되는 특수 프로젝트에서 독보적인 기술력을 발휘합니다.',
     details: [
+      '긴급 복구 및 재난 대응 리프팅 긴급 지원',
       '초중량 구조물 이동 및 설치',
       '교량 거더 리프팅, 터널 TBM 반입 및 조립',
-      '긴급 복구 및 재난 대응 리프팅 긴급 지원'
+     
     ],
     icon: <SirenIcon className="w-8 h-8" />,
     bgImage: '/images/business/06-special.jpg',
