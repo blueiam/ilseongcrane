@@ -200,7 +200,7 @@ export default function CompanyAboutPage() {
               {/* Info Cards */}
               <div className="md:col-span-2 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:border-blue-300 transition-all duration-300">
                 <p className="text-xs text-slate-400 font-bold uppercase mb-2">Main Business</p>
-                <p className="text-lg text-slate-900">건설기계 대여 및 매매업, 전문 건설업, 풍력 T&I 물류업 </p>
+                <p className="text-lg text-slate-900">건설기계 대여 및 매매업, 전문 건설업, 풍력 T&I 종합 물류업 </p>
               </div>
 
               <div className="md:col-span-2 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:border-blue-300 transition-all duration-300">
