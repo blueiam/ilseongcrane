@@ -94,7 +94,7 @@ const certItems = [
   {
     id: 7-1,
     category: '등록증',
-    title: '(주)정상풍력 건설업등록중',
+    title: '철강 구조물 공사업(제휴사)',
     image: '/images/sustainability/Construction-Business-Registration-Certificate.png',
     pdf: '/images/sustainability/pdf/Construction-Business-Registration-Certificate.pdf',
   },
