@@ -168,12 +168,18 @@ export default function AdminEquipmentsPage() {
     }
     if (form.max_boom_length.trim()) {
       basePayload.max_boom_length = form.max_boom_length.trim()
+    } else if (editingId) {
+      basePayload.max_boom_length = null
     }
     if (form.max_lifting_capacity.trim()) {
       basePayload.max_lifting_capacity = form.max_lifting_capacity.trim()
+    } else if (editingId) {
+      basePayload.max_lifting_capacity = null
     }
     if (form.max_lifting_moment.trim()) {
       basePayload.max_lifting_moment = form.max_lifting_moment.trim()
+    } else if (editingId) {
+      basePayload.max_lifting_moment = null
     }
     // Dimensions와 Technical Data 이미지는 선택사항이며 삭제 가능
     if (form.dimensions_image_url.trim()) {
