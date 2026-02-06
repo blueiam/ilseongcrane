@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { X, ZoomIn, Download } from 'lucide-react';
+import { X, ZoomIn } from 'lucide-react';
 
 // ----------------------------------------------------------------------
 // 1. 애니메이션 훅 & 컴포넌트
@@ -45,9 +45,30 @@ const certItems = [
   {
     id: 1,
     category: '등록증',
-    title: '사업자등록증',
+    title: '일성크레인(주) 사업자등록증',
     image: '/images/sustainability/bus.jpg',
     pdf: '/images/sustainability/pdf/01-Business_Registration_Certificate.pdf',
+  },
+  {
+    id: 12,
+    category: '등록증',
+    title: '승원씨엔에스(주) 사업자등록증',
+    image: '/images/sustainability/swon.png',
+    pdf: '/images/sustainability/pdf/02-Yard_Facility_Ownership_Certificate_Rental.pdf',
+  },
+  {
+    id: 13,
+    category: '등록증',
+    title: '범한건설중기(주) 사업자등록증)',
+    image: '/images/sustainability/bum-reg.png',
+    pdf: '/images/sustainability/pdf/02-Yard_Facility_Ownership_Certificate_Rental.pdf',
+  },
+  {
+    id: 14,
+    category: '등록증',
+    title: '시온(주) 사업자등록증',
+    image: '/images/sustainability/so-reg.png',
+    pdf: '/images/sustainability/pdf/02-Yard_Facility_Ownership_Certificate_Rental.pdf',
   },
   {
     id: 2,
@@ -92,7 +113,7 @@ const certItems = [
     pdf: '/images/sustainability/pdf/07-Trading_Business_Registration_Certificate.pdf',
   },
   {
-    id: 7-1,
+    id: 71,
     category: '등록증',
     title: '철강 구조물 공사업(제휴사)',
     image: '/images/sustainability/Construction-Business-Registration-Certificate.png',
@@ -236,19 +257,6 @@ export default function CertificationsPage() {
                 quality={95}
               />
             </div>
-            
-            {/* PDF 다운로드 버튼 */}
-            <a 
-              href={selectedItem.pdf} 
-              download
-              target="_blank"
-              rel="noopener noreferrer"
-              className="absolute -bottom-16 md:bottom-6 flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-500 transition-all hover:scale-105 shadow-lg shadow-blue-500/20"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Download className="w-5 h-5" />
-              PDF 다운로드
-            </a>
           </div>
         </div>
       )}
