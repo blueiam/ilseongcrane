@@ -133,7 +133,7 @@ type EquipmentItem = {
 
 const heroSlides = [
   '/images/landing/main01.jpg',
-  '/images/landing/main02.jpg',
+  '/images/landing/slideno-3.jpeg',
   '/images/landing/main03.png',
 ];
 
@@ -259,7 +259,7 @@ export default function LandingPage() {
               }`}
               priority={index === 0}
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/60" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/10 to-black/10" />
           </div>
         ))}
 

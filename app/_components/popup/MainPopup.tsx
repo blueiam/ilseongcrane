@@ -58,15 +58,18 @@ export default function MainPopup() {
           onClick={handleClose}
         >
           <Image
-            src="/images/landing/crane1600.jpeg"
+            src="/images/landing/1600-popup3.jpg"
             alt="공지사항"
             fill
             className="object-cover"
             priority
           />
 
-          {/* Copy Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/10 to-black/60" />
+          {/* Copy Overlay: 상단은 투명, 글씨 있는 하단만 약한 그라데이션 */}
+          <div
+            className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_0%,transparent_55%,rgba(0,0,0,0.2)_85%,rgba(0,0,0,0.45)_100%)]"
+            aria-hidden
+          />
           <div className="absolute inset-0 flex items-end p-6">
             <p className="text-white text-lg md:text-xl font-extrabold leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)] whitespace-pre-line">
               <span className="block text-xl md:text-2xl font-black tracking-wider text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
