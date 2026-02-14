@@ -102,6 +102,13 @@ const certItems = [
     id: 6,
     category: '등록증',
     title: '범한건설중기(주)건설기계 등록증',
+    image: '/images/sustainability/061.png',
+    pdf: '/images/sustainability/pdf/061.pdf',
+  },
+  {
+    id: 61,
+    category: '등록증',
+    title: '건설기계대여업 등록증(시온)',
     image: '/images/sustainability/9001_0005_Beomhan.jpg',
     pdf: '/images/sustainability/pdf/06-Beomhan.pdf',
   },
