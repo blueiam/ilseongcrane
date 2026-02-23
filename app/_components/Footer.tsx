@@ -18,14 +18,14 @@ export function Footer() {
           <div>
             대표번호: 031-683-4235 · 이메일:{' '}
             <a
-              href="mailto:info@ilseongcrane.com"
+              href="mailto:isc@ilseongcrane.com"
               className="text-gray-300 hover:text-white hover:underline transition-colors cursor-pointer inline-block"
               onClick={(e) => {
                 e.stopPropagation()
-                window.location.href = 'mailto:info@ilseongcrane.com'
+                window.location.href = 'mailto:isc@ilseongcrane.com'
               }}
             >
-              info@ilseongcrane.com
+              isc@ilseongcrane.com
             </a>
           </div>
           <div className="text-[11px] text-gray-400">

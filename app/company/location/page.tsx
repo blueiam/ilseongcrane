@@ -45,7 +45,7 @@ const locations = [
     mapQuery: '경기도 평택시 고덕갈평6길 25', 
     tel: '031-683-4235',
     fax: '031-683-4236',
-    email: 'info@ilseongcrane.com',
+    email: 'isc@ilseongcrane.com',
     hours: '평일 08:00 ~ 18:00' // 영업시간 추가
   },
   {
@@ -55,7 +55,7 @@ const locations = [
     mapQuery: '충청북도 음성군 맹동면 초금로 285',
     tel: '031-683-4235',
     fax: '031-683-4236',
-    email: 'info@ilseongcrane.com',
+    email: 'isc@ilseongcrane.com',
     hours: '평일 08:00 ~ 18:00' // 영업시간 추가
   }
 ];

@@ -242,7 +242,7 @@ export default function PrivacyPolicyPage() {
               <span className="font-medium">연락처:</span> 031-683-4235
             </p>
             <p>
-              <span className="font-medium">이메일:</span> info@ilseongcrane.com
+              <span className="font-medium">이메일:</span> isc@ilseongcrane.com
             </p>
           </div>
         </section>

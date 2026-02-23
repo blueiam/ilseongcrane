@@ -108,12 +108,13 @@ export async function POST(req: Request) {
       )
     }
 
-    // ✅ 3) 이메일 발송
-    const to = TO_EMAIL_BY_CATEGORY[category] ?? TO_EMAIL_BY_CATEGORY.equipment
-    const subjectPrefix = category === 'equipment' ? '[장비 문의]' : '[풍력 문의]'
-    const subject = `${subjectPrefix} ${company || name} 문의`
+    // ✅ 3) 이메일 발송 (선택적 - 실패해도 문의는 이미 저장됨)
+    if (process.env.RESEND_API_KEY) {
+      const to = TO_EMAIL_BY_CATEGORY[category] ?? TO_EMAIL_BY_CATEGORY.equipment
+      const subjectPrefix = category === 'equipment' ? '[장비 문의]' : '[풍력 문의]'
+      const subject = `${subjectPrefix} ${company || name} 문의`
 
-    const text = `
+      const text = `
 문의 유형: ${category === 'equipment' ? '장비' : '풍력'}
 회사명: ${company || '-'}
 담당자: ${name}
@@ -122,21 +123,23 @@ export async function POST(req: Request) {
 
 문의 내용:
 ${message}
-    `.trim()
+      `.trim()
 
-    const { error: mailError } = await resend.emails.send({
-      from: `ILSEONG CRANE <${FROM_EMAIL}>`,
-      to,
-      subject,
-      text,
-    })
+      const { error: mailError } = await resend.emails.send({
+        from: `ILSEONG CRANE <${FROM_EMAIL}>`,
+        to,
+        subject,
+        text,
+      })
 
-    if (mailError) {
-      console.error('Email send error:', mailError)
-      return NextResponse.json(
-        { error: '문의는 저장되었으나, 이메일 발송 중 오류가 발생했습니다.' },
-        { status: 500 }
-      )
+      if (mailError) {
+        // 문의는 저장됨. 이메일 실패 시에도 사용자에게 성공 반환.
+        // Resend 도메인(ilseongcrane.com) 인증 필요. 로그로만 기록.
+        console.error('[contact] Resend 이메일 발송 실패 (문의는 저장됨):', mailError)
+        // fallback: 관리자는 Supabase contacts 테이블에서 확인 가능
+      }
+    } else {
+      console.warn('[contact] RESEND_API_KEY 미설정 - 이메일 발송 생략')
     }
 
     return NextResponse.json({ ok: true }, { status: 200 })
