@@ -14,7 +14,7 @@ const notoSansKR = Noto_Sans_KR({
 
 export const metadata: Metadata = {
   title: '일성크레인 - 대형 크레인 전문',
-  description: '(주)일성크레인 안전을 최우선으로 생각합니다',
+  description: '일성크레인(주) 안전을 최우선으로 생각합니다',
   icons: {
     icon: [
       { url: '/images/favicon_io/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
   manifest: '/site.webmanifest',
   openGraph: {
-    title: '(주)일성크레인',
+    title: '일성크레인(주)',
     description: '안전을 최우선으로 생각합니다',
     images: [
       {
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: '일성크레인 - 대형 크레인 전문',
-    description: '(주)일성크레인 안전을 최우선으로 생각합니다',
+    description: '일성크레인(주) 안전을 최우선으로 생각합니다',
     images: ['/images/og-image.png'],
   },
 }
